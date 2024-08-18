@@ -1,6 +1,7 @@
 import os
+#import pandas as pd
 from datetime import datetime
-from tinydb import TinyDB, Query
+from tinydb import TinyDB, Query,  where
 from common.pipodconfiguration import piPodConfiguration
 
 class MusicDB():
@@ -26,14 +27,15 @@ class MusicDB():
         table = self.db.table(TableName)
         return table
      
-    def addYouTubeLibraryPlaylistsToDB(self, userPlaylists):
-        for pl in userPlaylists:
-            self.addPlaylistToDB(pl, self.YouTubeMusicSource)
+#    def addYouTubeLibraryPlaylistsToDB(self, userPlaylists):
+#        for pl in userPlaylists:
+#            
+#            self.addPlaylistToDB(pl, self.YouTubeMusicSource)
         
     def addPlaylistToDB(self,  Playlist,  Source):
         PlaylistQuery = Query()
         PlaylistTable = self.getTable('Playlist')
-        sPlaylistId = Playlist ['playlistId']
+        sPlaylistId = Playlist ['id']
         sPlaylist = Playlist ['title']
         sDescription = Playlist['description']
         if Source == None:
@@ -41,7 +43,7 @@ class MusicDB():
         else:
             sSource = Source
         if len(PlaylistTable) > 0:
-            QueryResult = PlaylistTable.search(PlaylistQuery.PlaylistId == Playlist ['playlistId'])
+            QueryResult = PlaylistTable.search(where('PlaylistId') == sPlaylistId)
             if len(QueryResult) == 0 :
                 PlaylistTable.insert({'PlaylistId' : sPlaylistId,  'Playlist' :  sPlaylist,  'Description' :  sDescription,  'Downloaded' : 'N',  'FlagForDownload' : 'N',  'Source' :  sSource, 'CreateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),  'LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")})
             else:    
@@ -65,7 +67,7 @@ class MusicDB():
         else:
             sSource = Source
         
-        AlbumQueryResult = AlbumTable.search(AlbumQuery.Album.AlbumId == sAlbumId)
+        AlbumQueryResult = AlbumTable.search(where('AlbumId ') == sAlbumId)
         if len(AlbumQueryResult) == 0 :
             AlbumTable.insert({'AlbumId ':  sAlbumId, 'Name' : sAlbum,  'Description' : sDescription, 'ArtistId' :  sArtistId, 'Artist' :  sArtist, 'Year' : sYear,  'TrackCount' :  sTrackCount, 'Duration' :  sDuration,  'Source' :  sSource, 'CreateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),  'LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")})
         else:    
@@ -76,7 +78,7 @@ class MusicDB():
         artistTable = self.getTable('Artist')
         sArtist = Track['artists'][0]['name']
         sArtistId = Track['artists'][0]['id']
-        artistQueryResult = artistTable.search(artistQuery.artistTable.ArtistId == sArtistId)
+        artistQueryResult = artistTable.search(where('ArtistId') == sArtistId)
     
         if len(artistQueryResult) == 0:
             artistTable.insert({'ArtistId' : sArtistId,  'ArtistName' :  sArtist, 'CreateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),  'LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")})
@@ -85,7 +87,6 @@ class MusicDB():
   
     def addTrackToDB(self, Playlist,  Album, Track, TrackPlaybackOrder,  FileLocation,  FileName,  Downloaded,  Source):
         trackQuery = Query()
-        playlistTrackQuery = Query()
         trackTable = self.getTable('Track')
         playlistTrackTable = self.getTable('PlaylistTrack')
     
@@ -107,8 +108,8 @@ class MusicDB():
         else:
             sSource = Source
     
-        trackQueryResult = trackTable.search(trackQuery.Track.TrackId == sTrackId)
-        playlistTrackQueryResult = playlistTrackTable.search((playlistTrackQuery.playlistTrack.PlaylistId == sPlaylistId) & (playlistTrackQuery.PlaylistTrack.TrackId == sTrackId))
+        trackQueryResult = trackTable.search(where('TrackId') == sTrackId)
+        playlistTrackQueryResult = playlistTrackTable.search((where('PlaylistId')  == sPlaylistId) & (where('TrackId')  == sTrackId))
     
         if len(trackQueryResult) == 0:
             trackTable.insert({'TrackId':  sTrackId, 'Title' : sTitle,  'FileLocation' : sFileLocation, 'FileName' : sFileName, 'AlbumId' : sAlbumId, 'Album' : sAlbum, 'TrackNumber' : sTrackNumber, 'ArtistId' :  sArtistId,'Artist' :  sArtist,  'Downloaded' : Downloaded,  'Source' :  sSource, 'CreateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),  'LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")})
@@ -140,25 +141,38 @@ class MusicDB():
         else:
             sSource = Source
     
-        skippedTrackQueryResult = skippedTrackTable.search(skippedTrackQuery.SkippedTrack.TrackId == sSkippedTrackId)
+        skippedTrackQueryResult = skippedTrackTable.search(where('TrackId') == sSkippedTrackId)
     
         if len(skippedTrackQueryResult) == 0:
             skippedTrackTable.insert({'TrackId':  sSkippedTrackId, 'Title' : sTitle,  'AlbumId' : sAlbumId, 'Album' : sAlbum, 'ArtistId' :  sArtistId,'Artist' :  sArtist, 'PlaylistId' : sPlaylistId, 'Playlist' :  sPlaylist,   'Source' :  sSource, 'CreateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),  'LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")})
         else:
             skippedTrackTable.update({'Title' :  sTitle,  'AlbumId' : sAlbumId, 'Album' : sAlbum, 'ArtistId' :  sArtistId,'Artist' :  sArtist, 'LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")},  skippedTrackQuery.SkippedTrack.TrackId == sSkippedTrackId)
      
+    def removeAlbumFromDB(self, AlbumId):
+        sAlbumId = AlbumId
+        albumTable = self.getTable('Album')
+        albumQuery = Query()
+        if 'Album' in self.db.tables():
+            albumTable.remove(albumQuery.AlbumId == sAlbumId)
     
+    def removePlaylistFromDB(self,  PlaylistId):
+        sPlaylistId = PlaylistId
+        self.removePlaylistTracksFromDB(sPlaylistId)
+        playlistTable = self.getTable('Playlist')
+        playlistQuery = Query()
+        if 'Playlist' in self.db.tables():
+            playlistTable.remove(playlistQuery.PlaylistId == sPlaylistId)
+            
     def removePlaylistTracksFromDB(self, PlaylistId):
         sPlaylistId = PlaylistId
         playlistTrackTable = self.getTable('PlaylistTrack')
         playlistTrackQuery = Query()
         if 'PlaylistTrack' in self.db.tables():
-            playlistTrackTable.remove(playlistTrackQuery.playlistTrackTable.PlaylistId == sPlaylistId)
+            playlistTrackTable.remove(playlistTrackQuery.PlaylistId == sPlaylistId)
 
     def getAlbumFromDB(self, albumId):
         albumTable = self.getTable('Album')
-        albumQuery = Query()
-        album = albumTable.search(albumQuery.albumTable.AlbumId == albumId )
+        album = albumTable.search(where('AlbumId') == albumId )
         return album
     
     def getPlaylistsFromDB(self):
@@ -167,31 +181,51 @@ class MusicDB():
     
     def getPlaylistsForDownload(self):
         playlistTable = self.getTable('Playlist')
-        playlistQuery = Query()
-        playlists = playlistTable.search(playlistQuery.FlagForDownload == 'Y' )
+        playlists = playlistTable.search(where('FlagForDownload') == 'Y' )
         return playlists
 
     def getDownloadedPlaylists(self):
         playlistTable = self.getTable('Playlist')
-        playlistQuery = Query()
-        playlists = playlistTable.search(playlistQuery.Downloaded == 'Y' )
+        playlists = playlistTable.search(where('Downloaded') == 'Y' )
         return playlists
- 
-    def getPlaylistTracksFromDB(self, currentPlaylistId):
+        
+    def getTrackFromDB(self,  TrackId):
+        sTrackId = TrackId
         trackTable = self.getTable('Track')
-        trackQuery = Query()
-        queryResult = trackTable.search(trackQuery.PlaylistId == currentPlaylistId)
-        return queryResult
+        track = trackTable.search(where('TrackId') == sTrackId)
+        if isinstance(track,  list):
+            track = track[0]
+        return track
+        
+    def getPlaylistTracksFromDB(self, currentPlaylistId):
+        trackTable = self.getTable('PlaylistTrack')
+        playlistTracks = trackTable.search(where('PlaylistId') == currentPlaylistId)
+        playlistTracks = sorted(playlistTracks, key=lambda x: x['TrackPlaybackOrder'], reverse=False)
+        return playlistTracks
     
     def  setPlaylistDownloaded(self, DownloadedPlaylistId):
         playlistQuery = Query()
         playlistTable = self.getTable('Playlist')
         playlistTable.update({'Downloaded' : 'Y', 'FlagForDownload' : 'N', 'LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")},  playlistQuery.PlaylistId == DownloadedPlaylistId)
     
+    def resetMusicDB(self):
+        self.db.drop_tables()
+        self.db.truncate()
+    
+    def  resetPlaylistDownloaded(self, DownloadedPlaylistId):
+        playlistQuery = Query()
+        playlistTable = self.getTable('Playlist')
+        playlistTable.update({'Downloaded' : 'N', 'FlagForDownload' : 'N', 'LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")},  playlistQuery.PlaylistId == DownloadedPlaylistId)
+    
     def  setPlaylistForDownload(self, DownloadPlaylistId): 
         PlaylistTable = self.getTable('Playlist')
         PlaylistQuery = Query()
         PlaylistTable.update({'FlagForDownload' : 'Y','LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")},  PlaylistQuery.PlaylistId == DownloadPlaylistId) 
+        
+    def  resetPlaylistForDownload(self, DownloadPlaylistId): 
+        PlaylistTable = self.getTable('Playlist')
+        PlaylistQuery = Query()
+        PlaylistTable.update({'FlagForDownload' : 'N','LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")},  PlaylistQuery.PlaylistId == DownloadPlaylistId)     
     
     def getAlbumTrackNumber(self,  Album, Track):
         # ytAlbum = YouTubeConnection.get_album(YouTubeSong['album']['id'])
@@ -208,3 +242,53 @@ class MusicDB():
                         trackNumber = str(i)
             i += 1
         return trackNumber
+
+    def clearNowPlayingPlaylist(self):
+        nowPlayingPlaylistTable = self.getTable('nowPlayingPlaylistTable')
+        nowPlayingPlaylistTable.truncate()
+        self.clearNowPlayingTrack()
+    
+    def clearNowPlayingTrack(self):
+        nowPlayingTrackTable = self.getTable('NowPlayingTrack')
+        nowPlayingTrackTable.truncate()
+        
+    def getNowPlayingPlaylist(self):
+        nowPlayingPlaylistTable =  self.getTable('nowPlayingPlaylistTable')
+        return  nowPlayingPlaylistTable
+        
+    def getNowPlayingTrack(self):
+        nowPlayingTrackTable = self.getTable('NowPlayingTrack')
+        return nowPlayingTrackTable
+    
+    def addPlaylistToNowPlaying(self,  PlaylistTracks):
+        lPlaylistTracks = PlaylistTracks
+        nowPlayingPlaylistTable =  self.getTable('NowPlayingPlaylist')
+        nowPlayingPlaylistTable.insert_multiple(lPlaylistTracks)
+    
+    def setNowPlayingTrack(self,  TrackId,  Duration,  InitialPosition = 0,  CurrentPosition = 0):
+        sTrackId = TrackId
+        fInitialPosition = InitialPosition
+        fCurrentPosition = CurrentPosition
+        fDuration = Duration
+        nowPlayingPlaylistTable =  self.getTable('NowPlayingPlaylist')
+        nowPlayingTrackTable = self.getTable('NowPlayingTrack')
+        nowPlayingQuery = Query()
+        nowPlayingPlaylistTable.update({'NowPlaying' : 'N','LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")},  nowPlayingQuery.NowPlaying == 'Y')
+        nowPlayingPlaylistTable.update({'NowPlaying' : 'Y','LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")},  nowPlayingQuery.TrackId == sTrackId)
+        self.clearNowPlayingTrack()
+        nowPlayingTrackTable.insert({'Trackid' : sTrackId,  'Duration' : fDuration,  'InitialPosition' : fInitialPosition,  'CurrentPosition' : fCurrentPosition})
+        
+    def updateNowPlayingTrack(self, TrackId,  CurrentPosition):
+        sTrackId = TrackId
+        fCurrentPosition = CurrentPosition
+        nowPlayingTrackTable = self.getTable('NowPlayingTrack')
+        nowPlayingQuery = Query()
+        nowPlayingTrackTable.update({'CurrentPosition' : fCurrentPosition},  nowPlayingQuery.TrackId == sTrackId)
+        
+        
+        
+        
+        
+        
+    
+        

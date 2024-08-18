@@ -55,23 +55,19 @@ class YouTubeDownloader():
             return isNone
         else:
             return isNotNone
-                
+ 
     def getYouTubeAutorization(self):
 #        yt = YTMusic("oauth.json")
         yt = YTMusic(self.OauthFileLocation)
         return yt
      
-    def downloadLibraryPlaylistsFromYouTube(self):
-        libraryPlaylists = self.YouTubeAuth.get_library_playlists()
-        for userPlaylist in libraryPlaylists:
-            downloadPlaylistId = userPlaylist['playlistId']
-            if  downloadPlaylistId == 'SS':
-                continue
-            downloadPlaylist = self.getPlaylistFromYouTube(downloadPlaylistId)
-            self.musicDB.addPlaylistToDB(downloadPlaylist,  self.YouTubeMusicSource)
-            
+    def getLibraryPlaylistsFromYouTube(self):
+#        yt = self.getYouTubeAutorization()
+        userPlaylists = self.YouTubeAuth.get_library_playlists()
+        return userPlaylists
 
     def getPlaylistFromYouTube(self, downloadPlaylistId):
+#        yt = getYouTubeAutorization()
         userPlaylist = self.YouTubeAuth.get_playlist(downloadPlaylistId)
         return userPlaylist
     
@@ -105,13 +101,15 @@ class YouTubeDownloader():
 #        print(matchRatio, song['title'],  song['album']['name'], song['artists'][0]['name'] )
         return bestSong
     
-    def trackExists(self,  FileSystemTrackDirectory,  currentFileSystemTrackName):
-        trackLocation = os.path.join(FileSystemTrackDirectory, currentFileSystemTrackName)
-        return os.path.isfile(trackLocation)
     
+
+ 
     def downloadPlaylistTracksFromYouTube(self, downloadPlaylist):
         sPlaylistId = downloadPlaylist ['id']
         self.musicDB.removePlaylistTracksFromDB(sPlaylistId)
+#       playlistTrackTable = getTable('PlaylistTrack')
+#       playlistTrackQuery = Query()
+    
         iTrackPlaybackOrder = 0
         tracks= downloadPlaylist['tracks']
         for currentTrack in tracks:
@@ -120,14 +118,13 @@ class YouTubeDownloader():
                 downloadTrack = self.searchSubstituteTrackInYouTubeMusic(currentTrack)
             if len(downloadTrack) > 0:
                 currentAlbum = self.getTrackAlbum(downloadTrack)
-                self.musicDB.addAlbumToDB(downloadTrack['album']['id'],  currentAlbum,  self.YouTubeMusicSource)
+                self.musicDB.addAlbumToDB(downloadTrack['album']['id'],  currentAlbum,  self.sYouTubeMusicSource)
                 self.musicDB.addArtistToDB(downloadPlaylist,  currentAlbum,  downloadTrack)
-                currentFileSystemTrackDirectory = self.getFileSystemDirectoryName(self.MusicRootDirectory,  downloadTrack)
-                currentFileSystemTrackName = self.getFileSystemTrackName(currentAlbum, downloadTrack, self.Codec)
-                if not self.trackExists(currentFileSystemTrackDirectory,  currentFileSystemTrackName):
-                    self.downloadTrackFromYouTube(downloadPlaylist,  downloadTrack)
+                currentFileSystemTrackDirectory = self.getFileSystemDirectoryName(self.sMusicRootDirectory,  downloadTrack)
+                currentFileSystemTrackName = self.getFileSystemTrackName(currentAlbum, downloadTrack, self.sCodec)
+                downloadTrackFromYouTube(downloadPlaylist,  downloadTrack)
                 iTrackPlaybackOrder += 1
-                self.musicDB.addTrackToDB(downloadPlaylist,  currentAlbum, downloadTrack, iTrackPlaybackOrder,  currentFileSystemTrackDirectory, currentFileSystemTrackName,  'Y',  self.YouTubeMusicSource)
+                self.musicDB.addTrackToDB(downloadPlaylist,  currentAlbum, downloadTrack, iTrackPlaybackOrder,  currentFileSystemTrackDirectory, currentFileSystemTrackName,  'Y',  self.sYouTubeMusicSource)
 
     def downloadPlaylistFromYouTube(self, downloadPlaylistId):
         youTubePlaylist = self.getPlaylistFromYouTube(downloadPlaylistId)
@@ -234,115 +231,115 @@ class YouTubeDownloader():
             ydl.download([yt_url])
 #    os.chdir(sCurrentDirectory)
 
-    def getNewestMp3Filename(self,  directory):
-        # lists all mp3s in local directory
-        print(directory)
-        list_of_mp3s = glob.glob(directory + '*.mp3')
-        # returns mp3 with highest timestamp value
-        return max(list_of_mp3s, key = os.path.getctime)
+def getNewestMp3Filename(directory):
+    # lists all mp3s in local directory
+    print(directory)
+    list_of_mp3s = glob.glob(directory + '*.mp3')
+    # returns mp3 with highest timestamp value
+    return max(list_of_mp3s, key = os.path.getctime)
 
 
-    def setId3Tags(self, album, track, downloadFile):
-        try:
-            currentTrack = music_tag.load_file(downloadFile)
-        except OSError as error :
-            print(error)
-            print('Error opening file: ' + downloadFile)
-        currentTrack['title'] = track['title']
-        currentTrack['artist'] = track['artists'][0]['name']
-        if track['album'] is None:
-            currentTrack['album'] = 'Unknown' # YouTubeSong['title']
-            currentTrack['comment'] = 'Most likey user uploaded video.  No Song or Album information available'
-            i = 0
-            for imgLoc in currentTrack['thumbnails']:
-                tmp = urlopen(imgLoc['url'])
-                data = bytearray(tmp.read())
-                print(imgLoc)
-                # print(data)
-                # Image.
-#               image = Image.open(io.BytesIO(data))
-                # art.values(i).thumbnail([imageWidth, imageHeight]) == data
-                if i == 0:
-                # with open(image, 'rb') as img_in:
-                    currentTrack['artwork'] = io.BytesIO(data).getvalue()
-                    print(currentTrack['artwork'])
-                else:
-                    currentTrack.append_tag('artwork', io.BytesIO(data).getvalue())
-                    print(currentTrack['artwork'])
-                i += 1
-        else:
-            currentTrack['album'] = track['album']['name']
-#           yt = getYouTubeAutorization()
-            album = self.YouTubeAuth.get_album(track['album']['id'])
-            currentTrack['totaltracks'] = album['trackCount']
-            currentTrack['year'] = album['year']
-            try:
-                currentTrack['comment'] = album['description']
-            except KeyError:
-                currentTrack['comment'] = 'Most likey user uploaded video.  No Song or Album information available'
-            currentTrack['albumartist'] = album['artists'][0]['name']
-            # print(album.keys())
-            # i = 1
-            # for track in album['tracks']:
-            #     if track['videoId'] == song['videoId']:
-            #         if len(str(i)) == 1:
-            #             sTrackNumber = '0' + str(i)
-            #         else:
-            #             sTrackNumber = str(i)
-            #             currentSongTags['tracknumber'] = sTrackNumber
-            # i += 1
-            currentTrack['tracknumber'] = self.getAlbumTrackNumber(album, track)
-#           art = currentSongTags['artwork']
-            # print(art)
-            # print(YouTubeAlbum['thumbnails'][-1])
-            imgLoc = album['thumbnails'][-1]
+def setId3Tags(self, album, track, downloadFile):
+    try:
+        currentTrack = music_tag.load_file(downloadFile)
+    except OSError as error :
+        print(error)
+        print('Error opening file: ' + downloadFile)
+    currentTrack['title'] = track['title']
+    currentTrack['artist'] = track['artists'][0]['name']
+    if track['album'] is None:
+        currentTrack['album'] = 'Unknown' # YouTubeSong['title']
+        currentTrack['comment'] = 'Most likey user uploaded video.  No Song or Album information available'
+        i = 0
+        for imgLoc in currentTrack['thumbnails']:
             tmp = urlopen(imgLoc['url'])
             data = bytearray(tmp.read())
-            currentTrack['artwork'] = io.BytesIO(data).getvalue()
-            # i = 0
-            # for imgLoc in YouTubeAlbum['thumbnails']:
-            #     tmp = urlopen(imgLoc['url'])
-            #     data = bytearray(tmp.read())
-            #     # print(imgLoc)
-            #     # print(data)
-            #     # Image.
-            #     image = Image.open(io.BytesIO(data))
-            #     # art.values(i).thumbnail([imageWidth, imageHeight]) == data
-            #     if i == 0:
-            #         # with open(image, 'rb') as img_in:
-            #         currentSongTags['artwork'] = io.BytesIO(data).getvalue()
-            #         # print(currentSongTags['artwork'])
-            #     else:
-            #         currentSongTags.append_tag('artwork', io.BytesIO(data).getvalue())
-            #         # print(currentSongTags['artwork'])
-            #     i += 1
+            print(imgLoc)
+            # print(data)
+            # Image.
+#            image = Image.open(io.BytesIO(data))
+            # art.values(i).thumbnail([imageWidth, imageHeight]) == data
+            if i == 0:
+            # with open(image, 'rb') as img_in:
+                currentTrack['artwork'] = io.BytesIO(data).getvalue()
+                print(currentTrack['artwork'])
+            else:
+                currentTrack.append_tag('artwork', io.BytesIO(data).getvalue())
+                print(currentTrack['artwork'])
+            i += 1
+    else:
+        currentTrack['album'] = track['album']['name']
+#        yt = getYouTubeAutorization()
+        album = self.YouTubeAuth.get_album(track['album']['id'])
+        currentTrack['totaltracks'] = album['trackCount']
+        currentTrack['year'] = album['year']
+        try:
+            currentTrack['comment'] = album['description']
+        except KeyError:
+            currentTrack['comment'] = 'Most likey user uploaded video.  No Song or Album information available'
+        currentTrack['albumartist'] = album['artists'][0]['name']
+        # print(album.keys())
+        # i = 1
+        # for track in album['tracks']:
+        #     if track['videoId'] == song['videoId']:
+        #         if len(str(i)) == 1:
+        #             sTrackNumber = '0' + str(i)
+        #         else:
+        #             sTrackNumber = str(i)
+        #             currentSongTags['tracknumber'] = sTrackNumber
+        # i += 1
+        currentTrack['tracknumber'] = self.getAlbumTrackNumber(album, track)
+#        art = currentSongTags['artwork']
+        # print(art)
+        # print(YouTubeAlbum['thumbnails'][-1])
+        imgLoc = album['thumbnails'][-1]
+        tmp = urlopen(imgLoc['url'])
+        data = bytearray(tmp.read())
+        currentTrack['artwork'] = io.BytesIO(data).getvalue()
+        # i = 0
+        # for imgLoc in YouTubeAlbum['thumbnails']:
+        #     tmp = urlopen(imgLoc['url'])
+        #     data = bytearray(tmp.read())
+        #     # print(imgLoc)
+        #     # print(data)
+        #     # Image.
+        #     image = Image.open(io.BytesIO(data))
+        #     # art.values(i).thumbnail([imageWidth, imageHeight]) == data
+        #     if i == 0:
+        #         # with open(image, 'rb') as img_in:
+        #         currentSongTags['artwork'] = io.BytesIO(data).getvalue()
+        #         # print(currentSongTags['artwork'])
+        #     else:
+        #         currentSongTags.append_tag('artwork', io.BytesIO(data).getvalue())
+        #         # print(currentSongTags['artwork'])
+        #     i += 1
 
-        currentTrack.save()
+    currentTrack.save()
 #    return currentTrack
     
-    def getTrackAlbum(self, track):
-        if track['album'] is None:
-            album = None
-        else:
-#           yt = getYouTubeAutorization()
-            album=self.YouTubeAuth.get_album(track['album']['id'])
+def getTrackAlbum(self, track):
+    if track['album'] is None:
+         album = None
+    else:
+#         yt = getYouTubeAutorization()
+         album=self.YouTubeAuth.get_album(track['album']['id'])
 #         print(album)
-        return album
+    return album
 
-    def downloadTrackFromYouTube(self, playlist,  track):
-        album = self.getTrackAlbum(track)
-        self.musicDB.addAlbumToDB(track['album']['id'], album,  'YouTube Music')
-        sYouTubeTrackURL = self.YouTubeURL + track['videoId']
-        self.downloadAudioFromYouTube(sYouTubeTrackURL)
-        sWorkingTrackFile = self.getNewestMp3Filename(self.WorkDirectory)
-        self.setId3Tags(album, track, sWorkingTrackFile)
-        # iDurationSeconds = track['duration_seconds']
-        sTrackDirectory = self.getFileSystemDirectoryName(self.MusicRootDirectory, track)
-        sTrackName = self.getFileSystemTrackName(album, track, self.Codec)
-        if not os.path.exists(sTrackDirectory):
-            os.makedirs(sTrackDirectory)
-        os.rename(sWorkingTrackFile, sTrackDirectory + sTrackName)
-#       return
+def downloadTrackFromYouTube(self, playlist,  track):
+    album = getTrackAlbum(track)
+    self.musicDB.addAlbumToDB(track['album']['id'], album,  'YouTube Music')
+    sYouTubeTrackURL = self.YouTubeURL + track['videoId']
+    self.downloadAudioFromYouTube(sYouTubeTrackURL)
+    sWorkingTrackFile = self.getNewestMp3Filename(self.WorkDirectory)
+    self.setId3Tags(album, track, sWorkingTrackFile)
+    # iDurationSeconds = track['duration_seconds']
+    sTrackDirectory = self.getFileSystemDirectoryName(self.MusicRootDirectory, track)
+    sTrackName = self.getFileSystemTrackName(album, track, self.sCodec)
+    if not os.path.exists(sTrackDirectory):
+        os.makedirs(sTrackDirectory)
+    os.rename(sWorkingTrackFile, sTrackDirectory + sTrackName)
+#    return
      
  
 #  def downloadFlagedPlaylists:
