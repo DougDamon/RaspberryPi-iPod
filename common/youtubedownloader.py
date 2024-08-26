@@ -93,8 +93,8 @@ class YouTubeDownloader():
                 firstSong = song
             index += 1
             if len(albumSong) == 0:
-                album = self.musicDB.getAlbumFromDB(song['album']['id'])
-                if len(album) == 0:
+                dfAlbum = self.musicDB.getAlbumFromDB(song['album']['id'])
+                if len(dfAlbum.shape[0]) == 0:
                     albumSong = song
         if len(albumSong) == 0:
             bestSong = albumSong

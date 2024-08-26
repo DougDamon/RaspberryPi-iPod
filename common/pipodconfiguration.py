@@ -17,12 +17,18 @@ class piPodConfiguration():
         self.configuration.read(self.ConfigurationFileLocation + self.ConfigurationFile)
         
         # General Attributes
-        self.WorkDirectory = self.HomeDirectory + self.configuration['General']['WorkDirectory']
+        self.WorkDirectory = os.path.join(self.HomeDirectory,  self.configuration['General']['WorkDirectory'])
         self.RelativeWorkDirectory = self.configuration['General']['WorkDirectory']
+        self.ImageDirectory = os.path.join(self.HomeDirectory,  self.configuration['General']['ImageDirectory'])
+        self.NoAlbumArt = self.configuration['General']['NoAlbumArt']
         self.InitWorkDirectory()
         
+        #UI Attributes
+        self.ThemeDirectory = os.path.join(self.HomeDirectory,  self.configuration['UI']['ThemeDirectory'])
+        self.ThemeFile = self.configuration['UI']['ThemeFile']
+        
         #Music Attributes
-        self.MusicRootDirectory = self.HomeDirectory + self.configuration['Music']['MusicRootDirectory']
+        self.MusicRootDirectory = os.path.join(self.HomeDirectory,  self.configuration['Music']['MusicRootDirectory'])
         self.PlaylistRootDirectory = self.HomeDirectory + self.configuration['Music']['PlaylistRootDirectory']
         self.PlaylistExtension = self.configuration['Music']['PlaylistExtension']
         
@@ -30,7 +36,7 @@ class piPodConfiguration():
         
         self.YouTubeDownloadOauthLocation = self.configuration['YouTubeMusic']['YouTubeOauthLocation']
         self.YouTubeDownloadOauthFile = self.configuration['YouTubeMusic']['YouTubeOauthFile']
-        self.YouTubeDownloadOauthFileLocation = self.HomeDirectory + self.YouTubeDownloadOauthLocation  + self.YouTubeDownloadOauthFile
+        self.YouTubeDownloadOauthFileLocation = os.path.join(self.HomeDirectory,  self.YouTubeDownloadOauthLocation,  self.YouTubeDownloadOauthFile)
         
         #YouTubeDownLoader (yt-dlp) Attributes
         self.YouTubeDownloadCodec = self.configuration['YoutTubeDownloader']['DownloadCodec']
@@ -38,13 +44,13 @@ class piPodConfiguration():
         self.YouTubeURL = self.configuration['YoutTubeDownloader']['YouTubeURL']
         self.CookieLocation =self.configuration['YoutTubeDownloader']['CookieLocation']
         self.CookieFile = self.configuration['YoutTubeDownloader']['CookieFile']
-        self.CookieFileLocation = self.HomeDirectory + self.CookieLocation + self.CookieFile
+        self.CookieFileLocation = os.path.join(self.HomeDirectory, self.CookieLocation , self.CookieFile)
         self.YouTubeDownloadSource = self.configuration['YoutTubeDownloader']['Source']
         
         #MusicDB (TinyDB) Attributes
         self.MusicDBLocation = self.configuration['MusicDB']['MusicDBLocation']
         self.MusicDBFile = self.configuration['MusicDB']['MusicDBFile']
-        self.MusicDBFileLocation = self.HomeDirectory + self.MusicDBLocation + self.MusicDBFile
+        self.MusicDBFileLocation = os.path.join(self.HomeDirectory, self.MusicDBLocation, self.MusicDBFile)
         
     def InitWorkDirectory(self):   
         if os.path.isdir(self.WorkDirectory) == False:

@@ -1,5 +1,5 @@
 import os
-#import pandas as pd
+import pandas as pd
 from datetime import datetime
 from tinydb import TinyDB, Query,  where
 from common.pipodconfiguration import piPodConfiguration
@@ -173,11 +173,42 @@ class MusicDB():
     def getAlbumFromDB(self, albumId):
         albumTable = self.getTable('Album')
         album = albumTable.search(where('AlbumId') == albumId )
-        return album
+        dfAlbum = pd.DataFrame(album)
+        return dfAlbum
     
+    def getPlaylistIdbyNamefromDB(self, PlaylistName):
+        sPlaylistName = PlaylistName
+        playlistTable = self.getTable('Playlist')
+        playlist = playlistTable.search(where('Playlist') == sPlaylistName )
+        print()
+        sPlaylistId = playlist[0]['PlaylistId']
+        return sPlaylistId
+        
+    def getTrackIdByNameFromDB(self,  PlaylistId,  TrackName):
+        sPlaylistId = PlaylistId
+        sTitle = TrackName
+        trackQuery = Query()
+        playlistTrackTable = self.getTable('PlaylistTrack')
+#        track = playlistTrackTable.search(where((('PlaylistId') == sPlaylistId) & (('Title')  == sTrackName))) #[0]
+        track = playlistTrackTable.search((trackQuery.PlaylistId == sPlaylistId) & (trackQuery.Title  == sTitle))[0]
+        sTrackId = track['TrackId']
+        return sTrackId
+        
     def getPlaylistsFromDB(self):
         playlists =  self.getTable('Playlist')
-        return  playlists
+        dfPlaylists = pd.DataFrame(playlists)
+        return  dfPlaylists
+        
+    def getPlaylistInfoFromDB(self,  PlaylistId):
+        sPlaylistId = PlaylistId
+        playlistTable = self.getTable('Playlist')
+        playlist = playlistTable.search(where('PlaylistId') == sPlaylistId )
+        playlistTracks = self.getPlaylistTracksFromDB(sPlaylistId)
+        sTrackCount = str(playlistTracks.shape[0])
+        dfPlaylistInfo = pd.DataFrame(playlist)
+        dfPlaylistInfo['TrackCount'] = sTrackCount
+        return dfPlaylistInfo
+        
     
     def getPlaylistsForDownload(self):
         playlistTable = self.getTable('Playlist')
@@ -187,21 +218,33 @@ class MusicDB():
     def getDownloadedPlaylists(self):
         playlistTable = self.getTable('Playlist')
         playlists = playlistTable.search(where('Downloaded') == 'Y' )
-        return playlists
+        dfPlaylists = pd.DataFrame(playlists)
+        return dfPlaylists
         
     def getTrackFromDB(self,  TrackId):
         sTrackId = TrackId
         trackTable = self.getTable('Track')
         track = trackTable.search(where('TrackId') == sTrackId)
-        if isinstance(track,  list):
-            track = track[0]
-        return track
+#        if isinstance(track,  list):
+#            track = track[0]
+        dfTrack = pd.DataFrame(track) 
+        return dfTrack
+        
+    def getTrackTableFromDB(self):    
+        tracks =  self.getTable('Track')
+        dfTracks = pd.DataFrame(tracks)
+        return dfTracks
         
     def getPlaylistTracksFromDB(self, currentPlaylistId):
+        sCurrentPlaylistId = currentPlaylistId
         trackTable = self.getTable('PlaylistTrack')
-        playlistTracks = trackTable.search(where('PlaylistId') == currentPlaylistId)
-        playlistTracks = sorted(playlistTracks, key=lambda x: x['TrackPlaybackOrder'], reverse=False)
-        return playlistTracks
+        playlistTracks = trackTable.search(where('PlaylistId') == sCurrentPlaylistId)
+        print()
+#        playlistTracks = sorted(playlistTracks, key=lambda x: x['TrackPlaybackOrder'], reverse=False)
+        dfPlaylistTracks = pd.DataFrame(playlistTracks)
+        dfPlaylistTracks = dfPlaylistTracks.sort_values('TrackPlaybackOrder')
+        dfPlaylistTracks = dfPlaylistTracks.reset_index(drop=True)
+        return dfPlaylistTracks
     
     def  setPlaylistDownloaded(self, DownloadedPlaylistId):
         playlistQuery = Query()
@@ -244,7 +287,7 @@ class MusicDB():
         return trackNumber
 
     def clearNowPlayingPlaylist(self):
-        nowPlayingPlaylistTable = self.getTable('nowPlayingPlaylistTable')
+        nowPlayingPlaylistTable = self.getTable('NowPlayingPlaylist')
         nowPlayingPlaylistTable.truncate()
         self.clearNowPlayingTrack()
     
@@ -253,19 +296,33 @@ class MusicDB():
         nowPlayingTrackTable.truncate()
         
     def getNowPlayingPlaylist(self):
-        nowPlayingPlaylistTable =  self.getTable('nowPlayingPlaylistTable')
+        nowPlayingPlaylistTable =  self.getTable('nowPlayingPlaylist')
         return  nowPlayingPlaylistTable
         
     def getNowPlayingTrack(self):
         nowPlayingTrackTable = self.getTable('NowPlayingTrack')
         return nowPlayingTrackTable
     
-    def addPlaylistToNowPlaying(self,  PlaylistTracks):
-        lPlaylistTracks = PlaylistTracks
-        nowPlayingPlaylistTable =  self.getTable('NowPlayingPlaylist')
-        nowPlayingPlaylistTable.insert_multiple(lPlaylistTracks)
+    def getNowPlayingTracksFromDB(self,  PlaylistId):
+#        get playlist from db
+        sPlaylistId = PlaylistId
+        dfPlaylistTracks = self.getPlaylistTracksFromDB(sPlaylistId)
+        dfTracks = self.getTrackTableFromDB()
+        dfNowPlayingTracks = dfPlaylistTracks.merge(dfTracks, on='TrackId', how='inner')
+        dfNowPlayingTracks['CurrentPlaybackOrder'] = dfNowPlayingTracks['TrackPlaybackOrder']
+        dfNowPlayingTracks['NowPlaying'] = 'N'
+        dfNowPlayingTracks['CreateDate'] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        dfNowPlayingTracks['LastUpdateDate'] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        return dfNowPlayingTracks
+
     
-    def setNowPlayingTrack(self,  TrackId,  Duration,  InitialPosition = 0,  CurrentPosition = 0):
+    def addPlaylistToNowPlaying(self,  PlaylistId):
+        sPlaylistId = PlaylistId
+        dfNowPlayingPlaylistTracks = self.getNowPlayingTracksFromDB(sPlaylistId)
+        nowPlayingPlaylistTable =  self.getTable('NowPlayingPlaylist')
+        nowPlayingPlaylistTable.insert_multiple(dfNowPlayingPlaylistTracks.to_dict(orient='records'))
+ 
+    def setNowPlayingTrack(self,  TrackId,  Duration=0,  InitialPosition = 0,  CurrentPosition = 0):
         sTrackId = TrackId
         fInitialPosition = InitialPosition
         fCurrentPosition = CurrentPosition
@@ -277,7 +334,15 @@ class MusicDB():
         nowPlayingPlaylistTable.update({'NowPlaying' : 'Y','LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")},  nowPlayingQuery.TrackId == sTrackId)
         self.clearNowPlayingTrack()
         nowPlayingTrackTable.insert({'Trackid' : sTrackId,  'Duration' : fDuration,  'InitialPosition' : fInitialPosition,  'CurrentPosition' : fCurrentPosition})
-        
+ 
+    def setNowPlayingPlaylist(self,  PlaylistId,  TrackId):
+        sPlaylistId =  PlaylistId
+        sTrackId = TrackId
+        self.clearNowPlayingTrack()
+        self.clearNowPlayingPlaylist()
+        self.addPlaylistToNowPlaying(sPlaylistId)
+        self.setNowPlayingTrack(sTrackId)  
+         
     def updateNowPlayingTrack(self, TrackId,  CurrentPosition):
         sTrackId = TrackId
         fCurrentPosition = CurrentPosition
