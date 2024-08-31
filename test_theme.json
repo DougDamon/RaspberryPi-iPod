@@ -1,0 +1,12 @@
+{
+    "#play_button": {
+        "images": {
+            "normal_image": {
+                "path": "/home/doug/.piPod/images/play.png"
+            },
+            "selected_image": {
+                "path": "/home/doug/.piPod/images/pause.png"
+            }
+        }
+    }
+}

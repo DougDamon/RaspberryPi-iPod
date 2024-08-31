@@ -13,49 +13,49 @@ def getImage(imagePath):
     # image = pygame.transform.scale(image, (150, 150))
     return image
     
-def MainScreen(containterMainWindow):
+def MainScreen(containerMainWindow):
     bNowPlaying = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((12, 0), (300, 24)),
                                                text='Now Playing',
-                                               container = containterMainWindow,
+                                               container = containerMainWindow,
                                                manager = manager
                                                )
     
     bMusic = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((12, 30), (300, 24)),
                                           text='Music',
-                                          container = containterMainWindow,
+                                          container = containerMainWindow,
                                           manager=manager)
 
     bOTR = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((12, 60), (300, 24)),
                                         text='OTR',
-                                        container = containterMainWindow,
+                                        container = containerMainWindow,
                                         manager=manager)
 
     bAudiobooks = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((12, 90), (300, 24)),
                                                text='Audiobooks',
-                                               container = containterMainWindow,
+                                               container = containerMainWindow,
                                                manager=manager)
 
     bGames = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((12, 120), (300, 24)),
                                           text='Games',
-                                          container = containterMainWindow,
+                                          container = containerMainWindow,
                                           manager=manager)
 
     bManagement = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((12, 150), (300, 24)),
                                                text='Mangement',
-                                               container = containterMainWindow,
+                                               container = containerMainWindow,
                                                manager=manager)
 
-    containterMainWindow.add_element(bNowPlaying) 
-    containterMainWindow.add_element(bMusic)
-    containterMainWindow.add_element(bOTR)
-    containterMainWindow.add_element(bAudiobooks)
-    containterMainWindow.add_element(bGames)
-    containterMainWindow.add_element(bManagement)
+    containerMainWindow.add_element(bNowPlaying) 
+    containerMainWindow.add_element(bMusic)
+    containerMainWindow.add_element(bOTR)
+    containerMainWindow.add_element(bAudiobooks)
+    containerMainWindow.add_element(bGames)
+    containerMainWindow.add_element(bManagement)
     
     return bNowPlaying, bMusic, bOTR, bAudiobooks, bGames, bManagement
     
 def HideMainScreen():
-    containterMainWindow.hide()
+    containerMainWindow.hide()
     # manager.draw_ui(window_surface)
     # pygame.display.update()
     # window_surface.blit(background, (0, 0))
@@ -68,7 +68,7 @@ def HideMainScreen():
     # window_surface.blit(background, (0, 0))
 
 def ShowMainScreen():
-    containterMainWindow.show()
+    containerMainWindow.show()
     # bNowPlaying.show()
     # bMusic.show()
     # bOTR.show()
@@ -76,7 +76,7 @@ def ShowMainScreen():
     # bGames.show()
     # bManagement.show()
 
-def NowPlaying(containterMainWindow):
+def NowPlaying(containerMainWindow):
     pbarCurrentPosition = pygame_gui.elements.UIProgressBar(relative_rect=pygame.Rect((48, 180), (220, 15)),
                                                             manager=manager)
     lblCurrentPosition = pygame_gui.elements.UILabel(relative_rect=pygame.Rect((10, 178), (56, 20)),
@@ -108,15 +108,15 @@ def NowPlaying(containterMainWindow):
     #                                             text='Mangement',
     #                                             manager=manager)
    
-    containterNowPlaying.add_element(pbarCurrentPosition) 
-    containterNowPlaying.add_element(lblCurrentPosition)
-    # containterMainWindow.add_element(bOTR)
-    return containterMainWindow
+    containerNowPlaying.add_element(pbarCurrentPosition) 
+    containerNowPlaying.add_element(lblCurrentPosition)
+    # containerMainWindow.add_element(bOTR)
+    return containerMainWindow
     
 def HideNowPlaying():
-    containterNowPlaying.hide()
+    containerNowPlaying.hide()
     # btnAlbumArt.hide()
 
 
 def ShowNowPlaying():
-    containterNowPlaying.show()
+    containerNowPlaying.show()

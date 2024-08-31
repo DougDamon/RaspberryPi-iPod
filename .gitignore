@@ -10,3 +10,17 @@
 /YT_Playlist_Downloader/browser.json
 /YT_Playlist_Downloader/oauth.json
 /YT_Playlist_Downloader/www.youtube.com_cookies.txt
+/.gitignore.orig
+/piPod/gui/main.py.orig
+/piPod/gui/ui/piPodNowPlayingScreen.ui.orig
+/piPod/gui/ui_piPodMainScreen.py.orig
+/piPod/gui/ui_piPodNowPlayingScreen.py.orig
+/tmp/Gamelan Gong Kebjar： Hudjan Mas (Golden Rain).webm.part
+/tmp/Gamelan Gong Kebjar： Hudjan Mas (Golden Rain).webm.ytdl
+/common/__pycache__/*.pyc
+/configTest.py
+/musicDBTest.py
+/unused/ID3_Tags.py
+/unused/browser.json
+/unused/oauth.json
+/youtubedownloaderTest.py
