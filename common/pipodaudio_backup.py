@@ -12,8 +12,8 @@ from common.musicdatabase import MusicDB
 class AudioPlayback():
     def __init__(self):
         pygame.init()
-        self.MUSIC_END = pygame.USEREVENT + 100
-#        print('self.MUSICENDEVENT:', self.MUSICENDEVENT)
+        self.MUSICENDEVENT = pygame.USEREVENT + 1
+        print('self.MUSICENDEVENT:', self.MUSICENDEVENT)
         self.musicDB = MusicDB()
         self.config = piPodConfiguration()
         self.musicRootDirectory = self.config.MusicRootDirectory
@@ -21,14 +21,16 @@ class AudioPlayback():
         self.MusicStarted = False
         mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=2048)
         mixer.init()
-        mixer.music.set_endevent(self.MUSIC_END)
+        mixer.music.set_endevent(self.MUSICENDEVENT)
         
     def setTrackToPlay(self,  Track):
         self.Track = Track
         self.TrackFile = os.path.join(Track['FileLocation'].iloc[0],  Track['FileName'].iloc[0])
         
     def setCurrentDuration(self,  Length):
+        print('length',  Length)
         self.CurrentDuration = round(float(str(Length)))
+        print('CurrDur',  self.CurrentDuration)
     
     def getTrackID3Tags(self, TrackId):
         sTrackId = TrackId
@@ -36,6 +38,7 @@ class AudioPlayback():
         sTrackFile  = os.path.join(dfTrack['FileLocation'].iloc[0],  dfTrack['FileName'].iloc[0])
         self.CurrentTrackID3 = music_tag.load_file(sTrackFile)
         self.setCurrentDuration(self.CurrentTrackID3['#length'])
+        print('ID Dur',  self.getCurrentDuration())
         return self.CurrentTrackID3 
     
     def getNextTrack(self):
@@ -66,9 +69,6 @@ class AudioPlayback():
     
     def pauseTrack(self):
         mixer.music.pause()
-        
-    def rewindTrack(self):
-        mixer.music.play(start=0.0)
     
     def stopTrack(self):
         pass

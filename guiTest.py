@@ -1,17 +1,16 @@
-import os
-import datetime
+#import os
+#import datetime
 #import pygame
 #import pygame_gui
 from common.pipodconfiguration import piPodConfiguration
 import common.pipodgui as piPodGUI
 from common.musicdatabase import MusicDB
-from common.pipodaudio import AudioPlayback
 
 configuration = piPodConfiguration()
 #themeFile =os.path.join(configuration.ThemeDirectory,  configuration.ThemeFile)
 musicDB = MusicDB()
-piPodAudio = AudioPlayback()
-piPodAudioControls = None 
+#piPodAudio = AudioPlayback()
+#piPodAudioControls = None 
 #pygame.init()
 #pygame.display.set_caption('piPod')
 #window_surface = pygame.display.set_mode((320,240))
@@ -41,6 +40,8 @@ clock = piPodGUI.getClock()
 # Music
 isMusicPlaying = False
 isMusicPaused = False
+currentPosition = 0
+
 
 
 #PlayContainer = piPod.Play()
@@ -49,14 +50,17 @@ isMusicPaused = False
 #PauseContainer.hide()
 
 
-SelectedNowPlayingPlaylistId = None
-SelectedNowPlayingTrackId = None
-NextTrack = None
+#SelectedNowPlayingPlaylistId = None
+#SelectedNowPlayingTrackId = None
+CurrentPlaylistId = None
+CurrentTrackId = None
+#NextPlaylistId = None
+NextTrackSet = False
 
 #piPodGUI.ShowMainScreen()
 
 while is_running:
-    time_delta = clock.tick(10)/1000.0
+    time_delta = clock.tick(60)/1000.0
     for event in piPodGUI.getEvent():
         piPodGUI.manager.process_events(event)
         match event.type:
@@ -66,31 +70,32 @@ while is_running:
                 match event.ui_element:
                     case piPodGUI.bNowPlaying:
                         piPodGUI.HideMainScreen()
-#                        window_surface.blit(background, (0, 0))
                         piPodGUI.ShowNowPlayingScreen()
-                        piPodGUI.HideMainScreen()
-#                        piPodGUI.display.flip()
                     case piPodGUI.bMusic:
                         piPodGUI.HideMainScreen()
-#                        window_surface.blit(background, (0, 0))
                         piPodGUI.ShowMusicScreen()
-#                        piPodGUI.display.flip()
                     case piPodGUI.bPlaylists:
                         piPodGUI.HideMusicScreen()
                         piPodGUI.ShowAvailablePlaylistsScreen()
-#                        piPodGUI.display.flip()
                     case piPodGUI.bPlay:
-                        piPodGUI.Pause()
+                        piPodGUI.Play()
+#                        piPodGUI.Pause()
 #                        piPodGUI.display.flip()
-                        piPodAudio.playTrack()
+#                        piPodAudio.playTrack()
                         isMusicPlaying = True
                         isMusicPaused = False
                     case piPodGUI.bPause:
-                        piPodGUI.Play()
+                        piPodGUI.Pause()
 #                        piPodGUI.display.flip()
-                        piPodGUI.piPodAudio.pauseTrack()
-                        isMusicPaused = True
-                    
+#                        piPodGUI.piPodAudio.pauseTrack()
+                        NextTrack = None
+                        isMusicPaused = True                    
+                    case piPodGUI.bForward:
+                        piPodGUI.NextTrackNowPlaying()
+                    case piPodGUI.bRewind:
+                        isMusicPlaying = False
+                        piPodGUI.PreviousTrackNowPlaying()
+                        isMusicPlaying = True
                     case _:
                         pass
             case piPodGUI.UI_SELECTION_LIST_NEW_SELECTION:
@@ -99,33 +104,33 @@ while is_running:
                         piPodGUI.HideAvailablePlaylistsScreen()
                         selectedPlaylist = piPodGUI.sPlaylistSelectionList.get_single_selection()
                         SelectedNowPlayingPlaylistId = musicDB.getPlaylistIdbyNamefromDB(selectedPlaylist)
-                        piPodGUI.ShowPlaylistTracksScreen(SelectedNowPlayingPlaylistId)                 
+                        piPodGUI.setCurrentPlaylist(SelectedNowPlayingPlaylistId)
+                        piPodGUI.ShowPlaylistTracksScreen()                 
                     case piPodGUI.sPlaylistTracks:
                         piPodGUI.HidePlaylistTracksScreen()
                         selectedTrack = piPodGUI.sPlaylistTracks.get_single_selection()
                         SelectedNowPlayingTrackId = str(musicDB.getTrackIdByNameFromDB(SelectedNowPlayingPlaylistId,  selectedTrack))
 #                        NowPlayingContainer,  piPodAudioControls = piPod.NowPlayingScreen() #SelectedNowPlayingPlaylistId,  SelectedNowPlayingTrackId)
                         piPodGUI.HidePlaylistTracksScreen()
-                        piPodGUI.piPodAudio.setTrack(SelectedNowPlayingTrackId)
-                        piPodGUI.ShowNowPlayingScreen(SelectedNowPlayingPlaylistId,  SelectedNowPlayingTrackId)
+                        piPodGUI.setCurrentTrack(SelectedNowPlayingTrackId)
+                        piPodGUI.ShowNowPlayingScreen()
                     case _:
                         pass
 #                        print('other')
-            case piPodAudio.MUSICENDEVENT:
-                print('MusicEndEvent',  piPodAudio.MUSICENDEVENT)
+            case piPodGUI.MUSIC_END:
+                piPodGUI.NextTrackNowPlaying()
+#                print('MusicEndEvent',  piPodGUI.MUSICENDEVENT)
             case _:
                 pass
-    if isMusicPlaying == True and isMusicPaused == False:
-        currentPosition = piPodGUI.getCurrentPosition()
-        print(currentPosition)
-        currentDuration = piPodGUI.getCurrentDuration()
-#        piPod.lblCurrentPosition.set_text = str(datetime.timedelta(seconds=currentPosition))
-        piPodGUI.updateCurrentPosition(currentPosition,  time_delta)
-#        if currentDuration - currentPosition < 5:
+    if isMusicPlaying == True:
+        piPodGUI.updateCurrentPosition()
+        
+#        if not NextTrackSet:
 #            print('Setting Next Track')
-#            NextTrack = musicDB.getNowPlayingNextTrack()
+#            piPodGUI.setNowPlayingNextTrack()
+#            print()
             
-    piPodGUI.manager.process_events(event)
+#    piPodGUI.manager.process_events(event)
     piPodGUI.manager.update(time_delta)
     # window_surface.blit(background, (0, 0))
     piPodGUI.drawScreen()

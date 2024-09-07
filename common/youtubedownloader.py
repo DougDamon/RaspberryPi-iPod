@@ -64,6 +64,7 @@ class YouTubeDownloader():
     def downloadLibraryPlaylistsFromYouTube(self):
         libraryPlaylists = self.YouTubeAuth.get_library_playlists()
         for userPlaylist in libraryPlaylists:
+            print(userPlaylist['title'])
             downloadPlaylistId = userPlaylist['playlistId']
             if  downloadPlaylistId == 'SS':
                 continue
@@ -94,7 +95,7 @@ class YouTubeDownloader():
             index += 1
             if len(albumSong) == 0:
                 dfAlbum = self.musicDB.getAlbumFromDB(song['album']['id'])
-                if len(dfAlbum.shape[0]) == 0:
+                if dfAlbum.shape[0] == 0:
                     albumSong = song
         if len(albumSong) == 0:
             bestSong = albumSong

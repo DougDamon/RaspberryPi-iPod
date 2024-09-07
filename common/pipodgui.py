@@ -1,11 +1,14 @@
 import os
-import time
+# import time
 import datetime
 
 import pygame
 import pygame_gui
+
 #from pygame.font import Font
 from pygame_gui.core import ObjectID
+from pygame_gui.ui_manager import UIManager
+from pygame_gui.elements.ui_window import UIWindow
 from pygame_gui.elements.ui_button import UIButton
 from pygame_gui.elements.ui_selection_list import UISelectionList
 from pygame_gui.elements.ui_label import UILabel
@@ -18,53 +21,53 @@ from PIL import  Image
 from common.pipodconfiguration import piPodConfiguration
 from common.pipodaudio import AudioPlayback
 from common.musicdatabase import MusicDB
-from pygame_gui.ui_manager import UIManager
-from pygame_gui.elements.ui_window import UIWindow
-from pygame_gui.elements.ui_image import UIImage
-from pygame_gui.ui_manager import UIManager
-
-#pygame.init()
-
-#class pygame_event_get(pygame.event.get):
-#    def  __init__(self):
-#        
-#        super(pygame.error).__init__()
-#        super(pygame.event.get).__init__()
-#    pass
-#    
-class piPodGUI():
+   
+class piPodGUI(AudioPlayback):
     def __init__(self):
-#        super(pygame_event_get).__init__()
-#        super(pygame_gui.ui_manager).__init__()
-#        super(pygame_gui).__init__()
-        pygame.init()
-        pygame.font.init()
+        super().__init__()
+#        pygame.init()
         pygame.display.set_caption('piPod')
         
+        # piPod config file
         self.configuration = piPodConfiguration()
+        #pygame_gui Theme file
         themeFile =os.path.join(self.configuration.ThemeDirectory,  self.configuration.ThemeFile)
-
-        self.window_surface = pygame.display.set_mode((320,240))
-        self.background = pygame.Surface((320,240))
-        self.background.fill(pygame.Color('aquamarine1'))
-        self.manager = pygame_gui.UIManager((320,240),  themeFile)
-       
-        self.piPodAudio = AudioPlayback()
-        self.musicDB = MusicDB()     
-        self.containerMainWindow = pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager)
-        self.containerNowPlaying = pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 0)
-        self.containerPlay = pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 0)
-        self.containerPause = pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 0)
-        self.containerMusic = pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 0)
-        self.containerAvailablePlaylists = pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 0)
-        self.containerPlaylistTracks = pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 0)
-        self.containerPause= pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 0)
-#        self.containerCurrentPosition = pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 0)
         
-        self.SelectedPlaylistName = None
-        self.SelectedPlaylistId = None
-        self.SelectedTrackTitle = None
-        self.SelectedTrackTitleId = None
+        # pygame_gui setup
+        self.window_surface = pygame.display.set_mode((325,245))
+        self.background = pygame.Surface((325,245))
+        self.background.fill(pygame.Color('aquamarine'))
+        self.manager = UIManager((320,240),  themeFile)
+       
+#        self.piPodAudio = AudioPlayback()
+        self.musicDB = MusicDB()
+       
+        self.windowMainScreen = UIWindow(pygame.Rect((1, 1), (320,240))
+                                                                 ,manager=self.manager
+                                                                 ,element_id='window') 
+        
+        self.windowNowPlaying = UIWindow(pygame.Rect((1, 1), (320,240))
+                                                                 ,manager=self.manager
+                                                                 ,element_id='window') 
+ 
+        self.windowMusic = UIWindow(pygame.Rect((1, 1), (320,240))
+                                                                 ,manager=self.manager
+                                                                 ,element_id='window')  
+
+        self.windowAvailablePlaylists = UIWindow(pygame.Rect((1, 1), (320,240))
+                                                                 ,manager=self.manager
+                                                                 ,element_id='window') 
+                                                                
+        self.windowPlaylistTracks = UIWindow(pygame.Rect((1, 1), (320,240))
+                                                                 ,manager=self.manager
+                                                                 ,element_id='window') 
+        
+        self.CurrentPlaylistId = self.musicDB.getCurrentPlaylistId()
+        self.CurrentTrackId = self.musicDB.getCurrentTrackId()
+#        print(self.CurrentPlaylistId,  self.CurrentTrackId)
+        self.NextPlaylistId = None
+        self.NextTrackId = None
+        self.AutoPlayOnStart = False
         
 
         self.NoAblumArtFile = os.path.join(self.configuration.ImageDirectory,  self.configuration.NoAlbumArt)
@@ -76,8 +79,11 @@ class piPodGUI():
         self.CurrentAlbum = ''
         self.CurrentGenre = ''
         self.CurrentPlaylist = ''
+        self.CurrentPosition = 0
+        self.StartPlaybackPosition = 0
+        self.CurrentPositionFormat = '00:00'
         self.CurrentDurationSeconds = 0
-        self.CurrentDurationFormat = '00:00:00'
+        self.CurrentDurationFormat = '00:00'
         
         self.CurrentPlayState = None
         
@@ -86,39 +92,45 @@ class piPodGUI():
         self.AvailablePlaylistsScreen()
         self.PlaylistTracksScreen()
         self.NowPlayingScreen()
+        
+        self.windowMusic.hide()
+        self.windowAvailablePlaylists.hide()
+        self.windowPlaylistTracks.hide()
+        self.windowNowPlaying.hide()
+        self.ShowMainScreen()
+        
+#        pygame.display.update()
+#        pygame.display.flip()
 #        self.Play()
 #        self.Pause()
         
         self.QUIT = pygame.QUIT
         self.UI_BUTTON_PRESSED = pygame_gui.UI_BUTTON_PRESSED
         self.UI_SELECTION_LIST_NEW_SELECTION = pygame_gui.UI_SELECTION_LIST_NEW_SELECTION
-        
-        
-#        
-#        self.nowPlayingImage = None
-#        self.MainScreen()
-#        self.NowPlaying()
-#        self.Music()
-        
-    
-#    def setNowPlayingImage(self, NowPlayingArtwork):
-#        self.nowPlayingImage = pygame.image.load(imagePath)
-#    print(image.get_rect())
-    # image = pygame.transform.scale(image, (150, 150))
-#    return image
-
-    def button(self, displayText,  left,  top,  width,  height, displayContainer,  displayManager  ):
-        btn = UIButton(relative_rect=pygame.Rect((left, top), (width, height)),
-                                 text=displayText,
-                                 container = displayContainer,
-                                 manager = displayManager)
-        return btn
+#        self.MUSICENDEVENT = self.piPodAudio.MUSICENDEVENT
+#        print('self.UI_BUTTON_PRESSED:',  self.UI_BUTTON_PRESSED)
+#        print('self.UI_SELECTION_LIST_NEW_SELECTION:',  self.UI_SELECTION_LIST_NEW_SELECTION)
+#        print('self.MUSIC_END:',  self.MUSIC_END)
     
     def getClock(self):
         return pygame.time.Clock()
       
     def getEvent(self):
-        return pygame.event.get()
+        events = pygame.event.get()
+#        for event in events:
+#            print('event:',  event.type)
+#            match event.type:
+#                case self.QUIT:
+#                    print('quit')
+#                case self.UI_BUTTON_PRESSED: 
+#                    print('button pressed')
+#                case self.UI_SELECTION_LIST_NEW_SELECTION:
+#                    print('selection')
+#                case self.MUSICENDEVENT:
+#                    print('song end')
+#                case _:
+#                    pass
+        return events
         
     def updateDisplay(self):
         pygame.display.update()
@@ -128,6 +140,12 @@ class piPodGUI():
     
     def drawScreen(self):
         self.manager.draw_ui(self.window_surface)
+        
+    def formatTrackTime(self,  Seconds):
+        if Seconds < 3600:
+            return str(datetime.timedelta(seconds=Seconds))[-5:]
+        else:
+            return str(datetime.timedelta(seconds=self.Seconds))
       
     def MainScreen(self):
 #        self.bNowPlaying = self.button('Now Playing',  12, 30,  300, 24,  self.containerMainWindow,  self.manager)
@@ -135,40 +153,46 @@ class piPodGUI():
 #        self.manager.set_ui_theme( self.piPodTheme)
         self.bNowPlaying = UIButton(relative_rect=pygame.Rect((12, 0), (300, 24)),
                                                        text='Now Playing',
-                                                       container = self.containerMainWindow,
-                                                       manager = self.manager)
+                                                       container = self.windowMainScreen ,#self.containerMainWindow,
+                                                       manager = self.manager, 
+                                                       object_id=ObjectID(class_id='button'))
     
         self.bMusic = UIButton(relative_rect=pygame.Rect((12, 30), (300, 24)),
                                              text='Music',
-                                             container = self.containerMainWindow,
-                                             manager=self.manager)
+                                             container = self.windowMainScreen, #self.containerMainWindow,
+                                             manager=self.manager, 
+                                             object_id=ObjectID(class_id='button'))
 
         self.bOTR = UIButton(relative_rect=pygame.Rect((12, 60), (300, 24)),
                                            text='OTR',
-                                           container = self.containerMainWindow,
-                                           manager=self.manager)
+                                           container = self.windowMainScreen , #self.containerMainWindow,
+                                           manager=self.manager, 
+                                           object_id=ObjectID(class_id='button'))
 
         self.bAudiobooks = UIButton(relative_rect=pygame.Rect((12, 90), (300, 24)),
                                                       text='Audiobooks',
-                                                      container = self.containerMainWindow,
-                                                      manager=self.manager)
+                                                      container = self.windowMainScreen , #self.containerMainWindow,
+                                                      manager=self.manager, 
+                                                      object_id=ObjectID(class_id='button'))
 
         self.bGames = UIButton(relative_rect=pygame.Rect((12, 120), (300, 24)),
                                                text='Games',
-                                               container = self.containerMainWindow,
-                                               manager=self.manager)
+                                               container = self.windowMainScreen , #self.containerMainWindow,
+                                               manager=self.manager, 
+                                               object_id=ObjectID(class_id='button'))
 
         self.bManagement = UIButton(relative_rect=pygame.Rect((12, 150), (300, 24)),
                                                          text='Mangement',
-                                                         container = self.containerMainWindow,
-                                                         manager=self.manager)
+                                                         container = self.windowMainScreen , #self.containerMainWindow,
+                                                         manager=self.manager, 
+                                                         object_id=ObjectID(class_id='button'))
 
-        self.containerMainWindow.add_element(self.bNowPlaying) 
-        self.containerMainWindow.add_element(self.bMusic)
-        self.containerMainWindow.add_element(self.bOTR)
-        self.containerMainWindow.add_element(self.bAudiobooks)
-        self.containerMainWindow.add_element(self.bGames)
-        self.containerMainWindow.add_element(self.bManagement)
+#        self.containerMainWindow.add_element(self.bNowPlaying) 
+#        self.containerMainWindow.add_element(self.bMusic)
+#        self.containerMainWindow.add_element(self.bOTR)
+#        self.containerMainWindow.add_element(self.bAudiobooks)
+#        self.containerMainWindow.add_element(self.bGames)
+#        self.containerMainWindow.add_element(self.bManagement)
         self.window_surface.blit(self.background, (0, 0))
 ##        self.updateDisplay()
 ##        
@@ -178,10 +202,13 @@ class piPodGUI():
 #        return #bNowPlaying, bMusic, bOTR, bAudiobooks, bGames, bManagement
     
     def HideMainScreen(self):
-        self.containerMainWindow.hide()
+        self.windowMainScreen.hide() #self.containerMainWindow.hide()
+        self.window_surface.blit(self.background, (0, 0))
 
     def ShowMainScreen(self):
-        self.containerMainWindow.show()
+        if self.CurrentPlaylistId == None or self.CurrentTrackId == None:
+            self.bNowPlaying.disable()
+        self.windowMainScreen.show() 
         pygame.display.flip()
 
     def NowPlayingScreen(self): #, SelectedPlaylistId,  SelectedTrackId):
@@ -197,131 +224,120 @@ class piPodGUI():
 #        self.manager.set_ui_theme(self.piPodTheme)
         self.lblTrackTitle = UILabel(relative_rect=pygame.Rect((177,5 ), (120, 21)),
                                                    text = self.CurrentTitle,
-                                                   container = self.containerNowPlaying,
+                                                   container = self.windowNowPlaying,
                                                    manager=self.manager, 
                                                    object_id=ObjectID(class_id='@now_playing_labels'))
         self.lblTrackArtist = UILabel(relative_rect=pygame.Rect((177,25 ), (120, 21)),
                                                      text = self.CurrentArtist, 
-                                                     container = self.containerNowPlaying,
+                                                     container = self.windowNowPlaying,
                                                      manager=self.manager, 
                                                      object_id=ObjectID(class_id='@now_playing_labels'))
                                                                                           
         self.lblTrackAlbum = UILabel(relative_rect=pygame.Rect((177,45 ), (120, 21)),
                                                        text = self.CurrentAlbum,
-                                                       container = self.containerNowPlaying,
+                                                       container = self.windowNowPlaying,
                                                        manager=self.manager, 
                                                        object_id=ObjectID(class_id='@now_playing_labels'))
                         
         self.lblTrackGenre = UILabel(relative_rect=pygame.Rect((177,65 ), (120, 21)),
                                                       text = self.CurrentGenre,
-                                                      container = self.containerNowPlaying,
+                                                      container = self.windowNowPlaying,
                                                       manager=self.manager, 
                                                       object_id=ObjectID(class_id='@now_playing_labels'))
                                                                                           
         self.lblTrackPlaylist = UILabel(relative_rect=pygame.Rect((177, 85), (120, 21)),
                                                         text = self.CurrentPlaylist , 
-                                                        container = self.containerNowPlaying,
+                                                        container = self.windowNowPlaying,
                                                         manager=self.manager, 
                                                         object_id=ObjectID(class_id='@now_playing_labels'))
                                                                                           
         self.imgAlbumArt = UIImage(relative_rect=pygame.Rect((10, 0 ), (128, 128)),
                                                        image_surface=self.CurrentAlbumArt, 
-                                                       container = self.containerNowPlaying,
+                                                       container = self.windowNowPlaying,
                                                        manager=self.manager)
                                                        
         self.bPlay = UIButton(relative_rect=pygame.Rect((210, 120 ), (50, 50)),
-                                                      text='Play',
-                                                      container = self.containerPlay,
+                                                      text='',
+                                                      container = self.windowNowPlaying,
                                                       manager=self.manager, 
                                                       object_id=ObjectID(class_id='@now_playing_buttons', 
                                                                                       object_id='#play_button'))
                                                                                       
         self.bPause = UIButton(relative_rect=pygame.Rect((210, 120 ), (50, 50)),
-                                                      text='Pause',
-                                                      container = self.containerPause,
+                                                      text='',
+                                                      container = self.windowNowPlaying,
                                                       manager=self.manager, 
                                                       object_id=ObjectID(class_id='@now_playing_buttons', 
                                                                                       object_id='#pause_button'))   
-                                                                                      
+        
+        self.bForward = UIButton(relative_rect=pygame.Rect((260, 120 ), (50, 50)),
+                                                      text='',
+                                                      container = self.windowNowPlaying,
+                                                      manager=self.manager, 
+                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
+                                                                                      object_id='#forward_button'))   
+
+        self.bRewind = UIButton(relative_rect=pygame.Rect((160, 120 ), (50, 50)),
+                                                      text='',
+                                                      container = self.windowNowPlaying,
+                                                      manager=self.manager, 
+                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
+                                                                                      object_id='#rewind_button'))   
+        
         self.pbarCurrentPosition = UIProgressBar(relative_rect=pygame.Rect((58, 180), (210, 15)),
-                                                                          container = self.containerNowPlaying,
+                                                                          container = self.windowNowPlaying,
                                                                           manager=self.manager)
                                                                                                        
         self.lblCurrentPosition = UILabel(relative_rect=pygame.Rect((2, 178), (56, 20)),
-                                                            text='00:00:00',
-                                                            container = self.containerNowPlaying,
+                                                            text=self.CurrentPositionFormat,
+                                                            container = self.windowNowPlaying,
                                                             manager=self.manager, 
                                                             object_id=ObjectID(class_id='@now_playing_labels'))
         
         self.lblTrackDuration = UILabel(relative_rect=pygame.Rect((263, 178), (56, 20)),
                                                             text=self.CurrentDurationFormat,
-                                                            container = self.containerNowPlaying,
+                                                            container = self.windowNowPlaying,
                                                             manager=self.manager, 
                                                             object_id=ObjectID(class_id='@now_playing_labels'))
    
-        self.containerNowPlaying.add_element(self.imgAlbumArt)
-        self.containerNowPlaying.add_element(self.lblTrackTitle)
-        self.containerNowPlaying.add_element(self.lblTrackArtist)
-        self.containerNowPlaying.add_element(self.lblTrackAlbum)
-        self.containerNowPlaying.add_element(self.lblTrackGenre)
-        self.containerNowPlaying.add_element(self.lblTrackPlaylist)
-        self.containerNowPlaying.add_element(self.pbarCurrentPosition) 
-        
-#        self.CurrentPositionLabel()
-        
-        self.containerPlay.add_element(self.bPlay)
-        self.containerPause.add_element(self.bPause)
-        self.containerPause.hide()
-        
-        return self.containerNowPlaying,  self.containerPlay,   self.containerPause # self.piPodAudio
-    
-#    def CurrentPositionLabel(self, CurrentPosition = '00:00:00'):
-#        self.lblCurrentPosition = UILabel(relative_rect=pygame.Rect((2, 178), (56, 20)),
-#                                                            text=CurrentPosition,
-#                                                            container = self.containerCurrentPosition,
-#                                                            manager=self.manager, 
-#                                                            object_id=ObjectID(class_id='@now_playing_labels'))
-#        self.containerCurrentPosition.add_element(self.lblCurrentPosition)
-#        self.containerCurrentPosition.show()
-#        pygame.display.flip()
+        self.bPause.hide()
         
     def HideNowPlayingScreen(self):
-        self.containerNowPlaying.hide()
-        # btnAlbumArt.hide()
+        self.windowNowPlaying.hide()
         
     def Play(self):
-        self.containerPause.kill()
-        self.containerPlay = pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 1)
-        self.bPlay = UIButton(relative_rect=pygame.Rect((210, 120 ), (50, 50)),
-                                                      text='',
-                                                      container = self.containerPlay,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                      object_id='#play_button'))
-                                                                                      
-        self.containerPlay.add_element(self.bPlay)
+        if self.CurrentTrackId != None:
+            self.bPlay.hide()
+            self.bPause.show()
+            self.playTrack()
         
     def Pause(self):
-        self.containerPlay.kill()
-        self.containerPause= pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 1)
-        self.bPause = UIButton(relative_rect=pygame.Rect((210, 120 ), (50, 50)),
-                                                      text='',
-                                                      container = self.containerPause,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                      object_id='#pause_button'))
-        self.containerPause.add_element(self.bPause)
-       
-    def ShowNowPlayingScreen(self, SelectedPlaylistId, SelectedTrackId):
-#        self.manager.set_ui_theme( self.piPodTheme)
-        self.SelectedPlaylistId = SelectedPlaylistId
-        self.SelectedTrackId = SelectedTrackId
-        self.window_surface.blit(self.background, (0, 0))
-#        dfTrack = self.musicDB.getTrackFromDB(self.SelectedTrackId)
-#        sCurrentTrackFile = os.path.join(dfTrack['FileLocation'].iloc[0],  dfTrack['FileName'].iloc[0])
-#        currentTrack = self.piPodAudio.setTrack(sCurrentTrackFile)
-        currentTrackID3 = self.piPodAudio.getTrackID3Tags(self.SelectedTrackId)
-        currentPlaylist = self.musicDB.getPlaylistInfoFromDB(SelectedPlaylistId)
+        self.pauseTrack()
+        self.bPause.hide()
+        self.bPlay.show()
+        
+    def setCurrentPlaylist(self, PlaylistId,):
+        self.CurrentPlaylistId = PlaylistId
+#        CurrentTrackId = TrackId
+        self.musicDB.setCurrentPlaylist(self.CurrentPlaylistId)
+    
+    def setCurrentTrack(self, TrackId):
+        self.CurrentTrackId = TrackId
+        dfTrack = self.musicDB.getTrackFromDB(self.CurrentTrackId)
+        CurrentDurationSeconds = dfTrack['DurationSeconds'][0].item()
+        self.musicDB.setCurrentTrack(self.CurrentTrackId, CurrentDurationSeconds)
+        
+    def ShowNowPlayingScreen(self):
+        dfCurrentTrack = self.musicDB.getCurrentTrack()
+        self.CurrentTrackId = dfCurrentTrack['TrackId'][0]
+        self.StartPlaybackPosition = dfCurrentTrack['CurrentPosition'][0].item()
+        self.CurrentPosition = dfCurrentTrack['CurrentPosition'][0].item()
+        self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition)
+#        print(self.CurrentPosition)
+#        print(self.CurrentPositionFormat)
+        
+        currentTrackID3 = self.getTrackID3Tags(self.CurrentTrackId)
+        currentPlaylist = self.musicDB.getPlaylistInfoFromDB(self.CurrentPlaylistId)
         currentArtwork = currentTrackID3['artwork'] 
         bytesCurrentImage = currentArtwork.first.data
         pilCurrentImage = Image.open(BytesIO(bytesCurrentImage))
@@ -333,68 +349,195 @@ class piPodGUI():
         self.CurrentAlbum = str(currentTrackID3['album'])
         self.CurrentGenre = str(currentTrackID3['genre'])
         self.CurrentPlaylist = currentPlaylist.loc[0]['Playlist']
+       
         self.CurrentDurationSeconds = round(float(str(currentTrackID3['#length'])))
-        self.CurrentDurationFormat = str(datetime.timedelta(seconds=self.CurrentDurationSeconds))
+        self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
+        
+        self.setTrack(self.CurrentTrackId,  self.StartPlaybackPosition)
+        
+        self.windowNowPlaying.show()
+        self.imgAlbumArt.set_image(self.CurrentAlbumArt)
+        self.lblTrackTitle.set_text(self.CurrentTitle )
+        self.lblTrackArtist.set_text(self.CurrentArtist)
+        self.lblTrackAlbum.set_text(self.CurrentAlbum)
+        self.lblTrackGenre.set_text(self.CurrentGenre)
+        self.lblTrackPlaylist.set_text(self.CurrentPlaylist)
+        self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
+        self.lblTrackDuration.set_text(self.CurrentDurationFormat)
         
         
-        self.musicDB.setNowPlayingPlaylist(self.SelectedPlaylistId ,  self.SelectedTrackId)
-        self.musicDB.setNowPlayingTrack( self.SelectedTrackId,  self.CurrentDurationSeconds,  0, 0)
-        self.containerNowPlaying.kill()
+#        self.musicDB.setNowPlayingPlaylist(self.CurrentPlaylistId ,  self.CurrentTrackId)
+#        self.musicDB.setNowPlayingTrack( self.CurrentTrackId,  self.CurrentDurationSeconds,  0, 0)
+#        self.containerNowPlaying.kill()
         pygame.display.flip()
-        self.containerNowPlaying = pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 1)
-        self.NowPlayingScreen()
+#        self.containerNowPlaying = pygame_gui.core.UIContainer(pygame.Rect(self.background.get_rect()), manager=self.manager, visible = 1)
+#        self.NowPlayingScreen()
+#        pygame.display.flip()
+        if self.AutoPlayOnStart:
+            self.Play()
+        else:
+            self.Pause()
+    def NextTrackNowPlaying(self):
+        self.setNextTrack()
+        print('NextPlaylistId:',  self.NextPlaylistId)
+        print('NextTrackId:',  self.NextTrackId)
+        if self.NextTrackId == None:
+            return
+            
+        if self.NextPlaylistId != self.CurrentPlaylistId:
+            self.musicDB.setCurrentPlaylist(self.NextPlaylistId)
+            self.CurrentPlaylistId = self.NextPlaylistId
+        
+        self.musicDB.setCurrentTrack(self.NextTrackId)
+        self.CurrentTrackid = self.NextTrackId
+        
+        dfCurrentTrack = self.musicDB.getCurrentTrack()
+        self.CurrentTrackId = dfCurrentTrack['TrackId'][0]
+        self.StartPlaybackPosition = dfCurrentTrack['CurrentPosition'][0].item()
+        self.CurrentPosition = dfCurrentTrack['CurrentPosition'][0].item()
+        self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition)
+        currentTrackID3 = self.getTrackID3Tags(self.CurrentTrackId)
+        currentPlaylist = self.musicDB.getPlaylistInfoFromDB(self.CurrentPlaylistId)
+        currentArtwork = currentTrackID3['artwork'] 
+        bytesCurrentImage = currentArtwork.first.data
+        pilCurrentImage = Image.open(BytesIO(bytesCurrentImage))
+        
+        pilCurrentImage = pilCurrentImage.resize((150, 150), 0)
+        self.CurrentAlbumArt =  pygame.image.frombytes(pilCurrentImage.tobytes('raw'), (150, 150), 'RGB')
+        self.CurrentTitle = str(currentTrackID3['title'])
+        self.CurrentArtist = str(currentTrackID3['artist'])
+        self.CurrentAlbum = str(currentTrackID3['album'])
+        self.CurrentGenre = str(currentTrackID3['genre'])
+        self.CurrentPlaylist = currentPlaylist.loc[0]['Playlist']
+       
+        self.CurrentDurationSeconds = round(float(str(currentTrackID3['#length'])))
+        self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
+        
+        self.setTrack(self.CurrentTrackId,  self.StartPlaybackPosition)
+        
+        self.windowNowPlaying.show()
+        self.imgAlbumArt.set_image(self.CurrentAlbumArt)
+        self.lblTrackTitle.set_text(self.CurrentTitle )
+        self.lblTrackArtist.set_text(self.CurrentArtist)
+        self.lblTrackAlbum.set_text(self.CurrentAlbum)
+        self.lblTrackGenre.set_text(self.CurrentGenre)
+        self.lblTrackPlaylist.set_text(self.CurrentPlaylist)
+        self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
+        self.lblTrackDuration.set_text(self.CurrentDurationFormat)
+        
         self.Play()
-
-    def updateCurrentPosition(self,  CurrentPosition,  TimeDelta):
-#        time.sleep(1)
-        sCurrentPosition = str(datetime.timedelta(seconds=round(CurrentPosition)))
+    def PreviousTrackNowPlaying(self):
+        if self.getAdjustedCurrentPosition() >= 5:
+            self.rewindTrack()
+            self.resetCurrentPosition()
+            return
+            
+        self.setNextTrack()
+        print('PrevioiusPlaylistId:',  self.NextPlaylistId)
+        print('PreviousTrackId:',  self.NextTrackId)
+        if self.NextTrackId == None:
+            return
+            
+        if self.NextPlaylistId != self.CurrentPlaylistId:
+            self.musicDB.setCurrentPlaylist(self.NextPlaylistId)
+            self.CurrentPlaylistId = self.NextPlaylistId
+        
+        self.musicDB.setCurrentTrack(self.NextTrackId)
+        self.CurrentTrackid = self.NextTrackId
+        
+        dfCurrentTrack = self.musicDB.getCurrentTrack()
+        self.CurrentTrackId = dfCurrentTrack['TrackId'][0]
+        self.StartPlaybackPosition = dfCurrentTrack['CurrentPosition'][0].item()
+        self.CurrentPosition = dfCurrentTrack['CurrentPosition'][0].item()
+        self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition)
+        currentTrackID3 = self.getTrackID3Tags(self.CurrentTrackId)
+        currentPlaylist = self.musicDB.getPlaylistInfoFromDB(self.CurrentPlaylistId)
+        currentArtwork = currentTrackID3['artwork'] 
+        bytesCurrentImage = currentArtwork.first.data
+        pilCurrentImage = Image.open(BytesIO(bytesCurrentImage))
+        
+        pilCurrentImage = pilCurrentImage.resize((150, 150), 0)
+        self.CurrentAlbumArt =  pygame.image.frombytes(pilCurrentImage.tobytes('raw'), (150, 150), 'RGB')
+        self.CurrentTitle = str(currentTrackID3['title'])
+        self.CurrentArtist = str(currentTrackID3['artist'])
+        self.CurrentAlbum = str(currentTrackID3['album'])
+        self.CurrentGenre = str(currentTrackID3['genre'])
+        self.CurrentPlaylist = currentPlaylist.loc[0]['Playlist']
+       
+        self.CurrentDurationSeconds = round(float(str(currentTrackID3['#length'])))
+        self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
+        
+        self.setTrack(self.CurrentTrackId,  self.StartPlaybackPosition)
+        
+        self.windowNowPlaying.show()
+        self.imgAlbumArt.set_image(self.CurrentAlbumArt)
+        self.lblTrackTitle.set_text(self.CurrentTitle )
+        self.lblTrackArtist.set_text(self.CurrentArtist)
+        self.lblTrackAlbum.set_text(self.CurrentAlbum)
+        self.lblTrackGenre.set_text(self.CurrentGenre)
+        self.lblTrackPlaylist.set_text(self.CurrentPlaylist)
+        self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
+        self.lblTrackDuration.set_text(self.CurrentDurationFormat)
+        
+        self.Play()
+        
+    def updateCurrentPosition(self):
+        self.CurrentPosition = self.getAdjustedCurrentPosition()
+        self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition )
         self.window_surface.blit(self.background, (2, 178))
-        self.lblCurrentPosition.set_text(sCurrentPosition)
-        print(type(self.lblCurrentPosition))
+        self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
+#        self.manager.draw_ui(self.window_surface)
+#        self.lblCurrentPosition.rebuild()
+#        self.lblCurrentPosition.update(TimeDelta)
+        self.musicDB.updateCurrentTrack(self.CurrentTrackId,  self.CurrentPosition)
+
+    def resetCurrentPosition(self):
+        self.CurrentPosition = 0
+        self.StartPlaybackPosition = 0
+        self.CurrentPositionFormat = '00:00'
+        self.musicDB.updateCurrentTrack(self.CurrentTrackId,  self.CurrentPosition)
+        self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition )
+        self.window_surface.blit(self.background, (2, 178))
+        self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
         self.manager.draw_ui(self.window_surface)
         self.lblCurrentPosition.rebuild()
-#        self.lblCurrentPosition.set_text('')
-        self.lblCurrentPosition.update(TimeDelta)
-#        pygame.display.flip()
-#        self.lblCurrentPosition.set_text(str(sCurrentPosition))
 #        self.lblCurrentPosition.update(TimeDelta)
-#        self.lblCurrentPosition.update(TimeDelta)
-#        pygame.display.flip()
+        self.musicDB.updateCurrentTrack(self.CurrentTrackId,  self.CurrentPosition)
         
     def MusicScreen(self):
 #        self.manager.set_ui_theme( self.piPodTheme)
         self.bPlaylists = UIButton(relative_rect=pygame.Rect((12, 0), (300, 24)),
                                             text='Playlists',
-                                            container = self.containerMusic,
+                                            container = self.windowMusic,
                                             manager=self.manager)
         
         self.bAlbums = UIButton(relative_rect=pygame.Rect((12, 30), (300, 24)),
                                                 text='Albums',
-                                                container = self.containerMusic,
+                                                container = self.windowMusic,
                                             manager=self.manager)
         self.bArtists = UIButton(relative_rect=pygame.Rect((12, 60), (300, 24)),
                                               text='Artists',
-                                              container = self.containerMusic,
+                                              container = self.windowMusic,
                                               manager=self.manager) 
                                             
         self.bGenres = UIButton(relative_rect=pygame.Rect((12, 90), (300, 24)),
                                                text='Genres',
-                                               container = self.containerMusic,
+                                               container = self.windowMusic,
                                                manager=self.manager)
         
-        self.containerMusic.add_element(self.bPlaylists)
-        self.containerMusic.add_element(self.bAlbums)
-        self.containerMusic.add_element(self.bArtists)
-        self.containerMusic.add_element(self.bGenres)
-        return self.containerMusic
+#        self.containerMusic.add_element(self.bPlaylists)
+#        self.containerMusic.add_element(self.bAlbums)
+#        self.containerMusic.add_element(self.bArtists)
+#        self.containerMusic.add_element(self.bGenres)
+        return
 
     def HideMusicScreen(self):
-         self.containerMusic.hide()
+         self.windowMusic.hide()
         # btnAlbumArt.hide()
 
 
     def ShowMusicScreen(self):
-         self.containerMusic.show()
+         self.windowMusic.show()
         
     def getAvailablePlaylists(self):
         dfDownloadedPlaylists = self.musicDB.getDownloadedPlaylists()[['PlaylistId','Playlist']]
@@ -408,59 +551,72 @@ class piPodGUI():
 #        playlistId = self.musicDB.getPlaylistIdbyNamefromDB(sPlaylistName)
         dfTracks = self.musicDB.getPlaylistTracksFromDB(sPlaylistId) #['TrackdId',  'Title']
         return dfTracks
+    
+    def getNextPlaylistIdTrackId(self):
+        return self.musicDB.getNextPlaylistIdTrackId()
+     
+    def setNextTrack(self):
+        sNextPlaylistId, sNextTrack = self.getNextPlaylistIdTrackId()
+        if sNextPlaylistId != self.NextPlaylistId:
+            self.NextPlaylistId = sNextPlaylistId
+        self.NextTrackId = sNextTrack
         
     def AvailablePlaylistsScreen(self):
 #        self.manager.set_ui_theme( self.piPodTheme)
         self.sPlaylistSelectionList = UISelectionList(relative_rect=pygame.Rect((12, 0), (300, 220)),
                                                                                                        item_list = list(self.getAvailablePlaylists()['Playlist']), 
-                                                                                                       container = self.containerAvailablePlaylists,
+                                                                                                       container = self.windowAvailablePlaylists,
                                                                                                        manager=self.manager, 
 #                                                                                                       allow_multi_select=False,
                                                                                                        allow_double_clicks=False)
-        self.containerAvailablePlaylists.add_element(self.sPlaylistSelectionList)
-        return self.containerAvailablePlaylists
+#        self.containerAvailablePlaylists.add_element(self.sPlaylistSelectionList)
+#        return self.containerAvailablePlaylists
         
     def HideAvailablePlaylistsScreen(self):
-         self.containerAvailablePlaylists.hide()
+         self.windowAvailablePlaylists.hide()
         # btnAlbumArt.hide()
 
     def ShowAvailablePlaylistsScreen(self):
         self.sPlaylistSelectionList.set_item_list(list(self.getAvailablePlaylists()['Playlist']))
-        self.containerAvailablePlaylists.show()
+        self.windowAvailablePlaylists.show()
 
         
-    def SelectedPlaylistTracks(self,  SelectedNowPlayingPlaylistId,  SelectedNowPlayingPlaylistName):
-        self.SelectedPlaylistId = SelectedNowPlayingPlaylistId
-        self.SelectedPlaylistName = SelectedNowPlayingPlaylistName
-#        dfAvailablePlaylists = self.getAvailablePlaylists()
-#        sPlaylistID = dfAvailablePlaylists[dfAvailablePlaylists['Playlist'] == SelectedPlaylistName]['PlaylistId']
-        dfTracks = self.getPlaylistTracks(self.SelectedPlaylistName)
-        return dfTracks
+#    def SelectedPlaylistTracks(self,  SelectedNowPlayingPlaylistId,  SelectedNowPlayingPlaylistName):
+#        self.SelectedPlaylistId = SelectedNowPlayingPlaylistId
+#        self.SelectedPlaylistName = SelectedNowPlayingPlaylistName
+#        dfTracks = self.getPlaylistTracks(self.SelectedPlaylistName)
+#        return dfTracks
         
     def PlaylistTracksScreen(self): # ,  SelectedPlaylistId):
 #        sSelectedPlaylistName = SelectedPlaylistName
 #        dfPlaylistTracks = self.getPlaylistTracks(SelectedPlaylistId)
         self.sPlaylistTracks= UISelectionList(relative_rect=pygame.Rect((12, 0), (300, 220)),
                                                                                                        item_list = [], #list(dfPlaylistTracks['Title']), 
-                                                                                                       container = self.containerAvailablePlaylists,
+                                                                                                       container = self.windowPlaylistTracks,
                                                                                                        manager=self.manager, 
 #                                                                                                       allow_multi_select=False,
                                                                                                        allow_double_clicks=False)
-        self.containerPlaylistTracks.add_element(self.sPlaylistTracks)
-        return self.containerPlaylistTracks
+#        self.containerPlaylistTracks.add_element(self.sPlaylistTracks)
+#        return self.containerPlaylistTracks
         
     def HidePlaylistTracksScreen(self):
-        self.containerPlaylistTracks.hide()
-        self.background.fill(pygame.Color('aquamarine1'))
+        self.windowPlaylistTracks.hide()
+#        self.background.fill(pygame.Color('aquamarine1'))
         # btnAlbumArt.hide()
 
-    def ShowPlaylistTracksScreen(self,  SelectedPlaylistId):
-        dfPlaylistTracks = self.getPlaylistTracks(SelectedPlaylistId)
+    def ShowPlaylistTracksScreen(self):
+        dfPlaylistTracks = self.musicDB.getCurrentPlaylist()
         self.sPlaylistTracks.set_item_list(list(dfPlaylistTracks['Title']))
-        self.containerPlaylistTracks.show()
+        self.windowPlaylistTracks.show()
 
-    def getCurrentPosition(self):
-        return self.piPodAudio.getCurrentPosition()
+    def getAdjustedCurrentPosition(self):
+        currentPosition = round(self.getCurrentPosition())
+        if currentPosition >= self.CurrentDurationSeconds:
+            return self.CurrentDurationSeconds
+        else:
+            return currentPosition + self.StartPlaybackPosition
         
     def getCurrentDuration(self):
-        return self.piPodAudio.CurrentDuration
+        return self.CurrentDurationSeconds
+        
+#    def setTrack(self,  TrackId):
