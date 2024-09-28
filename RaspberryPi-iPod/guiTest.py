@@ -96,6 +96,10 @@ while is_running:
                         isMusicPlaying = False
                         piPodGUI.PreviousTrackNowPlaying()
                         isMusicPlaying = True
+                    case piPodGUI.bHome:
+                        print('home')
+                        piPodGUI.HideNowPlayingScreen()
+                        piPodGUI.ShowMainScreen()
                     case _:
                         pass
             case piPodGUI.UI_SELECTION_LIST_NEW_SELECTION:

@@ -80,6 +80,7 @@ class piPodGUI(AudioPlayback):
         self.CurrentGenre = ''
         self.CurrentPlaylist = ''
         self.CurrentPosition = 0
+        self.CurrentPositionPercent = 0
         self.StartPlaybackPosition = 0
         self.CurrentPositionFormat = '00:00'
         self.CurrentDurationSeconds = 0
@@ -283,10 +284,26 @@ class piPodGUI(AudioPlayback):
                                                       manager=self.manager, 
                                                       object_id=ObjectID(class_id='@now_playing_buttons', 
                                                                                       object_id='#rewind_button'))   
-        
+                                                                                      
+        self.bBack = UIButton(relative_rect=pygame.Rect((10, 210), (50, 25)),
+                                                      text='Back',
+                                                      container = self.windowNowPlaying,
+                                                      manager=self.manager, 
+                                                      object_id=ObjectID(class_id='@navigation_buttons', 
+                                                                                      object_id='#back_button'))   
+
+        self.bHome = UIButton(relative_rect=pygame.Rect((65, 210), (50, 25)),
+                                                      text='Home',
+                                                      container = self.windowNowPlaying,
+                                                      manager=self.manager, 
+                                                      object_id=ObjectID(class_id='@navigation_buttons', 
+                                                                                      object_id='#home_button')) 
+                                                                                      
         self.pbarCurrentPosition = UIProgressBar(relative_rect=pygame.Rect((58, 180), (210, 15)),
                                                                           container = self.windowNowPlaying,
-                                                                          manager=self.manager)
+                                                                          manager=self.manager, 
+                                                                          object_id=ObjectID(class_id='@now_playing_buttons', 
+                                                                                                          object_id='#current_position_bar'))
                                                                                                        
         self.lblCurrentPosition = UILabel(relative_rect=pygame.Rect((2, 178), (56, 20)),
                                                             text=self.CurrentPositionFormat,
@@ -353,6 +370,7 @@ class piPodGUI(AudioPlayback):
         self.CurrentDurationSeconds = round(float(str(currentTrackID3['#length'])))
         self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
         
+        
         self.setTrack(self.CurrentTrackId,  self.StartPlaybackPosition)
         
         self.windowNowPlaying.show()
@@ -412,6 +430,7 @@ class piPodGUI(AudioPlayback):
        
         self.CurrentDurationSeconds = round(float(str(currentTrackID3['#length'])))
         self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
+        self.CurrentPositionPercent = (self.CurrentPosition/self.CurrentDurationSeconds) * 100
         
         self.setTrack(self.CurrentTrackId,  self.StartPlaybackPosition)
         
@@ -424,6 +443,7 @@ class piPodGUI(AudioPlayback):
         self.lblTrackPlaylist.set_text(self.CurrentPlaylist)
         self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
         self.lblTrackDuration.set_text(self.CurrentDurationFormat)
+        self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
         
         self.Play()
     def PreviousTrackNowPlaying(self):
@@ -432,7 +452,7 @@ class piPodGUI(AudioPlayback):
             self.resetCurrentPosition()
             return
             
-        self.setNextTrack()
+        self.setPreviousTrack()
         print('PrevioiusPlaylistId:',  self.NextPlaylistId)
         print('PreviousTrackId:',  self.NextTrackId)
         if self.NextTrackId == None:
@@ -466,7 +486,7 @@ class piPodGUI(AudioPlayback):
        
         self.CurrentDurationSeconds = round(float(str(currentTrackID3['#length'])))
         self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
-        
+        self.CurrentPositionPercent = (self.CurrentPosition/self.CurrentDurationSeconds) * 100
         self.setTrack(self.CurrentTrackId,  self.StartPlaybackPosition)
         
         self.windowNowPlaying.show()
@@ -478,14 +498,17 @@ class piPodGUI(AudioPlayback):
         self.lblTrackPlaylist.set_text(self.CurrentPlaylist)
         self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
         self.lblTrackDuration.set_text(self.CurrentDurationFormat)
+        self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
         
         self.Play()
         
     def updateCurrentPosition(self):
         self.CurrentPosition = self.getAdjustedCurrentPosition()
+        self.CurrentPositionPercent = (self.CurrentPosition/self.CurrentDurationSeconds) * 100
         self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition )
         self.window_surface.blit(self.background, (2, 178))
         self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
+        self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
 #        self.manager.draw_ui(self.window_surface)
 #        self.lblCurrentPosition.rebuild()
 #        self.lblCurrentPosition.update(TimeDelta)
@@ -493,6 +516,7 @@ class piPodGUI(AudioPlayback):
 
     def resetCurrentPosition(self):
         self.CurrentPosition = 0
+        self.CurrentPositionPercent = 0
         self.StartPlaybackPosition = 0
         self.CurrentPositionFormat = '00:00'
         self.musicDB.updateCurrentTrack(self.CurrentTrackId,  self.CurrentPosition)
@@ -557,6 +581,15 @@ class piPodGUI(AudioPlayback):
      
     def setNextTrack(self):
         sNextPlaylistId, sNextTrack = self.getNextPlaylistIdTrackId()
+        if sNextPlaylistId != self.NextPlaylistId:
+            self.NextPlaylistId = sNextPlaylistId
+        self.NextTrackId = sNextTrack
+        
+    def getPreviousPlaylistIdTrackId(self):
+        return self.musicDB.getPreviousPlaylistIdTrackId()
+        
+    def setPreviousTrack(self):
+        sNextPlaylistId, sNextTrack = self.getPreviousPlaylistIdTrackId()
         if sNextPlaylistId != self.NextPlaylistId:
             self.NextPlaylistId = sNextPlaylistId
         self.NextTrackId = sNextTrack
