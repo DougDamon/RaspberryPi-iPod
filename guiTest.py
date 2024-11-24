@@ -28,6 +28,8 @@ is_running = True
 
 piPodGUI = piPodGUI.piPodGUI()
 clock = piPodGUI.getClock()
+piPodGUI.bNowPlaying.select()
+currentUIElement = {'MainScreen':'NowPlaying'}
 
 
 #MainScreenContainer = piPod.MainScreen()
@@ -57,10 +59,105 @@ CurrentTrackId = None
 #NextPlaylistId = None
 NextTrackSet = False
 
-#piPodGUI.ShowMainScreen()
+#piPodGUI.MainScreenShow()
 
+# UI Navigation
+MainScreenUIElements = {'NowPlaying' : 1 ,  'Music' : 2,  'OTR' : 3, 'Audiobooks' : 4, 'Games' :  5,  'Management' : 6}
 while is_running:
     time_delta = clock.tick(60)/1000.0
+    encoderActivity = piPodGUI.rotaryEncoder.getEncoderActivity()
+    if encoderActivity != None:
+        control = next(iter(encoderActivity))
+        controlAction = encoderActivity[control]
+        currentScreen = next(iter(currentUIElement))
+        currentElement = currentUIElement[currentScreen]
+        match currentScreen:
+            case 'MainScreen':
+                match currentElement:
+                    case 'NowPlaying':
+                        match control:
+                            case 'Wheel':
+                                match controlAction:
+                                    case 'Up':
+                                        pass
+                                    case 'Down':
+                                        currentUIElement[currentScreen] = 'Music'
+                                        piPodGUI.bNowPlaying.unselect()
+                                        piPodGUI.bMusic.select()
+                            case _:
+                                pass
+                    case 'Music':
+                        match control:
+                            case 'Wheel':
+                                match controlAction:
+                                    case 'Up':
+                                        currentUIElement[currentScreen] = 'NowPlaying'
+                                        piPodGUI.bMusic.unselect()
+                                        piPodGUI.bNowPlaying.select()
+                                    case 'Down':
+                                        currentUIElement[currentScreen] = 'OTR'
+                                        piPodGUI.bMusic.unselect()
+                                        piPodGUI.bOTR.select()
+                            case _:
+                                pass
+                    case 'OTR': 
+                        match control:
+                            case 'Wheel':
+                                match controlAction:
+                                    case 'Up':
+                                        currentUIElement[currentScreen] = 'Music'
+                                        piPodGUI.bOTR.unselect()
+                                        piPodGUI.bMusic.select()
+                                    case 'Down':
+                                        currentUIElement[currentScreen] = 'Audiobooks'
+                                        piPodGUI.bOTR.unselect()
+                                        piPodGUI.bAudiobooks.select()
+                            case _:
+                                pass  
+                    case 'Audiobooks':
+                        match control:
+                            case 'Wheel':
+                                match controlAction:
+                                    case 'Up':
+                                        currentUIElement[currentScreen] = 'OTR'
+                                        piPodGUI.bAudiobooks.unselect()
+                                        piPodGUI.bOTR.select()
+                                    case 'Down':
+                                        currentUIElement[currentScreen] = 'Games'
+                                        piPodGUI.bAudiobooks.unselect()
+                                        piPodGUI.bGames.select()
+                            case _:
+                                pass
+                    case 'Games':  
+                        match control:
+                            case 'Wheel':
+                                match controlAction:
+                                    case 'Up':
+                                        currentUIElement[currentScreen] = 'Audiobooks'
+                                        piPodGUI.bGames.unselect()
+                                        piPodGUI.bAudiobooks.select()
+                                    case 'Down':
+                                        currentUIElement[currentScreen] = 'Management'
+                                        piPodGUI.bGames.unselect()
+                                        piPodGUI.bManagement.select()
+                            case _:
+                                pass
+                    case 'Management':
+                        match control:
+                            case 'Wheel':
+                                match controlAction:
+                                    case 'Up':
+                                        currentUIElement[currentScreen] = 'Games'
+                                        piPodGUI.bManagement.unselect()
+                                        piPodGUI.bGames.select()
+                                    case 'Down':
+                                        pass
+                            case _:
+                                pass
+                    case _:
+                        pass
+            case _:
+                pass
     for event in piPodGUI.getEvent():
         piPodGUI.manager.process_events(event)
         match event.type:
@@ -69,14 +166,14 @@ while is_running:
             case piPodGUI.UI_BUTTON_PRESSED:
                 match event.ui_element:
                     case piPodGUI.bNowPlaying:
-                        piPodGUI.HideMainScreen()
-                        piPodGUI.ShowNowPlayingScreen()
+                        piPodGUI.MainScreenHide()
+                        piPodGUI.NowPlayingScreenShow()
                     case piPodGUI.bMusic:
-                        piPodGUI.HideMainScreen()
-                        piPodGUI.ShowMusicScreen()
+                        piPodGUI.MainScreenHide()
+                        piPodGUI.MusicScreenShow()
                     case piPodGUI.bPlaylists:
-                        piPodGUI.HideMusicScreen()
-                        piPodGUI.ShowAvailablePlaylistsScreen()
+                        piPodGUI.MusicScreenHide()
+                        piPodGUI.AvailablePlaylistsScreenShow()
                     case piPodGUI.bPlay:
                         piPodGUI.Play()
 #                        piPodGUI.Pause()
@@ -96,24 +193,28 @@ while is_running:
                         isMusicPlaying = False
                         piPodGUI.PreviousTrackNowPlaying()
                         isMusicPlaying = True
+                    case piPodGUI.bHome:
+                        print('home')
+                        piPodGUI.NowPlayingScreenHide()
+                        piPodGUI.MainScreenShow()
                     case _:
                         pass
             case piPodGUI.UI_SELECTION_LIST_NEW_SELECTION:
                 match event.ui_element:
                     case piPodGUI.sPlaylistSelectionList:
-                        piPodGUI.HideAvailablePlaylistsScreen()
+                        piPodGUI.NowPlayingScreenShow()
                         selectedPlaylist = piPodGUI.sPlaylistSelectionList.get_single_selection()
                         SelectedNowPlayingPlaylistId = musicDB.getPlaylistIdbyNamefromDB(selectedPlaylist)
                         piPodGUI.setCurrentPlaylist(SelectedNowPlayingPlaylistId)
-                        piPodGUI.ShowPlaylistTracksScreen()                 
+                        piPodGUI.PlaylistTracksScreenShow()                 
                     case piPodGUI.sPlaylistTracks:
-                        piPodGUI.HidePlaylistTracksScreen()
+                        piPodGUI.PlaylistTracksScreenHide()
                         selectedTrack = piPodGUI.sPlaylistTracks.get_single_selection()
                         SelectedNowPlayingTrackId = str(musicDB.getTrackIdByNameFromDB(SelectedNowPlayingPlaylistId,  selectedTrack))
 #                        NowPlayingContainer,  piPodAudioControls = piPod.NowPlayingScreen() #SelectedNowPlayingPlaylistId,  SelectedNowPlayingTrackId)
-                        piPodGUI.HidePlaylistTracksScreen()
+                        piPodGUI.PlaylistTracksScreenHide()
                         piPodGUI.setCurrentTrack(SelectedNowPlayingTrackId)
-                        piPodGUI.ShowNowPlayingScreen()
+                        piPodGUI.NowPlayingScreenShow()
                     case _:
                         pass
 #                        print('other')
