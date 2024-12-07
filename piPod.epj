@@ -2,7 +2,7 @@
   "header": {
     "comment": "eric project file for project piPod",
     "copyright": "Copyright (C) 2024 Doug Damon, doug.damon@gmail.com",
-    "saved": "2024-09-28, 14:26:57"
+    "saved": "2024-11-24, 16:05:31"
   },
   "project": {
     "AUTHOR": "Doug Damon",
@@ -79,17 +79,16 @@
     },
     "RESOURCES": [],
     "SOURCES": [
-      "RaspberryPi-iPod/ID3_Tags.py",
       "RaspberryPi-iPod/YT_Playlist_Downloader/main.py",
+      "RaspberryPi-iPod/audioPlaybackTest.py",
       "RaspberryPi-iPod/common/musicdatabase.py",
       "RaspberryPi-iPod/common/pipodaudio.py",
       "RaspberryPi-iPod/common/pipodconfiguration.py",
       "RaspberryPi-iPod/common/pipodgui.py",
-      "RaspberryPi-iPod/common/userinterface.py",
+      "RaspberryPi-iPod/common/rotaryencoder.py",
       "RaspberryPi-iPod/common/youtubedownloader.py",
       "RaspberryPi-iPod/configTest.py",
       "RaspberryPi-iPod/guiTest.py",
-      "RaspberryPi-iPod/music-tagTest.py",
       "RaspberryPi-iPod/musicDBTest.py",
       "RaspberryPi-iPod/piPod/gui/classTest.py",
       "RaspberryPi-iPod/piPod/gui/classTest_old.py",
@@ -97,6 +96,7 @@
       "RaspberryPi-iPod/piPod/gui/test.py",
       "RaspberryPi-iPod/piPod/gui/ui_piPodMainScreen.py",
       "RaspberryPi-iPod/piPod/gui/ui_piPodNowPlayingScreen.py",
+      "RaspberryPi-iPod/youtubedownloaderTest.py",
       "test.py"
     ],
     "SPELLEXCLUDES": "",

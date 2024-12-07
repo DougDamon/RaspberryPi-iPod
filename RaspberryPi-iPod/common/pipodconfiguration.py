@@ -27,6 +27,19 @@ class piPodConfiguration():
         self.ThemeDirectory = os.path.join(self.HomeDirectory,  self.configuration['UI']['ThemeDirectory'])
         self.ThemeFile = self.configuration['UI']['ThemeFile']
         
+        #UI Navigation
+        self.ScreenNavigation = {}
+        self.Screens = [s.strip() for s in self.configuration['UINavigation']['Screens'].split(',')]
+        for ScreenNav in self.Screens:
+            self.ScreenNavigation[ScreenNav] =  [e.strip() for e in self.configuration['UINavigation'][ScreenNav].split(',')]
+        
+#            print(f'ScreenNav: {self.configuration["UINavigation"][ScreenNav]}')
+#            print(f'ScreenNav: {self.configuration["UINavigation"][ScreenNav]}')
+#            print(f'ScreenNav: {self.configuration.get("UINavigation",  ScreenNav)}')
+#            self.ScreenNavigation[ScreenNav] =  [e.strip() for e in self.configuration['UINavigation'][ScreenNav].split(',')]
+#        print(f'ScreenNav: {self.ScreenNavigation}')
+        self.DefaultScreen = self.configuration['UINavigation']['DefaultScreen']
+        self.DefaultElement = self.configuration['UINavigation']['DefaultElement']
         #Music Attributes
         self.MusicRootDirectory = os.path.join(self.HomeDirectory,  self.configuration['Music']['MusicRootDirectory'])
         self.PlaylistRootDirectory = self.HomeDirectory + self.configuration['Music']['PlaylistRootDirectory']

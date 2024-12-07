@@ -21,6 +21,7 @@ from PIL import  Image
 from common.pipodconfiguration import piPodConfiguration
 from common.pipodaudio import AudioPlayback
 from common.musicdatabase import MusicDB
+from common.rotaryencoder import RotaryEncoder
    
 class piPodGUI(AudioPlayback):
     def __init__(self):
@@ -41,6 +42,7 @@ class piPodGUI(AudioPlayback):
        
 #        self.piPodAudio = AudioPlayback()
         self.musicDB = MusicDB()
+        self.rotaryEncoder = RotaryEncoder()
        
         self.windowMainScreen = UIWindow(pygame.Rect((1, 1), (320,240))
                                                                  ,manager=self.manager
@@ -63,6 +65,12 @@ class piPodGUI(AudioPlayback):
                                                                  ,element_id='window') 
         
         self.CurrentPlaylistId = self.musicDB.getCurrentPlaylistId()
+        self.CurrentPlaylistInfo = self.musicDB.getCurrentPlaylistInfo()
+        if self.CurrentPlaylistInfo:
+            self.CurrentPlaylistIndex = self.getCurrentScreenElementIndex('AvailablePlaylists',  self.CurrentPlaylistInfo[0]['Playlist'])
+        else:
+            self.CurrentPlaylistIndex = 0 
+            
         self.CurrentTrackId = self.musicDB.getCurrentTrackId()
 #        print(self.CurrentPlaylistId,  self.CurrentTrackId)
         self.NextPlaylistId = None
@@ -98,7 +106,7 @@ class piPodGUI(AudioPlayback):
         self.windowAvailablePlaylists.hide()
         self.windowPlaylistTracks.hide()
         self.windowNowPlaying.hide()
-        self.ShowMainScreen()
+        self.MainScreenShow()
         
 #        pygame.display.update()
 #        pygame.display.flip()
@@ -108,6 +116,16 @@ class piPodGUI(AudioPlayback):
         self.QUIT = pygame.QUIT
         self.UI_BUTTON_PRESSED = pygame_gui.UI_BUTTON_PRESSED
         self.UI_SELECTION_LIST_NEW_SELECTION = pygame_gui.UI_SELECTION_LIST_NEW_SELECTION
+        self.Screens = self.configuration.Screens
+        self.ScreenNavigation = self.configuration.ScreenNavigation
+#        self.ScreenNavigation['AvailablePlaylists'] = []
+#        print(f'self.ScreenNavigation: {self.ScreenNavigation}')
+        self.CurrentScreen = self.configuration.DefaultScreen
+        self.CurrentScreenElement = self.configuration.DefaultElement
+        self.PreviousScreen = self.configuration.DefaultScreen
+        self.PreviousScreenElement = self.configuration.DefaultElement
+        
+        
 #        self.MUSICENDEVENT = self.piPodAudio.MUSICENDEVENT
 #        print('self.UI_BUTTON_PRESSED:',  self.UI_BUTTON_PRESSED)
 #        print('self.UI_SELECTION_LIST_NEW_SELECTION:',  self.UI_SELECTION_LIST_NEW_SELECTION)
@@ -202,16 +220,17 @@ class piPodGUI(AudioPlayback):
     
 #        return #bNowPlaying, bMusic, bOTR, bAudiobooks, bGames, bManagement
     
-    def HideMainScreen(self):
+    def MainScreenHide(self):
         self.windowMainScreen.hide() #self.containerMainWindow.hide()
         self.window_surface.blit(self.background, (0, 0))
 
-    def ShowMainScreen(self):
+    def MainScreenShow(self):
         if self.CurrentPlaylistId == None or self.CurrentTrackId == None:
             self.bNowPlaying.disable()
         self.windowMainScreen.show() 
         pygame.display.flip()
-
+#    def NavigateMainScreen(self):
+        
     def NowPlayingScreen(self): #, SelectedPlaylistId,  SelectedTrackId):
 #        self.SelectedPlaylistId = SelectedPlaylistId
 #        self.SelectedTrackId = SelectedTrackId
@@ -319,7 +338,7 @@ class piPodGUI(AudioPlayback):
    
         self.bPause.hide()
         
-    def HideNowPlayingScreen(self):
+    def NowPlayingScreenHide(self):
         self.windowNowPlaying.hide()
         
     def Play(self):
@@ -335,16 +354,18 @@ class piPodGUI(AudioPlayback):
         
     def setCurrentPlaylist(self, PlaylistId,):
         self.CurrentPlaylistId = PlaylistId
+        
 #        CurrentTrackId = TrackId
         self.musicDB.setCurrentPlaylist(self.CurrentPlaylistId)
-    
+        self.CurrentPlaylistInfo = self.musicDB.getCurrentPlaylistInfo()
+        
     def setCurrentTrack(self, TrackId):
         self.CurrentTrackId = TrackId
         dfTrack = self.musicDB.getTrackFromDB(self.CurrentTrackId)
         CurrentDurationSeconds = dfTrack['DurationSeconds'][0].item()
         self.musicDB.setCurrentTrack(self.CurrentTrackId, CurrentDurationSeconds)
         
-    def ShowNowPlayingScreen(self):
+    def NowPlayingScreenShow(self):
         dfCurrentTrack = self.musicDB.getCurrentTrack()
         self.CurrentTrackId = dfCurrentTrack['TrackId'][0]
         self.StartPlaybackPosition = dfCurrentTrack['CurrentPosition'][0].item()
@@ -407,7 +428,7 @@ class piPodGUI(AudioPlayback):
             self.CurrentPlaylistId = self.NextPlaylistId
         
         self.musicDB.setCurrentTrack(self.NextTrackId)
-        self.CurrentTrackid = self.NextTrackId
+#        self.CurrentTrackId = self.NextTrackId
         
         dfCurrentTrack = self.musicDB.getCurrentTrack()
         self.CurrentTrackId = dfCurrentTrack['TrackId'][0]
@@ -555,12 +576,12 @@ class piPodGUI(AudioPlayback):
 #        self.containerMusic.add_element(self.bGenres)
         return
 
-    def HideMusicScreen(self):
+    def MusicScreenHide(self):
          self.windowMusic.hide()
         # btnAlbumArt.hide()
 
 
-    def ShowMusicScreen(self):
+    def MusicScreenShow(self):
          self.windowMusic.show()
         
     def getAvailablePlaylists(self):
@@ -589,6 +610,7 @@ class piPodGUI(AudioPlayback):
         return self.musicDB.getPreviousPlaylistIdTrackId()
         
     def setPreviousTrack(self):
+        print(f'CurrentScreen:{self.CurrentScreen}')
         sNextPlaylistId, sNextTrack = self.getPreviousPlaylistIdTrackId()
         if sNextPlaylistId != self.NextPlaylistId:
             self.NextPlaylistId = sNextPlaylistId
@@ -596,8 +618,10 @@ class piPodGUI(AudioPlayback):
         
     def AvailablePlaylistsScreen(self):
 #        self.manager.set_ui_theme( self.piPodTheme)
+        playlists = list(self.getAvailablePlaylists()['Playlist'])
+#        self.ScreenNavigation['AvailablePlaylists'] = playlists
         self.sPlaylistSelectionList = UISelectionList(relative_rect=pygame.Rect((12, 0), (300, 220)),
-                                                                                                       item_list = list(self.getAvailablePlaylists()['Playlist']), 
+                                                                                                       item_list = playlists,
                                                                                                        container = self.windowAvailablePlaylists,
                                                                                                        manager=self.manager, 
 #                                                                                                       allow_multi_select=False,
@@ -605,13 +629,15 @@ class piPodGUI(AudioPlayback):
 #        self.containerAvailablePlaylists.add_element(self.sPlaylistSelectionList)
 #        return self.containerAvailablePlaylists
         
-    def HideAvailablePlaylistsScreen(self):
+    def AvailablePlaylistsScreenHide(self):
          self.windowAvailablePlaylists.hide()
         # btnAlbumArt.hide()
 
-    def ShowAvailablePlaylistsScreen(self):
-        self.sPlaylistSelectionList.set_item_list(list(self.getAvailablePlaylists()['Playlist']))
+    def AvailablePlaylistsScreenShow(self):
+        IndexCurrentElement = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)
         self.windowAvailablePlaylists.show()
+        self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
+#        self.setSelectionListItemSelected(self.sPlaylistSelectionList, IndexCurrentElement)
 
         
 #    def SelectedPlaylistTracks(self,  SelectedNowPlayingPlaylistId,  SelectedNowPlayingPlaylistName):
@@ -619,7 +645,7 @@ class piPodGUI(AudioPlayback):
 #        self.SelectedPlaylistName = SelectedNowPlayingPlaylistName
 #        dfTracks = self.getPlaylistTracks(self.SelectedPlaylistName)
 #        return dfTracks
-        
+        #
     def PlaylistTracksScreen(self): # ,  SelectedPlaylistId):
 #        sSelectedPlaylistName = SelectedPlaylistName
 #        dfPlaylistTracks = self.getPlaylistTracks(SelectedPlaylistId)
@@ -632,12 +658,12 @@ class piPodGUI(AudioPlayback):
 #        self.containerPlaylistTracks.add_element(self.sPlaylistTracks)
 #        return self.containerPlaylistTracks
         
-    def HidePlaylistTracksScreen(self):
+    def PlaylistTracksScreenHide(self):
         self.windowPlaylistTracks.hide()
 #        self.background.fill(pygame.Color('aquamarine1'))
         # btnAlbumArt.hide()
 
-    def ShowPlaylistTracksScreen(self):
+    def PlaylistTracksScreenShow(self):
         dfPlaylistTracks = self.musicDB.getCurrentPlaylist()
         self.sPlaylistTracks.set_item_list(list(dfPlaylistTracks['Title']))
         self.windowPlaylistTracks.show()
@@ -651,5 +677,326 @@ class piPodGUI(AudioPlayback):
         
     def getCurrentDuration(self):
         return self.CurrentDurationSeconds
+    
+    def show(self, ScreenName):
+        match ScreenName:
+            case 'AvailablePlaylists':
+                self.AvailablePlaylistsScreenShow()
+            case 'Main':
+                self.MainScreenShow()
+            case 'Music':
+                self.MusicScreenShow()
+            case 'NowPlaying':
+                self.NowPlayingScreenShow()
+            case 'PlaylistTracks':
+                self.PlaylistTracksScreenShow()
+            case _:
+                pass
+
+    def hide(self, ScreenName):
+        match ScreenName:
+            case 'AvailablePlaylists':
+                self.AvailablePlaylistsScreenHide()
+            case 'Main':
+                self.MainScreenHide()
+            case 'Music':
+                self.MusicScreenHide()
+            case 'NowPlaying':
+                self.NowPlayingScreenHide()
+            case 'PlaylistTracks':
+                self.PlaylistTracksScreenHide()
+            case _:
+                pass#    def setTrack(self,  TrackId):
+
+    def setCurrentScreen(self,  ScreenName):
+        # Check id Screen is a configured 
+        if ScreenName in self.Screens:
+            self.PreviousScreen = self.CurrentScreen
+            self.CurrentScreen = ScreenName
+        else:
+            print('error setting currentScreen')
+    
+    def setCurrentScreenElement(self,  ScreenName,  ScreenElement):
+        print(f'self.ScreenNavigation: {self.ScreenNavigation}')
+        if ScreenName in self.ScreenNavigation and ScreenElement in self.ScreenNavigation[ScreenName]:
+            self.setCurrentScreen(ScreenName)
+            self.PreviousScreenElement = self.CurrentScreenElement
+            self.CurrentScreenElement = ScreenElement
+        else:
+            print('error setting currentScreenElement')
+            
+    def getScreenElementIndex(self,  Screen,  ScreenElement):
+        indexCurrentElement = self.ScreenNavigation[Screen].index(ScreenElement)
+        return indexCurrentElement
         
-#    def setTrack(self,  TrackId):
+    def getCurrentScreenElementIndex(self):
+        indexCurrentElement = self.getScreenElementIndex(self.CurrentScreen,  self.CurrentScreenElement)
+        return indexCurrentElement
+    
+    def setScreenElementSelected(self,  Element):
+        match self.CurrentScreen:
+            case 'Main':
+                match Element:
+                    case 'NowPlaying':
+                        self.bNowPlaying.select()
+                    case 'Music':
+                        self.bMusic.select()
+                    case 'OTR':
+                        self.bOTR.select()
+                    case 'Audiobooks':
+                        self.bAudiobooks.select()
+                    case 'Games':
+                        self.bGames.select()
+                    case 'Settings':
+                        self.bManagement.select()
+                    case _:
+                        pass
+            case 'NowPlaying':
+                match Element:
+                    case 'Play':
+                        self.bPlay.select()
+                    case 'Pause':
+                        self.bPause.select()
+                    case 'Forward':
+                        self.bForward.select()
+                    case 'Back':
+                        self.bBack.select()
+                    case 'Home':
+                        self.bHome.select()
+                    case _:
+                        pass
+            case 'Music':
+                match Element:
+                    case 'AvailablePlaylists':
+                        self.bPlaylists.select()
+                    case 'Albums':
+                        self.bAlbums.select()
+                    case 'Artists':
+                        self.bArtists.select()
+                    case 'Genres':
+                        self.bGenres.select()
+                    case 'Back':
+                        self.bBack.select()
+                    case 'Home':
+                        self.bHome.select()
+                    case _:
+                        pass
+            case'AvailablePlaylists':
+                itemIndex = self.getCurrentScreenElementIndex()
+                self.sPlaylistSelectionList.item_list_container.elements[itemIndex].select()                
+            case'PlaylistTracks':
+                itemIndex=self.getCurrentScreenElementIndex()
+                self.sPlaylistTracks.item_list_container.elements[itemIndex].select()
+            case 'OTR':
+                pass
+            case 'Audiobooks':
+                pass
+            case 'Games':
+                pass
+            case 'Settings':
+                pass
+        self.CurrentScreenElement = Element
+        print(f'NewScreenElement: {self.CurrentScreenElement}')
+    
+#    def setSelectionListItemSelected(self, UISelectList,  ItemIndex):
+#        eventData = {'user_type': pygame_gui.UI_SELECTION_LIST_NEW_SELECTION,  #UI_BUTTON_PRESSED,
+#                               'ui_element': self.sPlaylistSelectionList.item_list_container.elements[ItemIndex]
+#        }
+#        selectListItemEvent = pygame.event.Event(pygame.USEREVENT+1500, eventData)
+#        print(f'self.sPlaylistSelectionList.item_list_container.elements[ItemIndex]: {self.sPlaylistSelectionList.item_list_container.elements[ItemIndex]}')
+##        for x in self.sPlaylistSelectionList.item_list_container.elements[ItemIndex]:
+#        print(f'x: {type(self.sPlaylistSelectionList.item_list_container.elements[ItemIndex])}')
+#        print(f'get_single_selection1: {UISelectList.get_single_selection()}')
+#        self.manager.process_events(selectListItemEvent)
+#        print(f'get_single_selection2: {UISelectList.get_single_selection()}')
+#        self.sPlaylistSelectionList.item_list_container.elements[ItemIndex].select()
+#        eventData = {'ui_element': UISelectList.item_list_container.elements[ItemIndex]}
+#        selectListItemEvent = pygame.event.Event(pygame_gui.UI_SELECTION_LIST_NEW_SELECTION, eventData)
+#        UISelectList.process_event(selectListItemEvent)
+    
+    def setScreenElementUnselected(self, Element):
+        match self.CurrentScreen:
+            case 'Main':
+                match Element:
+                    case 'NowPlaying':
+                        self.bNowPlaying.unselect()
+                    case 'Music':
+                        self.bMusic.unselect()
+                    case 'OTR':
+                        self.bOTR.unselect()
+                    case 'Audiobooks':
+                        self.bAudiobooks.unselect()
+                    case 'Games':
+                        self.bGames.unselect()
+                    case 'Settings':
+                        self.bManagement.unselect()
+                    case _:
+                        pass
+            case 'NowPlaying':
+                pass
+            case 'Music':
+               match Element:
+                    case 'AvailablePlaylists':
+                        self.bPlaylists.unselect()
+                    case 'Albums':
+                        self.bAlbums.unselect()
+                    case 'Artists':
+                        self.bArtists.unselect()
+                    case 'Genres':
+                        self.bGenres.unselect()
+                    case _:
+                        pass
+            case'AvailablePlaylists':
+                itemIndex = self.getCurrentScreenElementIndex()
+                self.sPlaylistSelectionList.item_list_container.elements[itemIndex].unselect()
+            case'PlaylistTracks':
+                itemIndex = self.getCurrentScreenElementIndex()
+                self.sPlaylistTracks.item_list_container.elements[itemIndex].unselect()
+            case 'OTR':
+                pass
+            case 'Audiobooks':
+                pass
+            case 'Games':
+                pass
+            case 'Settings':
+                pass
+    def NavigateUp(self, IndexCurrentElement):
+#        lengthScreenNavigation = len(self.ScreenNavigation[self.CurrentScreen]) - 1
+        if IndexCurrentElement  > 0:
+            IndexCurrentElement = self.getCurrentScreenElementIndex()-1
+            self.setScreenElementUnselected(self.CurrentScreenElement)
+            self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
+            self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
+#            match self.CurrentScreen:
+#                case 'AvailablePlaylists':
+#                    IndexCurrentElement = getCurrentScreenElementIndex()-1
+#                    self.setScreenElementUnselected(self.CurrentScreenElement)
+#                    self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
+#                    self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
+#                case _:
+#                    IndexCurrentElement = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)-1
+#                    self.setScreenElementUnselected(self.CurrentScreenElement)
+#                    self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
+#                    self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
+                    
+            print(f'indexCurrentElement: {IndexCurrentElement}')
+        else:
+            pass
+            
+    def NavigateDown(self, IndexCurrentElement):
+        lengthScreenNavigation = len(self.ScreenNavigation[self.CurrentScreen]) - 1
+        
+        if IndexCurrentElement  < lengthScreenNavigation:
+            IndexCurrentElement = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)+1
+            self.setScreenElementUnselected(self.CurrentScreenElement)
+            self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
+            self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
+#            match self.CurrentScreen:
+#                case 'AvailablePlaylists':
+#                    IndexCurrentElement = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)+1
+#                    self.setScreenElementUnselected(self.CurrentScreenElement)
+#                    self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
+#                    self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
+##                    self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
+#                case _:
+#                    IndexCurrentElement = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)+1
+#                    self.setScreenElementUnselected(self.CurrentScreenElement)
+#                    self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
+#                    self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
+            print(f'indexCurrentElement: {IndexCurrentElement}')
+        else:
+            pass
+    def Select(self):
+        match self.CurrentScreen:
+            case 'Main':
+                match self.CurrentScreenElement:
+                    case 'NowPlaying':
+                        
+                        self.setCurrentScreenElement('NowPlaying', 'Play')
+                        self.hide()
+                        self.NowPlayingScreenShow()
+                        self.bPlay.select()
+                    case 'Music':
+                        self.setCurrentScreenElement('Music', 'AvailablePlaylists')
+                        self.MainScreenHide()
+                        self.MusicScreenShow()
+                        self.bPlaylists.select()
+                    case 'OTR':
+                        pass
+                    case 'Audiobooks':
+                        pass
+                    case 'Games':
+                        pass
+                    case 'Settings':
+                        pass
+            case 'NowPlaying':
+                pass
+            case 'Music':
+                match self.CurrentScreenElement:
+                    case 'AvailablePlaylists':
+                        if self.CurrentPlaylistInfo:
+                            playlistIndex = self.getCurrentScreenElementIndex('AvailablePlaylists',  self.CurrentPlaylistInfo[0]['Playlist'])
+                        else:
+                            playlistIndex = 0 
+                        playlists = list(self.getAvailablePlaylists()['Playlist'])
+                        self.ScreenNavigation['AvailablePlaylists'] = playlists
+                        self.setCurrentScreenElement('AvailablePlaylists', playlists[playlistIndex])
+                        self.MusicScreenHide()
+                        self.AvailablePlaylistsScreenShow()
+                    case 'Music':
+                        self.setCurrentScreenElement('Music', 'AvailablePlaylists')
+                        self.MainScreenHide()
+                        self.MusicScreenShow()
+                        self.bPlaylists.select()
+            case 'AvailablePlaylists':
+                selectedPlaylist = self.CurrentScreenElement
+                SelectedNowPlayingPlaylistId = self.musicDB.getPlaylistIdbyNamefromDB(selectedPlaylist)
+                self.setCurrentPlaylist(SelectedNowPlayingPlaylistId)
+                tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId))
+#                if 
+                self.ScreenNavigation['PlaylistTracks'] = tracks
+                
+                self.setCurrentScreenElement('tracks', tracks[0])
+                self.AvailablePlaylistsScreenHide()
+                self.PlaylistTracksScreenShow()
+    def EncoderNavigation(self, EncoderActivity):
+#        print(f'EncoderActivity: {EncoderActivity}')
+#        print(f'CurrentScreenElement: {self.CurrentScreenElement}')
+        control = next(iter(EncoderActivity))
+        controlAction = EncoderActivity[control]
+        indexCurrentElement = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)
+#        print(f'indexCurrentElement: {indexCurrentElement}') 
+        
+#        print(f'lengthScreenNavigation: {lengthScreenNavigation}')
+        match control:
+            case 'Wheel':
+                match controlAction:
+                    case 'Up':
+                        self.NavigateUp(indexCurrentElement)
+                    case 'Down':
+                        self.NavigateDown(indexCurrentElement)
+            case 'Select':
+                match controlAction:
+                    case 'Release':
+                        self.Select()
+                    case 'Press':
+                        pass
+            case 'Up':
+                match controlAction:
+                    case 'Release':
+                        self.NavigateUp(indexCurrentElement)
+                    case 'Press':
+                        pass
+                
+            case 'Down':
+                match controlAction:
+                    case 'Release':
+                        self.NavigateDown(indexCurrentElement)
+                    case 'Press':
+                        pass
+                
+            case 'Left':
+                pass
+                
+            case 'Right':
+                pass

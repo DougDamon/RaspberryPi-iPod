@@ -21,9 +21,11 @@ class MusicDB():
             dfNowPlayingTrack = self.getCurrentTrack()
             self.NowPlayingPlaylistId = dfNowPlayingPlaylist.iloc[0]['PlaylistId']
             self.NowPlayingTrackId = dfNowPlayingTrack.iloc[0]['TrackId']
+            self.CurrentPlaylistInfo = self.getPlaylistInfoFromDB(self.NowPlayingPlaylistId)
         else:
             self.NowPlayingPlaylistId = None
             self.NowPlayingTrackId = None
+            self.CurrentPlaylistInfo = None
         
     def getMusicDB(self):
 #        dbFile = self.MusicDBLocation + self.MusicDBFile
@@ -314,7 +316,10 @@ class MusicDB():
             return self.dfEmpty
         else:
             return  dfNowPlayingPlaylist.sort_values('CurrentPlaybackOrder')
-        
+    
+    def getCurrentPlaylistInfo(self):
+        return self.CurrentPlaylistInfo
+    
     def getCurrentTrack(self):
         nowPlayingTrackTable = self.getTable('NowPlayingTrack')
         dfNowPlayingTrack = pd.DataFrame(nowPlayingTrackTable)
@@ -404,17 +409,18 @@ class MusicDB():
  
     def setCurrentPlaylist(self,  PlaylistId):
 #        sPlaylistId =  PlaylistId
-        print()
 #        sTrackId = TrackId
 #        if sPlaylistId != self.NowPlayingPlaylistId:
 #        self.clearNowPlayingTrack()
         self.clearCurrentPlaylist()
         self.addCurrentPlaylistToDB(PlaylistId)
+        self.CurrentPlaylistInfo = self.getPlaylistInfoFromDB(PlaylistId)
         self.NowPlayingPlaylistId = PlaylistId
 #            self.setNowPlayingTrack(sTrackId)  
 #        elif sPlaylistId == self.NowPlayingPlaylistId and sTrackId != self.NowPlayingTrackId:
 #            self.setNowPlayingTrack(sTrackId)
-         
+        return  self.CurrentPlaylistInfo
+        
     def updateCurrentTrack(self, TrackId,  CurrentPosition):
         sTrackId = TrackId
         fCurrentPosition = CurrentPosition
@@ -429,7 +435,7 @@ class MusicDB():
             return None
         else:
             return dfNowPlayingPlaylist['PlaylistId'][0]
-            
+    
     def getCurrentTrackId(self):
         dfCurrentTrack = self.getCurrentTrack()
         if dfCurrentTrack.shape[0] == 0:
