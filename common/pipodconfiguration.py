@@ -11,7 +11,6 @@ class piPodConfiguration():
         self.HomeDirectory  = os.path.expanduser("~") + '/'
         self.ConfigurationFile = 'piPod.conf'
         self.ConfigurationFileLocation = self.HomeDirectory +  '.piPod/'
-#        self.ConfigurationFile = self.HomeDirectory +  '.piPod/piPod.conf'
         self.configuration = configparser.ConfigParser()
         self.configuration.sections()
         self.configuration.read(self.ConfigurationFileLocation + self.ConfigurationFile)
@@ -32,11 +31,9 @@ class piPodConfiguration():
         self.Screens = [s.strip() for s in self.configuration['UINavigation']['Screens'].split(',')]
         for ScreenNav in self.Screens:
             self.ScreenNavigation[ScreenNav] =  [e.strip() for e in self.configuration['UINavigation'][ScreenNav].split(',')]
-#            print(f'ScreenNav: {self.configuration["UINavigation"][ScreenNav]}')
-#            print(f'ScreenNav: {self.configuration["UINavigation"][ScreenNav]}')
-#            print(f'ScreenNav: {self.configuration.get("UINavigation",  ScreenNav)}')
-#            self.ScreenNavigation[ScreenNav] =  [e.strip() for e in self.configuration['UINavigation'][ScreenNav].split(',')]
         
+        self.DefaultScreen = self.configuration['UINavigation']['DefaultScreen']
+        self.DefaultElement = self.configuration['UINavigation']['DefaultElement']
         #Music Attributes
         self.MusicRootDirectory = os.path.join(self.HomeDirectory,  self.configuration['Music']['MusicRootDirectory'])
         self.PlaylistRootDirectory = self.HomeDirectory + self.configuration['Music']['PlaylistRootDirectory']

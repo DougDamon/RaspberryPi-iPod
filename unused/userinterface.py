@@ -54,7 +54,7 @@ def MainScreen(containerMainWindow):
     
     return bNowPlaying, bMusic, bOTR, bAudiobooks, bGames, bManagement
     
-def HideMainScreen():
+def MainScreenHide():
     containerMainWindow.hide()
     # manager.draw_ui(window_surface)
     # pygame.display.update()
@@ -67,7 +67,7 @@ def HideMainScreen():
     # bManagement.hide()
     # window_surface.blit(background, (0, 0))
 
-def ShowMainScreen():
+def MainScreenShow():
     containerMainWindow.show()
     # bNowPlaying.show()
     # bMusic.show()

@@ -18,10 +18,16 @@ class AudioPlayback():
         self.config = piPodConfiguration()
         self.musicRootDirectory = self.config.MusicRootDirectory
         self.CurrentDuration = 0
-        self.MusicStarted = False
+        self.AudioPlaying = False
+        self.Repeat = 'Off'
         mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=2048)
         mixer.init()
         mixer.music.set_endevent(self.MUSIC_END)
+    def setAudioPlayingStatus(self, Status):
+        self.AudioPlaying = Status
+    
+    def getAudioPlayingStatus(self):
+        return self.AudioPlaying
         
     def setTrackToPlay(self,  Track):
         self.Track = Track
@@ -58,6 +64,7 @@ class AudioPlayback():
     
     def playTrack(self):
         mixer.music.unpause()
+        self.setAudioPlayingStatus(True)
 #        if self.MusicStarted == False:
 #            self.MusicStarted = True
 #            mixer.music.play()
@@ -66,6 +73,7 @@ class AudioPlayback():
     
     def pauseTrack(self):
         mixer.music.pause()
+        self.setAudioPlayingStatus(False)
         
     def rewindTrack(self):
         mixer.music.play(start=0.0)
