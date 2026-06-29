@@ -3,7 +3,7 @@ from common.rotaryencoder import RotaryEncoder
    
 class piPodGUINavigation(RotaryEncoder, piPodGUI):
     def __init__(self):
-        super().__init__()
+#        super().__init__()
         RotaryEncoder.__init__(self)
         piPodGUI.__init__(self)
 
@@ -64,7 +64,6 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 match Element:
                     case 'NowPlaying':
                         self.setMainScreenElementDefault()
-#                        self.bNowPlaying.select()
                     case 'Music':
                         self.bMusic.select()
                     case 'OTR':
@@ -103,6 +102,14 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                             case 'One':
                                 self.ShowRepeatButtonOne()
                                 self.bRepeatOne.select()
+                    case 'Shuffle':
+                        match self.Shuffle:
+                            case 'Off':
+                                self.ShowShuffleButtonOn()
+                                self.bShuffleOn.select()
+                            case 'On':
+                                self.ShowShuffleButtonOff()
+                                self.bShuffleOff.select()    
                     case _:
                         pass
             case 'Music':
@@ -123,15 +130,11 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                         pass
             case'AvailablePlaylists':
                 itemIndex = self.getCurrentScreenElementIndex()
-#                z= self.sPlaylistSelectionList.item_list_container.elements
-#                print(f'z: {z}')
                 self.sPlaylistSelectionList.item_list_container.elements[itemIndex].change_object_id('@navigation_buttons')
                 self.sPlaylistSelectionList.item_list_container.elements[itemIndex].select()                
             case'PlaylistTracks':
                 itemIndex=self.getCurrentScreenElementIndex()
                 print(f'itemIndex: {itemIndex}')
-#                z= self.sPlaylistSelectionList.item_list_container.elements
-#                print(f'z: {z}')
                 self.sPlaylistTracks.item_list_container.elements[itemIndex].change_object_id('@navigation_buttons')
                 self.sPlaylistTracks.item_list_container.elements[itemIndex].select()
             case 'OTR':
@@ -145,22 +148,6 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.CurrentScreenElement = Element
         print(f'NewScreenElement: {self.CurrentScreenElement}')
 
-#    def setSelectionListItemSelected(self, UISelectList,  ItemIndex):
-#        eventData = {'user_type': pygame_gui.UI_SELECTION_LIST_NEW_SELECTION,  #UI_BUTTON_PRESSED,
-#                               'ui_element': self.sPlaylistSelectionList.item_list_container.elements[ItemIndex]
-#        }
-#        selectListItemEvent = pygame.event.Event(pygame.USEREVENT+1500, eventData)
-#        print(f'self.sPlaylistSelectionList.item_list_container.elements[ItemIndex]: {self.sPlaylistSelectionList.item_list_container.elements[ItemIndex]}')
-##        for x in self.sPlaylistSelectionList.item_list_container.elements[ItemIndex]:
-#        print(f'x: {type(self.sPlaylistSelectionList.item_list_container.elements[ItemIndex])}')
-#        print(f'get_single_selection1: {UISelectList.get_single_selection()}')
-#        self.manager.process_events(selectListItemEvent)
-#        print(f'get_single_selection2: {UISelectList.get_single_selection()}')
-#        self.sPlaylistSelectionList.item_list_container.elements[ItemIndex].select()
-#        eventData = {'ui_element': UISelectList.item_list_container.elements[ItemIndex]}
-#        selectListItemEvent = pygame.event.Event(pygame_gui.UI_SELECTION_LIST_NEW_SELECTION, eventData)
-#        UISelectList.process_event(selectListItemEvent)
-    
     def setScreenElementUnselected(self, Element):
         match self.CurrentScreen:
             case 'Main':
@@ -205,6 +192,14 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                             case 'One':
                                 self.ShowRepeatButtonOne()
                                 self.bRepeatOne.unselect()
+                    case 'Shuffle':
+                        match self.Shuffle:
+                            case 'Off':
+                                self.ShowShuffleButtonOff()
+                                self.bShuffleOff.unselect()
+                            case 'On':
+                                self.ShowShuffleButtonOn()
+                                self.bShuffleOn.unselect()
                     case _:
                         pass
                         
@@ -240,19 +235,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             IndexCurrentElement = self.getCurrentScreenElementIndex()-1
             self.setScreenElementUnselected(self.CurrentScreenElement)
             self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
-            self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
-#            match self.CurrentScreen:
-#                case 'AvailablePlaylists':
-#                    IndexCurrentElement = getCurrentScreenElementIndex()-1
-#                    self.setScreenElementUnselected(self.CurrentScreenElement)
-#                    self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
-#                    self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
-#                case _:
-#                    IndexCurrentElement = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)-1
-#                    self.setScreenElementUnselected(self.CurrentScreenElement)
-#                    self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
-#                    self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
-                    
+            self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])   
             print(f'indexCurrentElement: {IndexCurrentElement}')
         else:
             pass
@@ -265,24 +248,13 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             self.setScreenElementUnselected(self.CurrentScreenElement)
             self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
             self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
-#            match self.CurrentScreen:
-#                case 'AvailablePlaylists':
-#                    IndexCurrentElement = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)+1
-#                    self.setScreenElementUnselected(self.CurrentScreenElement)
-#                    self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
-#                    self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
-##                    self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
-#                case _:
-#                    IndexCurrentElement = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)+1
-#                    self.setScreenElementUnselected(self.CurrentScreenElement)
-#                    self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
-#                    self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
             print(f'indexCurrentElement: {IndexCurrentElement}')
         else:
             pass
     def Select(self):
         match self.CurrentScreen:
             case 'Main':
+                self.navigationPath.append('Main')
                 match self.CurrentScreenElement:
                     case 'NowPlaying':                       
                         self.setCurrentScreenElement('NowPlaying', 'Play/Pause')
@@ -306,6 +278,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 #            case 'NowPlaying':
 #                pass
             case 'Music':
+                self.navigationPath.append('Music')
                 match self.CurrentScreenElement:
                     case 'AvailablePlaylists':
                         print(f"self.CurrentPlaylistInfo: {self.CurrentPlaylistInfo},  {type(self.CurrentPlaylistInfo)}")
@@ -326,6 +299,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                         self.MusicScreenShow()
                         self.bPlaylists.select()
             case 'AvailablePlaylists':
+                self.navigationPath.append('AvailablePlaylists')
                 selectedPlaylist = self.CurrentScreenElement  #get the selected playlist
                 trackIndex = 0
                 self.setCurrentScreen('PlaylistTracks')
@@ -340,11 +314,12 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 self.PlaylistTracksScreenShow()
                 self.setScreenElementSelected(self.CurrentScreenElement)
             case 'PlaylistTracks':
+                self.navigationPath.append('PlaylistTracks')
                 selectedTrack = self.CurrentScreenElement  #get the selected track
 #                self.setCurrentScreen('NowPlaying')
                 self.setCurrentScreenElement('NowPlaying',  'Play/Pause') #self.ScreenNavigation[self.CurrentScreen][0])
-                selectedTrackId = self.musicDB.getTrackIdByNameFromDB(self.CurrentPlaylistId,  selectedTrack)
-                self.setCurrentTrack(selectedTrackId)
+                selectedTrackId = self.getTrackIdByNameFromDB(self.CurrentPlaylistId,  selectedTrack)
+                self.setSelectedTrack(selectedTrackId)
                 self.PlaylistTracksScreenHide()
                 self.NowPlayingScreenShow()
                 self.setScreenElementSelected(self.CurrentScreenElement)
@@ -368,10 +343,25 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                                 self.RepeatOne()
                             case 'One':
                                 self.RepeatOff()
+                    case 'Shuffle':
+                        match self.Shuffle:
+                            case 'Off':
+                                self.ShuffleOn()
+                            case 'On':
+                                self.ShuffleOff()
                     case 'Back':
-                        pass
+                        match self.navigationPath.pop():
+                            case 'PlaylistTracks':
+                                tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
+                                self.ScreenNavigation['PlaylistTracks'] = tracks
+                                self.setCurrentScreenElement('PlaylistTracks', tracks[trackIndex])
+                                self.NowPlayingScreenHide()
+                                self.PlaylistTracksScreenShow()
+                                self.setScreenElementSelected(self.CurrentScreenElement)
+                                
                     case 'Home':
-                        pass
+                        self.NowPlayingScreenHide()
+                        self.MainScreenShow()
                         
     def EncoderNavigation(self, EncoderActivity):
 #        print(f'EncoderActivity: {EncoderActivity}')

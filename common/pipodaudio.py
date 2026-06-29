@@ -13,13 +13,13 @@ class AudioPlayback():
     def __init__(self):
         pygame.init()
         self.MUSIC_END = pygame.USEREVENT + 100
-#        print('self.MUSICENDEVENT:', self.MUSICENDEVENT)
         self.musicDB = MusicDB()
         self.config = piPodConfiguration()
         self.musicRootDirectory = self.config.MusicRootDirectory
         self.CurrentDuration = 0
         self.AudioPlaying = False
         self.Repeat = 'Off'
+        self.Shuffle = 'Off'
         mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=2048)
         mixer.init()
         mixer.music.set_endevent(self.MUSIC_END)
@@ -44,9 +44,9 @@ class AudioPlayback():
         self.setCurrentDuration(self.CurrentTrackID3['#length'])
         return self.CurrentTrackID3 
     
-    def getNextTrack(self):
-        dfNextTrack = self.musicDB.musicDB.getNowPlayingNextTrack()
-        return dfNextTrack
+#    def getNextTrack(self):
+#        dfNextTrack = self.musicDB.getNowPlayingNextTrack()
+#        return dfNextTrack
     
     def setTrack(self,  TrackId,  StartPosition = 0):
         sTrackId = TrackId
@@ -57,19 +57,10 @@ class AudioPlayback():
         pygame.mixer.music.play()
         pygame.mixer.music.set_pos(StartPosition)
         pygame.mixer.music.pause()
-#        return self.CurrentTrackID3
-        
-#    def  setNextTrack(self, NextTrackFile):
-#        self.sNextTrackFile
     
     def playTrack(self):
         mixer.music.unpause()
         self.setAudioPlayingStatus(True)
-#        if self.MusicStarted == False:
-#            self.MusicStarted = True
-#            mixer.music.play()
-#        else:
-#            mixer.music.unpause()
     
     def pauseTrack(self):
         mixer.music.pause()

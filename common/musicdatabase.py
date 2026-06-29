@@ -17,15 +17,23 @@ class MusicDB():
         
         self.dfEmpty = pd.DataFrame()
         if len(self.getTable('NowPlayingPlaylist')) > 0 and len(self.getTable('NowPlayingTrack')) >= 0:
-            dfNowPlayingPlaylist = self.getCurrentPlaylist()
-            dfNowPlayingTrack = self.getCurrentTrack()
-            self.NowPlayingPlaylistId = dfNowPlayingPlaylist.iloc[0]['PlaylistId']
-            self.NowPlayingTrackId = dfNowPlayingTrack.iloc[0]['TrackId']
-            self.CurrentPlaylistInfo = self.getPlaylistInfoFromDB(self.NowPlayingPlaylistId)
+            dfCurrentPlaylist = self.getCurrentPlaylist()
+            dfCurrentTrack = self.getCurrentTrack()
+            self.CurrentPlaylistId = dfCurrentPlaylist.iloc[0]['PlaylistId']
+            self.CurrentTrackId = dfCurrentTrack.iloc[0]['TrackId']
+            self.CurrentPlaylistInfo = self.getPlaylistInfoFromDB(self.CurrentPlaylistId)
         else:
-            self.NowPlayingPlaylistId = None
-            self.NowPlayingTrackId = None
+            self.CurrentPlaylistId = None
+            self.CurrentTrackId = None
             self.CurrentPlaylistInfo = None
+        
+#        self.CurrentPlaylistId = self.getCurrentPlaylistId()
+#        self.CurrentPlaylistInfo = self.getCurrentPlaylistInfo()
+#            
+#        self.CurrentTrackId = self.getCurrentTrackId()
+#        print(self.CurrentPlaylistId,  self.CurrentTrackId)
+        self.NextPlaylistId = None
+        self.NextTrackId = None
         
     def getMusicDB(self):
 #        dbFile = self.MusicDBLocation + self.MusicDBFile
@@ -344,8 +352,8 @@ class MusicDB():
         CurrentTrackIndex = None
         dfNowPlayingTrack = self.getCurrentTrack()
         dfNowPlayingPlaylist = self.getCurrentPlaylist()
-        sNowPlayingTrackId = dfNowPlayingTrack.iloc[0]['TrackId']
-        CurrentTrackIndex= dfNowPlayingPlaylist.index.get_loc(dfNowPlayingPlaylist.loc[(dfNowPlayingPlaylist['NowPlaying'] == 'Y') & (dfNowPlayingPlaylist['TrackId'] ==  sNowPlayingTrackId)].index[0])
+        sCurrentTrackId = dfNowPlayingTrack.iloc[0]['TrackId']
+        CurrentTrackIndex= dfNowPlayingPlaylist.index.get_loc(dfNowPlayingPlaylist.loc[(dfNowPlayingPlaylist['NowPlaying'] == 'Y') & (dfNowPlayingPlaylist['TrackId'] ==  sCurrentTrackId)].index[0])
 #        print('max index:',  dfNowPlayingPlaylist.shape[0]-1)
         if CurrentTrackIndex != None and CurrentTrackIndex < dfNowPlayingPlaylist.shape[0] - 1:
             dfNextTrack = dfNowPlayingPlaylist.iloc[[CurrentTrackIndex+1]]
@@ -358,8 +366,8 @@ class MusicDB():
         CurrentTrackIndex = None
         dfNowPlayingTrack = self.getCurrentTrack()
         dfNowPlayingPlaylist = self.getCurrentPlaylist()
-        sNowPlayingTrackId = dfNowPlayingTrack.iloc[0]['TrackId']
-        CurrentTrackIndex= dfNowPlayingPlaylist.index.get_loc(dfNowPlayingPlaylist.loc[(dfNowPlayingPlaylist['NowPlaying'] == 'Y') & (dfNowPlayingPlaylist['TrackId'] ==  sNowPlayingTrackId)].index[0])
+        sCurrentTrackId = dfNowPlayingTrack.iloc[0]['TrackId']
+        CurrentTrackIndex= dfNowPlayingPlaylist.index.get_loc(dfNowPlayingPlaylist.loc[(dfNowPlayingPlaylist['NowPlaying'] == 'Y') & (dfNowPlayingPlaylist['TrackId'] ==  sCurrentTrackId)].index[0])
         if CurrentTrackIndex >= 1:
             dfPreviousTrack = dfNowPlayingPlaylist.iloc[[CurrentTrackIndex-1]]
             dfPreviousTrack.reset_index(drop=True, inplace=True)
@@ -425,14 +433,14 @@ class MusicDB():
     def setCurrentPlaylist(self,  PlaylistId):
 #        sPlaylistId =  PlaylistId
 #        sTrackId = TrackId
-#        if sPlaylistId != self.NowPlayingPlaylistId:
+#        if sPlaylistId != self.CurrentPlaylistId:
 #        self.clearNowPlayingTrack()
         self.clearCurrentPlaylist()
         self.addCurrentPlaylistToDB(PlaylistId)
         self.CurrentPlaylistInfo = self.getPlaylistInfoFromDB(PlaylistId)
-        self.NowPlayingPlaylistId = PlaylistId
+        self.CurrentPlaylistId = PlaylistId
 #            self.setNowPlayingTrack(sTrackId)  
-#        elif sPlaylistId == self.NowPlayingPlaylistId and sTrackId != self.NowPlayingTrackId:
+#        elif sPlaylistId == self.CurrentPlaylistId and sTrackId != self.CurrentTrackId:
 #            self.setNowPlayingTrack(sTrackId)
         return  self.CurrentPlaylistInfo
         
