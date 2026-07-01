@@ -1,28 +1,42 @@
+# YT Downloader Authorization Keys
 /oauth.json
 /browser.json
 /oauth.json
-/piPod/piPod_pcb.fzz
-/tmp/Gamelan Gong Kebjar? Hudjan Mas (Golden Rain).webm.part
-/tmp/Gamelan Gong Kebjar? Hudjan Mas (Golden Rain).webm.ytdl
-/piPod/piPod_pcb.fzz
-/YT_Playlist_Downloader/oauth.json
-/YT_Playlist_Downloader/home/doug/.piPod/tmp/Love Will Tear Us Apart.mp3
-/YT_Playlist_Downloader/browser.json
-/YT_Playlist_Downloader/oauth.json
-/YT_Playlist_Downloader/www.youtube.com_cookies.txt
-/.gitignore.orig
-/piPod/gui/main.py.orig
-/piPod/gui/ui/piPodNowPlayingScreen.ui.orig
-/piPod/gui/ui_piPodMainScreen.py.orig
-/piPod/gui/ui_piPodNowPlayingScreen.py.orig
-/tmp/Gamelan Gong Kebjar： Hudjan Mas (Golden Rain).webm.part
-/tmp/Gamelan Gong Kebjar： Hudjan Mas (Golden Rain).webm.ytdl
-/common/__pycache__/*.pyc
-/configTest.py
-/musicDBTest.py
-/unused/ID3_Tags.py
-/unused/browser.json
-/unused/oauth.json
-/youtubedownloaderTest.py
-/unused/music-tagTest.py
-/unused/threadingTest.py
+
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Kate editor
+*.kate-swp
+*.swp
+
+# Eric IDE
+*.e4*
+*.e5*
+*.e6*
+
+# Local editor settings
+*.bak
+*~
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# Build artifacts
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
