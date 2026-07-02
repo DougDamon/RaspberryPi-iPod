@@ -1,20 +1,29 @@
-# Current Architecture
+## Current Refactored Structure
 
-main.py
-    |
-    +-- GUI
-    |     |
-    |     +-- Audio
-    |     +-- Database
-    |     +-- Navigation
-    |
-    +-- Rotary Encoder
-    |
-    +-- Configuration
+- `piPod.py`
+  - Application entry point
+  - Main loop
+  - Creates GUI, audio, database, and input objects
 
-Current Problems
+- `common/config/settings.py`
+  - Loads config file
+  - Provides paths and configuration values
 
-- GUI owns too much state
-- Audio tightly coupled to GUI
-- Playlist logic mixed with UI
-- Global state
+- `common/input/rotary.py`
+  - Reads rotary encoder and button activity
+
+- `common/audio/player.py`
+  - Current audio playback implementation
+
+- `common/library/database.py`
+  - Music library/database access
+
+- `common/pipodgui.py`
+  - Main UI object
+  - Drawing
+  - Current screen state
+  - Playback-related UI behavior
+  - Navigation integration
+
+- `common/pipodgui_navigation.py`
+  - UI navigation rules/state
