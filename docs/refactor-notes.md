@@ -123,7 +123,7 @@ refactor is where architecture cleanup happens.
 	Commit.
 
 
-**Session 6 — Move music database**
+**~~Session 6 — Move music database~~**
 
 	Move: common/musicdatabase.py
 	to: common/library/database.py
