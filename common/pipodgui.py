@@ -18,7 +18,7 @@ from pygame_gui.elements.ui_progress_bar import UIProgressBar
 from io import BytesIO
 
 from PIL import  Image
-from common.pipodconfiguration import piPodConfiguration
+from common.config.settings import piPodConfiguration
 from common.pipodaudio import AudioPlayback
 from common.musicdatabase import MusicDB
 #from common.rotaryencoder import RotaryEncoder

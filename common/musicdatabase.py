@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pandas as pd
 from tinydb import TinyDB, Query,  where
-from common.pipodconfiguration import piPodConfiguration
+from common.config.settings import piPodConfiguration
 
 class MusicDB():
     def __init__(self):

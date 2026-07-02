@@ -22,6 +22,12 @@ env/
 *.e4*
 *.e5*
 *.e6*
+.eric7project/
+.jedi/
+
+# Old Eric IDE project files
+piPod_old.epj
+
 
 # Local editor settings
 *.bak

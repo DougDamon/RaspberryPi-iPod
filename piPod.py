@@ -1,4 +1,4 @@
-from common.pipodconfiguration import piPodConfiguration
+from common.config.settings import piPodConfiguration
 import common.pipodgui_navigation as piPodGUI
 
 from common.musicdatabase import MusicDB

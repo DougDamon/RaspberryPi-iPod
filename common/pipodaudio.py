@@ -5,7 +5,7 @@ import music_tag
 #from datetime import datetime
 import pygame
 from pygame import mixer
-from common.pipodconfiguration import piPodConfiguration
+from common.config.settings import piPodConfiguration
 from common.musicdatabase import MusicDB
 
 

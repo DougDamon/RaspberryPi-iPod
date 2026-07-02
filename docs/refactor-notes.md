@@ -46,7 +46,7 @@ Do not do a large rewrite.
 
 Use a dedicated branch:
 
-```bash
+
 git checkout refactor
 
 main should remain the known-good prototype.
@@ -54,113 +54,120 @@ main should remain the known-good prototype.
 refactor is where architecture cleanup happens.
 
  ****  Overall Roadmap  ****
-Session 1 — Documentation structure
 
-Done.
 
-Created:
+**~~Session 1 — Documentation structure~~**
 
-docs/architecture.md
-docs/roadmap.md
+	Created: docs/architecture.md
+	         docs/roadmap.md
 
-No code moved.
+	No code moved.
 
-Session 2 — Create package folders under common
 
-Goal: prepare the future structure without moving code yet.
+**~~Session 2 — Create package folders under common~~**
 
-Create empty folders:
-common/
-    audio/
-    config/
-    input/
-    library/
-    ui/
+	Goal: prepare the future structure without moving code yet.
 
-Each should contain:
-__init__.py
+	Create empty folders:
+		common/
+	    		audio/
+	    		config/
+  	    		input/
+  	    		library/
+ 	    		ui/
 
-No existing Python files should be moved yet.
-No existing Python files should be moved yet.
+	Each should contain:
+		__init__.py
 
-Commit message suggestion: git commit -m "Create package structure under common"
+	No existing Python files should be moved yet.
+	No existing Python files should be moved yet.
 
-Session 3 — Move configuration
+	Commit message suggestion: git commit -m "Create package structure under common"
 
-Move: common/pipodconfiguration.py
-to: common/config/settings.py
 
-Then update imports only as needed.
+**~~Session 3 — Move configuration~~**
 
-Test on the Pi.
+ 	Move: common/pipodconfiguration.py
+ 	to: common/config/settings.py
+ 	
+ 	Then update imports only as needed.
+ 	
+ 	Test on the Pi.
+	
+	Commit.
 
-Commit.
 
-Session 4 — Move rotary encoder input
+**Session 4 — Move rotary encoder input**
 
-Move: common/rotaryencoder.py
-to: common/input/rotary.py
+	Move: common/rotaryencoder.py
+	to: common/input/rotary.py
 
-Update imports.
-Test.
-Commit.
+	Update imports.
+	
+	Test.
+	
+	Commit.
 
-Session 5 — Move audio module
 
-Move: common/pipodaudio.py
-to: common/audio/player.py
+**Session 5 — Move audio module**
 
-Do not replace pygame yet.
+	Move: common/pipodaudio.py
+	to: common/audio/player.py
 
-Only move/wrap current behavior.
+	Do not replace pygame yet.
 
-Test.
-Commit.
+	Only move/wrap current behavior.
 
-Session 6 — Move music database
+	Test.
+	
+	Commit.
 
-Move: common/musicdatabase.py
-to: common/library/database.py
 
-Update imports.
-Test.
-Commit.
+**Session 6 — Move music database**
 
-Session 7 — UI cleanup begins
+	Move: common/musicdatabase.py
+	to: common/library/database.py
 
-Start splitting responsibilities from:
+	Update imports.
+	
+	Test.
+	
+	Commit.
 
-common/pipodgui.py
-common/pipodgui_navigation.py
 
-Potential future locations:
+**Session 7** — UI cleanup begins
 
-common/ui/
-    screen_manager.py
-    theme.py
-    widgets.py
-    screens/
+	Start splitting responsibilities from:
+		common/pipodgui.py
+		common/pipodgui_navigation.py
 
-Do this slowly, one piece at a time.
+	Potential future locations:
+		common/ui/
+		  screen_manager.py
+		  theme.py
+		  widgets.py
+    		  screens/
+
+	Do this slowly, one piece at a time.
 
 Future Feature Goals
 
-After the architecture is stable:
+	After the architecture is stable:
 
-Support FLAC/OGG/M4A/AAC/etc.
-Replace pygame audio backend, likely with VLC or another backend
-Add library scanning/imports
-Detect new audio files from folder structure
-Read and enrich tag metadata
-Support non-music audio:
-audiobooks
-Old Time Radio
-podcasts
-Add configurable button mappings
-Improve playlist/library management
-Add search, favorites, queue, themes, resume playback, bookmarks, and sleep timer
-Important Rule
+- 	Support FLAC/OGG/M4A/AAC/etc.
+- 	Replace pygame audio backend, likely with VLC or another backend
+- 	Add library scanning/imports
+- 	Detect new audio files from folder structure
+- 	Read and enrich tag metadata
+- 	Support non-music audio:
+	+ 	audiobooks
+	+ 	Old Time Radio
+	+ 	podcasts
+- 	Add configurable button mappings
+- 	Improve playlist/library management
+- 	Add search, favorites, queue, themes, resume playback, bookmarks, and sleep timer
+*Important Rule*
 
-Do not start enhancing features until the current functionality is refactored into a cleaner architecture.
+	Do not start enhancing features until the current functionality is refactored into a cleaner architecture.
 
-For **Session 2**, yes: just create the empty folders and `__init__.py` files. No code movement yet.
+
