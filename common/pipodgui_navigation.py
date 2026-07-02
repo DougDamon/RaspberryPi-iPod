@@ -1,5 +1,5 @@
 from common.pipodgui import piPodGUI
-from common.rotaryencoder import RotaryEncoder
+from common.input.rotary import RotaryEncoder
    
 class piPodGUINavigation(RotaryEncoder, piPodGUI):
     def __init__(self):

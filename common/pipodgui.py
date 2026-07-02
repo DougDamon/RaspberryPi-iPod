@@ -21,7 +21,7 @@ from PIL import  Image
 from common.config.settings import piPodConfiguration
 from common.pipodaudio import AudioPlayback
 from common.musicdatabase import MusicDB
-#from common.rotaryencoder import RotaryEncoder
+#from common.input.rotary import RotaryEncoder
    
 class piPodGUI(AudioPlayback, MusicDB):
     def __init__(self):
