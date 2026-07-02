@@ -21,7 +21,7 @@ import io
 #from datetime import datetime
 #from difflib import SequenceMatcher
 from common.config.settings import piPodConfiguration
-from common.musicdatabase import MusicDB
+from common.library.database import MusicDB
 
 class YouTubeDownloader():
     def __init__(self):

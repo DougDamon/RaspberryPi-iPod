@@ -109,7 +109,7 @@ refactor is where architecture cleanup happens.
 	Commit.
 
 
-**Session 5 — Move audio module**
+**~~Session 5 — Move audio module~~**
 
 	Move: common/pipodaudio.py
 	to: common/audio/player.py

@@ -20,7 +20,7 @@ from io import BytesIO
 from PIL import  Image
 from common.config.settings import piPodConfiguration
 from common.audio.player import AudioPlayback
-from common.musicdatabase import MusicDB
+from common.library.database import MusicDB
 #from common.input.rotary import RotaryEncoder
    
 class piPodGUI(AudioPlayback, MusicDB):

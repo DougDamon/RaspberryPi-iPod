@@ -6,7 +6,7 @@ import music_tag
 import pygame
 from pygame import mixer
 from common.config.settings import piPodConfiguration
-from common.musicdatabase import MusicDB
+from common.library.database import MusicDB
 
 
 class AudioPlayback():

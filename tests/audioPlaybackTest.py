@@ -5,7 +5,7 @@ from pygame import mixer
 from datetime import datetime
 import time
 from common.config.settings import piPodConfiguration
-from common.musicdatabase import MusicDB
+from common.library.database import MusicDB
 
 from mutagen.mp3 import MP3
 
