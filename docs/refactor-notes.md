@@ -97,7 +97,7 @@ refactor is where architecture cleanup happens.
 	Commit.
 
 
-**Session 4 — Move rotary encoder input**
+**~~Session 4 — Move rotary encoder input~~**
 
 	Move: common/rotaryencoder.py
 	to: common/input/rotary.py
