@@ -39,10 +39,12 @@ Working prototype of a Raspberry Pi Zero 2 W portable media player using a 2.2" 
 - Location:
 - Connected through:
 - Current mapping:
-	+ Button 1: GPIO 17
+	+ Button 1: GPIO 16
 	+ Button 2: GPIO 22
 	+ Button 3: GPIO 23
 	+ Button 4: GPIO 27
+	+ Volume Up: GPIO 20
+	+ Volume Down: GPIO 26
 - Future mapping ideas:
 - Notes:  May consider dedicated volume buttons or possibly a small rotary controller on the side of the device.  These buttons will increase/decrease volume regardless of where the user is in the device interface.
 
@@ -84,12 +86,12 @@ Working prototype of a Raspberry Pi Zero 2 W portable media player using a 2.2" 
 | Display | SPI CE0 | GPIO 8 / Pin 24 | PiTFT | Display chip select |
 | Display | SPI CE1 | GPIO 7 / Pin 26 | PiTFT | Used by PiTFT |
 | Display | GPIO 25 | GPIO 25 / Pin 22 | PiTFT | Used by PiTFT |
-| Display Buttons | Button 1 | GPIO 17 / Pin 11 | PiTFT | Conflicts with Witty Pi GPIO 17 usage |
+| Display Buttons | Button 1 | GPIO 16 / Pin 36 | PiTFT | Remapped from GPIO 17 to avoid conflict with the Witty Pi GPIO 17 usage |
 | Display Buttons | Button 2 | GPIO 22 / Pin 15 | PiTFT | From PiTFT documentation |
 | Display Buttons | Button 3 | GPIO 23 / Pin 16 | PiTFT | From PiTFT documentation |
 | Display Buttons | Button 4 | GPIO 27 / Pin 13 | PiTFT | From PiTFT documentation |
-| Volume Control | Volume Down | TBD | Side buttons or side rotary | Future global volume control |
-| Volume Control | Volume Up | TBD | Side buttons or side rotary | Future global volume control |
+| Volume Control | Volume Down | GPIO 26 / Pin 37 | Side button | Global volume control |
+| Volume Control | Volume Up | GPIO 20 / Pin 38 | Side button | Global volume control |
 | Encoder | I2C SDA | GPIO 2 / Pin 3 | ANO I2C Adapter | Shared I2C bus |
 | Encoder | I2C SCL | GPIO 3 / Pin 5 | ANO I2C Adapter | Shared I2C bus |
 | Encoder | I2C Address | 0x49 | ANO I2C Adapter | Default address |
@@ -97,28 +99,36 @@ Working prototype of a Raspberry Pi Zero 2 W portable media player using a 2.2" 
 | Audio DAC | I2S LRCLK | GPIO 19 / Pin 35 | PCM5102 | I2S audio |
 | Audio DAC | I2S DIN | GPIO 21 / Pin 40 | PCM5102 | I2S audio |
 | Power | Shutdown sequence | GPIO 4 / Pin 7 | Witty Pi 4 L3V7 | Default shutdown signal pin |
-| Power | System state / power monitoring | GPIO 17 / Pin 11 | Witty Pi 4 L3V7 | Conflicts with PiTFT Button 1 |
+| Power | System state / power monitoring | GPIO 17 / Pin 11 | Witty Pi 4 L3V7 | GPIO 17 reserved for Witty Pi; PiTFT Button 1 remapped |
 | Power | Control/status | GPIO 5 / Pin 29 | Witty Pi 4 L3V7 | Used by onboard microcontroller |
 | Power | Control/status | GPIO 6 / Pin 31 | Witty Pi 4 L3V7 | Used by onboard microcontroller |
 | Power | I2C SDA | GPIO 2 / Pin 3 | Witty Pi 4 L3V7 | Shared I2C bus for RTC / temperature sensor |
 | Power | I2C SCL | GPIO 3 / Pin 5 | Witty Pi 4 L3V7 | Shared I2C bus for RTC / temperature sensor |
 
-## Known Pin Conflicts
+## Resolved Pin Conflicts
 
-| GPIO / Pin | Used By | Conflict |
+| GPIO / Pin | Original Conflict | Resolution |
 |---|---|---|
-| GPIO 17 / Pin 11 | PiTFT Button 1, Witty Pi 4 L3V7 | PiTFT Button 1 conflicts with Witty Pi system state / power management monitoring |
+| GPIO 17 / Pin 11 | PiTFT Button 1 and Witty Pi 4 L3V7 both wanted GPIO 17 | PiTFT Button 1 was remapped to GPIO 16 / Pin 36 |
 
 Notes:
+- GPIO 17 is reserved for Witty Pi system state / power management monitoring.
 - GPIO 2 and GPIO 3 are shared by the ANO encoder adapter and the Witty Pi 4 L3V7.
 - This I2C sharing is expected as long as device addresses do not conflict.
-- GPIO 17 must be resolved before PCB design.
 
 ## Known Hardware Issues
 
 - I2C read errors from rotary encoder/seesaw board
 - Display refresh/flicker issues, probably software-related but visible on hardware
 - Display times out to a white screen; desired behavior is to turn the screen off instead.
+
+## Hardware Validation
+
+- PiTFT Buttons 1–4 tested with a simple `gpiozero` script.
+- Button 1 is remapped from GPIO 17 to GPIO 16.
+- Side volume buttons tested with `gpiozero`.
+- Volume Up uses GPIO 20 / Pin 38.
+- Volume Down uses GPIO 26 / Pin 37.
 
 ## Notes
 - All Product IDs refer to Adafruit Product IDs.
@@ -159,4 +169,3 @@ The design goal is to preserve the familiar ergonomics of a classic dedicated mu
 - Confirm battery type/capacity and charging behavior.
 - Confirm physical audio output path: headphone jack, line out, amp, or speaker.
 - Confirm whether `fbcp` is required for the current pygame display setup.
-- Decide how to resolve the GPIO 17 conflict between PiTFT Button 1 and Witty Pi 4 L3V7.

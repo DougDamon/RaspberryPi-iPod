@@ -28,14 +28,10 @@ The ideal primary workflow is:
 
 ### Global Controls
 
-These controls should work consistently from anywhere in the interface:
-
-| Control | Action |
-|---|---|
-| Side Volume Down | Decrease volume |
-| Side Volume Up | Increase volume |
-
-Volume should not require looking at the screen and should be handled globally by the application, not by individual screens.
+- Volume Control
+	+ Dedicated side volume buttons are the preferred volume-control method.
+	+ Volume Up and Volume Down should work globally from anywhere in the interface. They should not require navigating to a volume control, selecting a volume widget, or looking at the screen.
+	+ The existing rotary-accessible volume behavior may remain during early refactoring as a fallback, but it should not be required for normal use.
 
 ### Front Controls
 
@@ -51,3 +47,9 @@ Possible default mapping:
 | PiTFT Button 2 | Home / Now Playing |
 | PiTFT Button 3 | Previous |
 | PiTFT Button 4 | Next |
+
+## Future UI Cleanup Questions
+
+- Decide whether rotary-accessible volume control should remain once side volume buttons are implemented.
+- Decide whether volume changes should display a temporary on-screen overlay.
+- Decide whether volume buttons should work while the display is dimmed or off.
