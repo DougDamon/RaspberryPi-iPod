@@ -700,7 +700,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         
     def AvailablePlaylistsScreenHide(self):
          self.windowAvailablePlaylists.hide()
-         AvailablePlaylistsScreenShow
+         self.markDirty()
 
     def AvailablePlaylistsScreenShow(self):
         dfAvailablePlaylists = self.getDownloadedPlaylists()
