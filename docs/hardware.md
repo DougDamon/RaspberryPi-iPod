@@ -95,7 +95,7 @@ Brief description of the current working hardware prototype.
 
 - I2C read errors from rotary encoder/seesaw board
 - Display refresh/flicker issues, probably software-related but visible on hardware
-- Any power/audio/display quirks
+- Display times out to a white screen.  Need to change the to turning the screen off
 
 ## Notes
 - All Product IDs refer to Adafruit Product IDs.
