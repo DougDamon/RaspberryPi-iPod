@@ -600,13 +600,20 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.Play()
         
     def updateCurrentPosition(self):
-        self.CurrentPosition = self.getAdjustedCurrentPosition()
+        new_position = self.getAdjustedCurrentPosition()
+        
+        if new_position == self.CurrentPosition:
+            return
+        
+        self.CurrentPosition = new_position
         self.CurrentPositionPercent = (self.CurrentPosition/self.CurrentDurationSeconds) * 100
         self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition )
+        
         self.window_surface.blit(self.background, (2, 178))
         self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
         self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
         self.updateCurrentTrack(self.CurrentTrackId,  self.CurrentPosition)
+        
         self.markDirty()
 
     def resetCurrentPosition(self):

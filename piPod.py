@@ -110,6 +110,9 @@ while is_running:
 #    piPodGUI.manager.process_events(event)
     piPodGUI.manager.update(time_delta)
     # window_surface.blit(background, (0, 0))
-    piPodGUI.drawScreen()
-    piPodGUI.updateDisplay()
+    if piPodGUI.isDirty():
+        piPodGUI.drawScreen()
+        piPodGUI.updateDisplay()
+        piPodGUI.clearDirty()
+        
 piPodGUI.quit()

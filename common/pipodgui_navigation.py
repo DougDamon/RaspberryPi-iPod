@@ -147,6 +147,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 pass
         self.CurrentScreenElement = Element
         print(f'NewScreenElement: {self.CurrentScreenElement}')
+        self.markDirty()
 
     def setScreenElementUnselected(self, Element):
         match self.CurrentScreen:
@@ -229,6 +230,8 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 pass
             case 'Settings':
                 pass
+        self.markDirty()
+        
     def NavigateUp(self, IndexCurrentElement):
 #        lengthScreenNavigation = len(self.ScreenNavigation[self.CurrentScreen]) - 1
         if IndexCurrentElement  > 0:
