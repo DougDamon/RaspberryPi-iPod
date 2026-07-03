@@ -2,7 +2,7 @@
 
 ## Current Prototype
 
-Brief description of the current working hardware prototype.
+Working prototype of a Raspberry Pi Zero 2 W portable media player using a 2.2" PiTFT display, ANO rotary encoder, PCM5102 I2S DAC, and Witty Pi 4 L3V7 power-management board.
 
 ## Compute
 
@@ -13,7 +13,7 @@ Brief description of the current working hardware prototype.
 
 ## Display
 
-- Display model:Adafruit PiTFT 2.2" HAT Mini Kit - 320x240 2.2" TFT - No Touch (Product ID: 2315)
+- Display model: Adafruit PiTFT 2.2" HAT Mini Kit - 320x240 2.2" TFT - No Touch (Product ID: 2315)
 - Size: 2.2"
 - Resolution: 320x240
 - Interface:
@@ -35,7 +35,7 @@ Brief description of the current working hardware prototype.
 
 ## Buttons
 
-- Number of buttons: 4 (these are the 4 buttongs on the Display)
+- Number of buttons: 4 (these are the 4 buttons on the Display)
 - Location:
 - Connected through:
 - Current mapping:
@@ -44,6 +44,7 @@ Brief description of the current working hardware prototype.
 	+ Button 3: GPIO 23
 	+ Button 4: GPIO 27
 - Future mapping ideas:
+- Notes:  May consider dedicated volume buttons or possibly a small rotary controller on the side of the device.  These buttons will increase/decrease volume regardless of where the user is in the device interface.
 
 ## Audio Output
 
@@ -60,6 +61,7 @@ Brief description of the current working hardware prototype.
 - Notes: 
 	- SCK is not connected. Tutorial listed SCK as NC / internal via link.
 	- Tutorial (https://www.instructables.com/Raspberry-Pi-HQ-Audio-PCM5102-and-MPD/)
+	- The PCM5102 tutorial uses `LCK`, while Raspberry Pi / I2S references often call the same signal `LRCLK`, `LRCK`, or word clock.
 
 ## Power
 
@@ -68,8 +70,11 @@ Brief description of the current working hardware prototype.
 - Charging:
 - Power switch:
 - Notes:
+  - Provides RTC and power-management functionality.
+  - Uses GPIO pins for shutdown, system state monitoring, and control/status signaling.
+  - Uses the Raspberry Pi I2C bus for RTC and temperature sensor communication.
 
-## Wiring
+## Raspberry Pi Pin Usage
 
 | Subsystem | Signal | GPIO / Pin | Used By | Notes |
 |---|---|---:|---|---|
@@ -79,23 +84,41 @@ Brief description of the current working hardware prototype.
 | Display | SPI CE0 | GPIO 8 / Pin 24 | PiTFT | Display chip select |
 | Display | SPI CE1 | GPIO 7 / Pin 26 | PiTFT | Used by PiTFT |
 | Display | GPIO 25 | GPIO 25 / Pin 22 | PiTFT | Used by PiTFT |
-| Display Buttons | Button 1 | GPIO #17 | PiTFT | Need confirm exact GPIO |
-| Display Buttons | Button 2 | GPIO #22 | PiTFT | Need confirm exact GPIO |
-| Display Buttons | Button 3 | GPIO #23 | PiTFT | Need confirm exact GPIO |
-| Display Buttons | Button 4 | GPIO #27 | PiTFT | Need confirm exact GPIO |
+| Display Buttons | Button 1 | GPIO 17 / Pin 11 | PiTFT | Conflicts with Witty Pi GPIO 17 usage |
+| Display Buttons | Button 2 | GPIO 22 / Pin 15 | PiTFT | From PiTFT documentation |
+| Display Buttons | Button 3 | GPIO 23 / Pin 16 | PiTFT | From PiTFT documentation |
+| Display Buttons | Button 4 | GPIO 27 / Pin 13 | PiTFT | From PiTFT documentation |
+| Volume Control | Volume Down | TBD | Side buttons or side rotary | Future global volume control |
+| Volume Control | Volume Up | TBD | Side buttons or side rotary | Future global volume control |
 | Encoder | I2C SDA | GPIO 2 / Pin 3 | ANO I2C Adapter | Shared I2C bus |
 | Encoder | I2C SCL | GPIO 3 / Pin 5 | ANO I2C Adapter | Shared I2C bus |
 | Encoder | I2C Address | 0x49 | ANO I2C Adapter | Default address |
 | Audio DAC | I2S BCLK | GPIO 18 / Pin 12 | PCM5102 | I2S audio |
 | Audio DAC | I2S LRCLK | GPIO 19 / Pin 35 | PCM5102 | I2S audio |
 | Audio DAC | I2S DIN | GPIO 21 / Pin 40 | PCM5102 | I2S audio |
-| Power | Power / RTC / UPS | TBD | Witty Pi 4 L3V7 | Need document occupied pins |
+| Power | Shutdown sequence | GPIO 4 / Pin 7 | Witty Pi 4 L3V7 | Default shutdown signal pin |
+| Power | System state / power monitoring | GPIO 17 / Pin 11 | Witty Pi 4 L3V7 | Conflicts with PiTFT Button 1 |
+| Power | Control/status | GPIO 5 / Pin 29 | Witty Pi 4 L3V7 | Used by onboard microcontroller |
+| Power | Control/status | GPIO 6 / Pin 31 | Witty Pi 4 L3V7 | Used by onboard microcontroller |
+| Power | I2C SDA | GPIO 2 / Pin 3 | Witty Pi 4 L3V7 | Shared I2C bus for RTC / temperature sensor |
+| Power | I2C SCL | GPIO 3 / Pin 5 | Witty Pi 4 L3V7 | Shared I2C bus for RTC / temperature sensor |
+
+## Known Pin Conflicts
+
+| GPIO / Pin | Used By | Conflict |
+|---|---|---|
+| GPIO 17 / Pin 11 | PiTFT Button 1, Witty Pi 4 L3V7 | PiTFT Button 1 conflicts with Witty Pi system state / power management monitoring |
+
+Notes:
+- GPIO 2 and GPIO 3 are shared by the ANO encoder adapter and the Witty Pi 4 L3V7.
+- This I2C sharing is expected as long as device addresses do not conflict.
+- GPIO 17 must be resolved before PCB design.
 
 ## Known Hardware Issues
 
 - I2C read errors from rotary encoder/seesaw board
 - Display refresh/flicker issues, probably software-related but visible on hardware
-- Display times out to a white screen.  Need to change the to turning the screen off
+- Display times out to a white screen; desired behavior is to turn the screen off instead.
 
 ## Notes
 - All Product IDs refer to Adafruit Product IDs.
@@ -114,7 +137,26 @@ Brief description of the current working hardware prototype.
 - Hold Pi, display, encoder, and buttons securely
 - Easy access to USB/power/audio/SD card
 - Printable with minimal supports
-- Easy to assemble/disassemble 
+- Easy to assemble/disassemble
+- Roughly the size of a 4th generation iPod
 
-## Open question:
+## Case Design Intent
+
+The case is intended to follow the general handheld media-player layout of a 4th generation iPod:
+
+- Display near the top
+- Rotary controller / navigation wheel below the display
+- Pocketable handheld form factor
+- One-handed navigation
+- Minimal front-panel controls
+
+The design goal is to preserve the familiar ergonomics of a classic dedicated music player while adapting the layout for Raspberry Pi hardware, a PiTFT display, and the ANO rotary controller.
+
+## Open Questions
+
 - Confirm whether the PiTFT reset line should use GPIO 24 or whether the current setup is sufficient without it.
+- Confirm which GPIO/header pins are occupied by the Witty Pi 4 L3V7.
+- Confirm battery type/capacity and charging behavior.
+- Confirm physical audio output path: headphone jack, line out, amp, or speaker.
+- Confirm whether `fbcp` is required for the current pygame display setup.
+- Decide how to resolve the GPIO 17 conflict between PiTFT Button 1 and Witty Pi 4 L3V7.
