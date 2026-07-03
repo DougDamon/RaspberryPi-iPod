@@ -25,7 +25,7 @@ from common.library.database import MusicDB
    
 class piPodGUI(AudioPlayback, MusicDB):
     def __init__(self):
-#        super().__init__()
+#        super().__init__
         AudioPlayback.__init__(self)
         MusicDB.__init__(self)
         pygame.display.set_caption('piPod')
@@ -43,6 +43,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.background = pygame.Surface((325,245))
         self.background.fill(pygame.Color('aquamarine'))
         self.manager = UIManager((320,240),  themeFile)
+        self.needs_redraw = True
        
 #        self.piPodAudio = AudioPlayback()
 #        self.musicDB = MusicDB()
@@ -121,6 +122,14 @@ class piPodGUI(AudioPlayback, MusicDB):
     def getEvent(self):
         events = pygame.event.get()
         return events
+    def markDirty(self):
+        self.needs_redraw = True
+
+    def clearDirty(self):
+        self.needs_redraw = False
+
+    def isDirty(self):
+        return self.needs_redraw
         
     def updateDisplay(self):
         pygame.display.update()
@@ -187,12 +196,15 @@ class piPodGUI(AudioPlayback, MusicDB):
     def MainScreenHide(self):
         self.windowMainScreen.hide() #self.containerMainWindow.hide()
         self.window_surface.blit(self.background, (0, 0))
+        self.markDirty()
 
     def MainScreenShow(self):
         if self.CurrentPlaylistId == None or self.CurrentTrackId == None:
             self.bNowPlaying.disable()
         self.windowMainScreen.show() 
         pygame.display.flip()
+        self.markDirty()
+        
 #    def NavigateMainScreen(self):
         
     def NowPlayingScreen(self): #, SelectedPlaylistId,  SelectedTrackId):
@@ -337,14 +349,17 @@ class piPodGUI(AudioPlayback, MusicDB):
        
     def NowPlayingScreenHide(self):
         self.windowNowPlaying.hide()
+        self.markDirty()
         
     def ShowPlayButton(self):
         self.bPlay.hide()
         self.bPause.show()
+        self.markDirty()
         
     def ShowPauseButton(self):
         self.bPause.hide()
         self.bPlay.show()
+        self.markDirty()
         
     def Play(self):
         if self.CurrentTrackId != None:
@@ -361,27 +376,31 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.bRepeatOn.hide()
         self.bRepeatOne.hide()
         self.bRepeatOff.show()
+        self.markDirty()
         
     def ShowRepeatButtonOn(self):
         self.bRepeatOff.hide()
         self.bRepeatOne.hide()
         self.bRepeatOn.show()
+        self.markDirty()
     
     def ShowRepeatButtonOne(self):
         self.bRepeatOff.hide()
         self.bRepeatOn.hide()
         self.bRepeatOne.show()
+        self.markDirty()
     
     def ShowShuffleButtonOff(self):
         self.bShuffleOn.unselect()
         self.bShuffleOn.hide()
         self.bShuffleOff.show()
-        
+        self.markDirty()
     
     def ShowShuffleButtonOn(self):
         self.bShuffleOff.unselect()
         self.bShuffleOff.hide()
         self.bShuffleOn.show()
+        self.markDirty()
     
     def RepeatOff(self):
         self.Repeat = 'Off'
@@ -465,7 +484,8 @@ class piPodGUI(AudioPlayback, MusicDB):
             self.Play()
         else:
             self.Pause()
-            
+        self.markDirty()
+        
     def NextTrackNowPlaying(self):
         if self.Repeat == 'One':
             # Repeat Track is on.  Set the starting position to 0 and start the track
@@ -587,6 +607,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
         self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
         self.updateCurrentTrack(self.CurrentTrackId,  self.CurrentPosition)
+        self.markDirty()
 
     def resetCurrentPosition(self):
         self.CurrentPosition = 0
@@ -600,6 +621,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.manager.draw_ui(self.window_surface)
         self.lblCurrentPosition.rebuild()
         self.updateCurrentTrack(self.CurrentTrackId,  self.CurrentPosition)
+        self.markDirty()
         
     def MusicScreen(self):
         self.bPlaylists = UIButton(relative_rect=pygame.Rect((12, 0), (300, 24)),
@@ -630,11 +652,13 @@ class piPodGUI(AudioPlayback, MusicDB):
 
     def MusicScreenHide(self):
          self.windowMusic.hide()
+         self.markDirty()
 
     def MusicScreenShow(self):
          if self.MusicScreenInit == False:
             self.MusicScreen()
          self.windowMusic.show()
+         self.markDirty()
         
     def getAvailablePlaylists(self):
         dfDownloadedPlaylists = self.getDownloadedPlaylists()[['PlaylistId','Playlist']]
@@ -676,12 +700,14 @@ class piPodGUI(AudioPlayback, MusicDB):
         
     def AvailablePlaylistsScreenHide(self):
          self.windowAvailablePlaylists.hide()
+         AvailablePlaylistsScreenShow
 
     def AvailablePlaylistsScreenShow(self):
         dfAvailablePlaylists = self.getDownloadedPlaylists()
         self.sPlaylistSelectionList.set_item_list(list(dfAvailablePlaylists['Playlist']))
         self.setUISelectionListButtonTheme(self.sPlaylistSelectionList,  '@navigation_buttons')
         self.windowAvailablePlaylists.show()
+        self.markDirty()
 
     def PlaylistTracksScreen(self): 
         self.sPlaylistTracks= UISelectionList(relative_rect=pygame.Rect((12, 0), (300, 220)),
@@ -695,6 +721,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         
     def PlaylistTracksScreenHide(self):
         self.windowPlaylistTracks.hide()
+        self.markDirty()
         
     def setUISelectionListButtonTheme(self,  UISelectionList,  Theme):
         for element in UISelectionList.item_list_container:
@@ -707,6 +734,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.sPlaylistTracks.set_item_list(list(dfPlaylistTracks['Title']))
         self.setUISelectionListButtonTheme(self.sPlaylistTracks,  '@navigation_buttons')
         self.windowPlaylistTracks.show()
+        self.markDirty()
 
     def getAdjustedCurrentPosition(self):
         currentPosition = round(self.getCurrentPosition())
