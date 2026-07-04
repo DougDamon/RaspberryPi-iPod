@@ -6,6 +6,28 @@ This document captures the current state of the RaspberryPi-iPod codebase before
 
 The goal is to understand what the current code does, especially around screen refresh, navigation, playback state, and input handling.
 
+## Display Redraw Behavior
+
+The GUI now uses a dirty/redraw flag so the main loop does not redraw continuously.
+
+Current behavior:
+- The main loop updates `pygame_gui` every loop.
+- The display is redrawn only when the GUI is marked dirty.
+- Navigation changes mark the GUI dirty.
+- Screen changes mark the GUI dirty.
+- Playback position updates are throttled to once per second.
+- Playback position updates currently still use the normal dirty redraw path.
+
+Current limitation:
+- Playback position no longer causes constant flicker.
+- A noticeable once-per-second redraw can still occur while music is playing.
+- A future improvement should update only the Now Playing time/progress area instead of redrawing the full display.
+
+Relevant files:
+- `piPod.py` controls when redraws happen in the main loop.
+- `common/pipodgui.py` owns dirty/redraw state and display update methods.
+- `common/pipodgui_navigation.py` marks the GUI dirty after navigation and selection changes.
+- 
 ## Entry Point
 
 ### `piPod.py`
@@ -24,8 +46,8 @@ Responsibilities:
 - Handles music-end events.
 - Updates current playback position.
 - Updates pygame_gui manager.
-- Draws the screen every loop.
-- Updates the display every loop.
+- Updates pygame_gui manager every loop.
+- Redraws/updates the display only when the GUI is marked dirty.
 - Quits the GUI system on shutdown.
 
 Current dependencies:
@@ -49,8 +71,9 @@ Possible problems:
 - `piPod.py` directly dispatches screen transitions.
 - Playback state is split between local variables and the GUI object.
 - `piPod.py` calls GUI methods that also appear to control audio playback.
-- The main loop always calls `drawScreen()` and `updateDisplay()`, which may contribute to flicker or unnecessary refreshes.
-- There is no obvious dirty/needs-redraw flag.
+- Event handling, playback updates, and rendering are still mixed in the same loop.
+- Playback state is split between local variables and the GUI object.
+- See [Display Redraw Behavior](#display-redraw-behavior).
 - Event handling, playback updates, and rendering are all mixed in the same loop.
 - The name `piPodGUI` is reused first as a module alias and then as an object instance, which makes the code harder to reason about.
 
@@ -214,10 +237,10 @@ Possible problems:
 - Now-playing screen update logic is duplicated in `NowPlayingScreenShow`, `NextTrackNowPlaying`, and `PreviousTrackNowPlaying`.
 - Screen construction and screen display are mixed together.
 - Some methods both change state and redraw/update widgets.
-- Some methods call `pygame.display.flip()` directly.
-- The main loop also calls `drawScreen()` and `updateDisplay()` every loop.
-- Display refresh is spread across several places instead of being controlled centrally.
-- There is no obvious dirty/needs-redraw flag.
+- Some methods may still contain direct display-update behavior from the earlier implementation.
+- Display redraw is now mostly controlled through the dirty flag, but older direct draw/update calls should be reviewed during future cleanup.
+- Playback position updates are throttled to once per second but still use the normal dirty redraw path.
+- See [Display Redraw Behavior](#display-redraw-behavior).
 - `window_surface.blit(self.background, ...)` appears in multiple places, which may contribute to inconsistent clearing/redrawing.
 - The typo `NoAblumArt` appears in variable names.
 - `formatTrackTime` references `self.Seconds` in the hour+ case, which may be a bug.
@@ -225,15 +248,11 @@ Possible problems:
 - Several methods contain debug `print()` calls.
 - `CurrentTrackid` appears with a lowercase `i` in one place, which may be a typo separate from `CurrentTrackId`.
 
-UI refresh observations:
-- `MainScreenShow()` calls `pygame.display.flip()`.
-- `NowPlayingScreen()` calls `pygame.display.flip()`.
-- `NowPlayingScreenShow()` calls `pygame.display.flip()`.
-- `updateCurrentPosition()` directly blits the background, updates label text, updates the progress bar, and updates the database.
-- `resetCurrentPosition()` blits, updates text, calls `manager.draw_ui()`, rebuilds the label, and updates the database.
-- The main loop also calls `drawScreen()` and `updateDisplay()` continuously.
-- Refresh behavior is not centralized.
-- Some methods partially redraw; others flip the display; the main loop redraws every frame.
+UI refresh notes:
+- Owns the dirty/redraw state.
+- Owns `drawScreen()` and `updateDisplay()`.
+- `updateCurrentPosition()` updates elapsed time/progress and marks the GUI dirty once per displayed second.
+- See [Display Redraw Behavior](#display-redraw-behavior).
 
 This supports the known suspected causes:
 - Arbitrary and constant screen refreshes
@@ -298,8 +317,8 @@ Possible problems:
 UI refresh observations:
 - Selecting or unselecting an element immediately changes widget state.
 - Screen show/hide calls happen inside navigation methods.
-- There is no obvious redraw request or dirty flag after state changes.
-- Many navigation actions likely depend on the main loop constantly redrawing to make changes appear.
+- Navigation and selection changes should mark the GUI dirty after visible state changes.
+- This module participates in the redraw flow described in [Display Redraw Behavior](#display-redraw-behavior).
 
 ## Input
 
@@ -350,23 +369,28 @@ Responsibilities:
 Notes:
 - Already moved successfully
 
-## Known UI Refresh Problems
+## UI Refresh Status
 
-Symptoms:
-- [ ] Screen does not redraw when expected
-- [ ] Old elements remain visible
-- [ ] Selection highlight gets stuck
-- [ ] Now-playing data does not update reliably
-- [ ] Button/encoder actions update state but not display
-- [x] Display flickers
-- [ ] Full redraw is too slow
+Current stable behavior:
 
-Suspected causes:
-- [ ] Drawing logic mixed with state changes
-- [ ] No single source of truth for current screen
-- [x] Arbitary and constant screen refreshes
-- [x] No clear dirty/needs-redraw flag
-- [ ] Partial updates and full redraws mixed together
-- [ ] Playback state changes not consistently propagated to UI
-- [ ] Navigation changes do not always trigger repaint
+* [x] Main loop no longer redraws the display continuously.
+* [x] GUI dirty/redraw flag exists.
+* [x] Navigation and selection changes now request redraws.
+* [x] Playback position updates are throttled to once per displayed second.
+* [x] Constant playback flicker has been reduced.
+
+Still known:
+
+* [x] A once-per-second redraw is still noticeable while music is playing.
+* [ ] Playback position currently uses the normal full-screen dirty redraw path.
+* [ ] Partial updates and full redraws are still mixed together.
+* [ ] Playback position should eventually update only the Now Playing time/progress area.
+* [ ] Some older direct display-update calls may still exist and should be reviewed.
+
+Future cleanup:
+
+* Centralize all display updates through one redraw path.
+* Remove or replace older direct `pygame.display.flip()` calls.
+* Separate state changes from drawing/display-update calls where practical.
+
 
