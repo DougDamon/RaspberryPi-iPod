@@ -43,10 +43,9 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.background = pygame.Surface((325,245))
         self.background.fill(pygame.Color('aquamarine'))
         self.manager = UIManager((320,240),  themeFile)
+        
         self.needs_redraw = True
-       
-#        self.piPodAudio = AudioPlayback()
-#        self.musicDB = MusicDB()
+        self.needs_position_redraw = False
         
 #        Setup Windows
         self.windowMainScreen = UIWindow(pygame.Rect((1, 1), (320,240))
@@ -130,7 +129,16 @@ class piPodGUI(AudioPlayback, MusicDB):
 
     def isDirty(self):
         return self.needs_redraw
-        
+    
+    def markPositionDirty(self):
+        self.needs_position_redraw = True
+
+    def clearPositionDirty(self):
+        self.needs_position_redraw = False
+
+    def isPositionDirty(self):
+        return self.needs_position_redraw
+    
     def updateDisplay(self):
         pygame.display.update()
         
@@ -139,7 +147,20 @@ class piPodGUI(AudioPlayback, MusicDB):
     
     def drawScreen(self):
         self.manager.draw_ui(self.window_surface)
-        
+    
+    def drawCurrentPosition(self):
+        self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
+        self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
+
+        self.manager.draw_ui(self.window_surface)
+
+#        pygame.display.update([
+#            self.lblCurrentPosition.rect,
+#            self.pbarCurrentPosition.rect
+#        ])
+        pygame.display.update()
+        self.clearPositionDirty()
+    
     def formatTrackTime(self,  Seconds):
         if Seconds < 3600:
             return str(datetime.timedelta(seconds=Seconds))[-5:]
@@ -601,19 +622,18 @@ class piPodGUI(AudioPlayback, MusicDB):
         
     def updateCurrentPosition(self):
         new_position = self.getAdjustedCurrentPosition()
-        
+
         if new_position == self.CurrentPosition:
             return
-        
+
         self.CurrentPosition = new_position
-        self.CurrentPositionPercent = (self.CurrentPosition/self.CurrentDurationSeconds) * 100
-        self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition )
-        
-        self.window_surface.blit(self.background, (2, 178))
+        self.CurrentPositionPercent = (self.CurrentPosition / self.CurrentDurationSeconds) * 100
+        self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition)
+
         self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
         self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
-        self.updateCurrentTrack(self.CurrentTrackId,  self.CurrentPosition)
-        
+        self.updateCurrentTrack(self.CurrentTrackId, self.CurrentPosition)
+
         self.markDirty()
 
     def resetCurrentPosition(self):
