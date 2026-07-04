@@ -2,7 +2,7 @@ import os
 import configparser
 
 
-class piPodConfiguration():
+class ConfigService:
 #    HomeDirectory = os.path.expanduser("~") + '/'
 #    ConfigurationFile = 'piPod.conf'
 #    ConfigurationFileLocation = HomeDirectory +  '.piPod/'
@@ -64,5 +64,6 @@ class piPodConfiguration():
             mode = 0o666
             os.mkdir(self.WorkDirectory,  mode)
 
-
+# Backward-compatible name while the rest of the app is migrated.
+piPodConfiguration = ConfigService
 

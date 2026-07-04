@@ -2,7 +2,7 @@
   "header": {
     "comment": "eric project file for project piPod",
     "copyright": "Copyright (C) 2026 Doug Damon, doug.damon@gmail.com",
-    "saved": "2026-07-02, 15:06:10"
+    "saved": "2026-07-04, 15:52:52"
   },
   "project": {
     "AUTHOR": "Doug Damon",
@@ -74,19 +74,28 @@
     },
     "RESOURCES": [],
     "SOURCES": [
+      "archive/YT_Playlist_Downloader/main.py",
+      "archive/youtubedownloader.py",
       "common/audio/__init__.py",
+      "common/audio/player.py",
       "common/config/__init__.py",
       "common/config/settings.py",
       "common/input/__init__.py",
+      "common/input/rotary.py",
       "common/library/__init__.py",
-      "common/musicdatabase.py",
-      "common/pipodaudio.py",
+      "common/library/music.py",
+      "common/library/music_database.py",
       "common/pipodgui.py",
       "common/pipodgui_navigation.py",
-      "common/rotaryencoder.py",
       "common/ui/__init__.py",
       "common/youtubedownloader.py",
       "piPod.py",
+      "tests/audioPlaybackTest.py",
+      "tests/classTest.py",
+      "tests/classTest_old.py",
+      "tests/guiTest.py",
+      "tests/main.py",
+      "tests/test.py",
       "themeTest.py"
     ],
     "SPELLEXCLUDES": "",
