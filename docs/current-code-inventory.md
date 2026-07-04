@@ -385,8 +385,23 @@ Still known:
 * [ ] Playback position currently uses the normal full-screen dirty redraw path.
 * [ ] Partial updates and full redraws are still mixed together.
 * [ ] Playback position should eventually update only the Now Playing time/progress area.
-* [ ] Some older direct display-update calls may still exist and should be reviewed.
+* [ ] Some direct `pygame.display.flip()` calls remain in screen setup/show methods.
+* [ ] At least one of these calls appears necessary for the current PiTFT display behavior.
+* [ ] These calls should not be removed until the display initialization/redraw path is better understood.
+- [ ] The current pygame/PiTFT display path should be treated as fragile working code.
+- [ ] Direct `pygame.display.flip()` calls remain because removing them caused the PiTFT screen to go white after rotary input.
+- [ ] Display-refresh cleanup should be deferred until there is a small isolated pygame/PiTFT test program.
 
+## Playback State Notes
+
+The app stores current playlist/track/playback-position state in the database.
+
+During refactoring, code changes may leave the saved current track state pointing at an invalid or incomplete track record. If Now Playing fails while loading track metadata, try selecting a fresh track from Music → Playlists before assuming the code is broken.
+
+Observed failure mode:
+- Now Playing can fail in `getTrackID3Tags()` with `KeyError: 'FileLocation'`.
+- Re-selecting a track can restore valid current-track state.
+- 
 Future cleanup:
 
 * Centralize all display updates through one redraw path.
