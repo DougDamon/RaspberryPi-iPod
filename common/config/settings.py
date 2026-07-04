@@ -64,6 +64,4 @@ class ConfigService:
             mode = 0o666
             os.mkdir(self.WorkDirectory,  mode)
 
-# Backward-compatible name while the rest of the app is migrated.
-piPodConfiguration = ConfigService
 

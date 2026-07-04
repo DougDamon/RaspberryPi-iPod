@@ -3,11 +3,11 @@ from datetime import datetime
 
 import pandas as pd
 from tinydb import TinyDB, Query,  where
-from common.config.settings import piPodConfiguration
+from common.config.settings import ConfigService
 
 class MusicDB():
     def __init__(self):
-        self.config = piPodConfiguration()
+        self.config = ConfigService()
         self.HomeDirectory = self.config.HomeDirectory
         self.MusicDBLocation = self.config.MusicDBLocation
         self.MusicDBFile = self.config.MusicDBFile
