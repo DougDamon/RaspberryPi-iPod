@@ -1,30 +1,44 @@
 # common/library/music.py
+import pandas as pd
 
 from common.library.music_database import MusicDB
 
 
 class MusicLibraryService:
-    """
-    Music-specific library service.
-
-    Wraps the existing MusicDB implementation and gives the rest of the app
-    a clearer music-library boundary.
-    """
-
     def __init__(self):
         self.db = MusicDB()
 
-    def get_downloaded_playlists(self):
-        return self.db.getDownloadedPlaylists()
+    def get_track(self, track_id):
+        df_track = self.db.getTrackFromDB(track_id)
 
-    def get_playlist_tracks(self, playlist_id):
-        return self.db.getPlaylistTracksFromDB(playlist_id)
+        if df_track is None or df_track.empty:
+            return None
 
-    def get_current_playlist_id(self):
-        return self.db.getCurrentPlaylistId()
-
-    def get_current_track_id(self):
-        return self.db.getCurrentTrackId()
+        return df_track
 
     def get_current_track(self):
-        return self.db.getCurrentTrack()
+        df_track = self.db.getCurrentTrack()
+
+        if df_track is None or df_track.empty:
+            return None
+
+        if "TrackId" not in df_track.columns:
+            return None
+
+        return df_track
+
+    def get_downloaded_playlists(self):
+        df_playlists = self.db.getDownloadedPlaylists()
+
+        if df_playlists is None or df_playlists.empty:
+            return pd.DataFrame()
+
+        return df_playlists
+
+    def get_playlist_tracks(self, playlist_id):
+        df_tracks = self.db.getPlaylistTracksFromDB(playlist_id)
+
+        if df_tracks is None or df_tracks.empty:
+            return pd.DataFrame()
+
+        return df_tracks
