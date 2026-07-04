@@ -549,28 +549,12 @@ class piPodGUI(AudioPlayback, MusicDB):
             self.NextTrackId = dfFirstTrack['TrackId'][0]
 
         
-        dfCurrentTrack = self.getTrackFromDB(self.NextTrackId)
-        self.CurrentTrackId = dfCurrentTrack['TrackId'][0]
-        self.StartPlaybackPosition = 0 #dfCurrentTrack['CurrentPosition'][0].item()
-        self.CurrentPosition = 0 #dfCurrentTrack['CurrentPosition'][0].item()
-        self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition)
-        currentTrackID3 = self.getTrackID3Tags(self.CurrentTrackId)
-        currentPlaylist = self.getPlaylistInfoFromDB(self.CurrentPlaylistId)
-        currentArtwork = currentTrackID3['artwork'] 
-        bytesCurrentImage = currentArtwork.first.data
-        pilCurrentImage = Image.open(BytesIO(bytesCurrentImage))
-        pilCurrentImage = pilCurrentImage.resize((150, 150), 0)
-        self.CurrentAlbumArt =  pygame.image.frombytes(pilCurrentImage.tobytes('raw'), (150, 150), 'RGB')
-        self.CurrentTitle = str(currentTrackID3['title'])
-        self.CurrentArtist = str(currentTrackID3['artist'])
-        self.CurrentAlbum = str(currentTrackID3['album'])
-        self.CurrentGenre = str(currentTrackID3['genre'])
-        self.CurrentPlaylist = currentPlaylist.loc[0]['Playlist']
-        self.CurrentDurationSeconds = round(float(str(currentTrackID3['#length'])))
-        self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
-        self.CurrentPositionPercent = (self.CurrentPosition/self.CurrentDurationSeconds) * 100
-        self.setCurrentTrack(self.CurrentTrackId,  self.CurrentDurationSeconds,  0, self.StartPlaybackPosition)
-        self.setTrack(self.CurrentTrackId,  self.StartPlaybackPosition)
+        self.CurrentTrackId = self.NextTrackId
+        self.setCurrentTrack(self.CurrentTrackId, 0, 0, 0)
+        self.loadCurrentTrackDisplayState(start_position=0)
+        self.setCurrentTrack(self.CurrentTrackId, self.CurrentDurationSeconds, 0, self.StartPlaybackPosition)
+        self.setTrack(self.CurrentTrackId, self.StartPlaybackPosition)
+        
         self.windowNowPlaying.show()
         self.imgAlbumArt.set_image(self.CurrentAlbumArt)
         self.lblTrackTitle.set_text(self.CurrentTitle )
