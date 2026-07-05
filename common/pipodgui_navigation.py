@@ -298,7 +298,17 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                     case 'On':
                         self.ShuffleOff()
                 return True    
-        
+                
+            case UIAction.CYCLE_REPEAT:
+                match self.Repeat:
+                    case 'Off':
+                        self.RepeatOn()
+                    case 'On':
+                        self.RepeatOne()
+                    case 'One':
+                        self.RepeatOff()
+                return True    
+                
             case _:
                 return False
     
@@ -389,13 +399,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                     case 'Rewind':
                         pass
                     case 'Repeat':
-                        match self.Repeat:
-                            case 'Off':
-                                self.RepeatOn()
-                            case 'On':
-                                self.RepeatOne()
-                            case 'One':
-                                self.RepeatOff()
+                        pass
                     case 'Shuffle':
                         pass
                     case 'Back':
