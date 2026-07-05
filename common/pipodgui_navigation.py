@@ -1,6 +1,7 @@
 from common.pipodgui import piPodGUI
 from common.input.rotary import RotaryEncoder
 from common.ui.navigation_map import get_action_for_screen_element
+from common.ui.actions import UIAction
    
 class piPodGUINavigation(RotaryEncoder, piPodGUI):
     def __init__(self):
@@ -276,11 +277,23 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         lives in Select(), and actions will be moved here one at a time.
         """
         print("Handle UI action:", action)
+        
+        match action:
+            case UIAction.PLAY_PAUSE:
+                if self.AudioPlaying == True:
+                    self.Pause()
+                else:
+                    self.Play()
+                return True
+
+            case _:
+                return False
     
     def Select(self):
         current_action = self.getCurrentUIAction()
         print("Current UI action:", current_action)
-        self.handleUIAction(current_action)
+        if self.handleUIAction(current_action):
+            return
         
         match self.CurrentScreen:
             case 'Main':
@@ -357,10 +370,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 #                Play/Pause, Forward, Rewind, Back, Home
                 match self.CurrentScreenElement:
                     case 'Play/Pause':
-                        if self.AudioPlaying == True:
-                            self.Pause()
-                        else:
-                            self.Play()
+                        pass
                     case 'Forward':
                         self.NextTrackNowPlaying()
                     case 'Rewind':
