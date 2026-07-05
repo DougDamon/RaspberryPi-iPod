@@ -268,8 +268,19 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             self.CurrentScreenElement
         )
     
+    def handleUIAction(self, action):
+        """
+        Handle a UIAction selected by the current UI.
+    
+        This starts the future controller path. For now, most behavior still
+        lives in Select(), and actions will be moved here one at a time.
+        """
+        print("Handle UI action:", action)
+    
     def Select(self):
-        print("Current UI action:", self.getCurrentUIAction())
+        current_action = self.getCurrentUIAction()
+        print("Current UI action:", current_action)
+        self.handleUIAction(current_action)
         
         match self.CurrentScreen:
             case 'Main':
