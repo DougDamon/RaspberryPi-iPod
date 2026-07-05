@@ -102,6 +102,24 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         indexCurrentElement = self.getScreenElementIndex(self.CurrentScreen,  self.CurrentScreenElement)
         return indexCurrentElement
 
+    def getNowPlayingWidget(self, element_name):
+        """
+        Return the pygame_gui widget for a simple Now Playing screen element.
+
+        Repeat and Shuffle are intentionally not handled here because they
+        use state-specific widgets/icons.
+        """
+
+        widgets = {
+            "Play/Pause": self.bPause if self.getAudioPlayingStatus() else self.bPlay,
+            "Forward": self.bForward,
+            "Rewind": self.bRewind,
+            "Back": self.bBack,
+            "Home": self.bHome,
+        }
+
+        return widgets.get(element_name)
+        
     def setScreenElementSelected(self,  Element):
         match self.CurrentScreen:
             case 'Main':
@@ -112,19 +130,11 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                     
             case 'NowPlaying':
                 match Element:
-                    case 'Play/Pause':
-                        if self.getAudioPlayingStatus() == False:
-                            self.bPlay.select()
-                        else:
-                            self.bPause.select()
-                    case 'Forward':
-                        self.bForward.select()
-                    case 'Rewind':
-                        self.bRewind.select()
-                    case 'Back':
-                        self.bBack.select()
-                    case 'Home':
-                        self.bHome.select()
+                    case 'Play/Pause' | 'Forward' | 'Rewind' | 'Back' | 'Home':
+                        widget = self.getNowPlayingWidget(Element)
+
+                        if widget is not None:
+                            widget.select()
                     case 'Repeat':
                         match self.Repeat:
                             case 'Off':
@@ -193,19 +203,11 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                     
             case 'NowPlaying':
                 match Element:
-                    case 'Play/Pause':
-                        if self.getAudioPlayingStatus() == False:
-                            self.bPlay.unselect()
-                        else:
-                            self.bPause.unselect()
-                    case 'Forward':
-                        self.bForward.unselect()
-                    case 'Rewind':
-                        self.bRewind.unselect()
-                    case 'Back':
-                        self.bBack.unselect()
-                    case 'Home':
-                        self.bHome.unselect()
+                    case 'Play/Pause' | 'Forward' | 'Rewind' | 'Back' | 'Home':
+                        widget = self.getNowPlayingWidget(Element)
+
+                        if widget is not None:
+                            widget.unselect()
                     case 'Repeat':
                         match self.Repeat:
                             case 'Off':
