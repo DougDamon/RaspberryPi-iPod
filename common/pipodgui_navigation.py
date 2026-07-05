@@ -108,10 +108,10 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                         match self.Shuffle:
                             case 'Off':
                                 self.ShowShuffleButtonOn()
-                                self.bShuffleOn.select()
+                                self.bShuffleOff.select()
                             case 'On':
                                 self.ShowShuffleButtonOff()
-                                self.bShuffleOff.select()    
+                                self.bShuffleOn.select()    
                     case _:
                         pass
             case 'Music':
@@ -196,13 +196,10 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                                 self.ShowRepeatButtonOne()
                                 self.bRepeatOne.unselect()
                     case 'Shuffle':
-                        match self.Shuffle:
-                            case 'Off':
-                                self.ShowShuffleButtonOff()
-                                self.bShuffleOff.unselect()
-                            case 'On':
-                                self.ShowShuffleButtonOn()
-                                self.bShuffleOn.unselect()
+                        if self.Shuffle == 'Off':
+                            self.bShuffleOn.unselect()
+                        else:
+                            self.bShuffleOn.select()
                     case _:
                         pass
                         
@@ -293,7 +290,15 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             case UIAction.PREVIOUS_TRACK:
                 self.PreviousTrackNowPlaying()
                 return True    
-                
+            
+            case UIAction.TOGGLE_SHUFFLE:
+                match self.Shuffle:
+                    case 'Off':
+                        self.ShuffleOn()
+                    case 'On':
+                        self.ShuffleOff()
+                return True    
+        
             case _:
                 return False
     
@@ -392,11 +397,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                             case 'One':
                                 self.RepeatOff()
                     case 'Shuffle':
-                        match self.Shuffle:
-                            case 'Off':
-                                self.ShuffleOn()
-                            case 'On':
-                                self.ShuffleOff()
+                        pass
                     case 'Back':
                         match self.navigationPath.pop():
                             case 'PlaylistTracks':

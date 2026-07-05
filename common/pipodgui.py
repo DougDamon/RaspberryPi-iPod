@@ -412,15 +412,13 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.markDirty()
     
     def ShowShuffleButtonOff(self):
+        self.bShuffleOn.show()
         self.bShuffleOn.unselect()
-        self.bShuffleOn.hide()
-        self.bShuffleOff.show()
         self.markDirty()
     
     def ShowShuffleButtonOn(self):
-        self.bShuffleOff.unselect()
-        self.bShuffleOff.hide()
         self.bShuffleOn.show()
+        self.bShuffleOn.select()
         self.markDirty()
     
     def RepeatOff(self):

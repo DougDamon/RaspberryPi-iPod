@@ -55,3 +55,6 @@ They do not perform the action directly. They are vocabulary for the future cont
 Initial actions are defined in:
 
 - `common/ui/actions.py`
+
+- Shuffle currently uses a single icon as a toggle because there is no matching unshuffle icon yet.
+- This is acceptable for now; revisit icon/theme cleanup later.
