@@ -457,7 +457,34 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         """
         Handle selection behavior for the Main screen.
         """
-        pass
+
+        self.navigationPath.append('Main')
+
+        match self.CurrentScreenElement:
+            case 'NowPlaying':
+                self.setCurrentScreenElement('NowPlaying', 'Play/Pause')
+                self.MainScreenHide()
+                self.NowPlayingScreenShow()
+                self.setScreenElementSelected(self.CurrentScreenElement)
+
+            case 'Music':
+                self.setCurrentScreenElement('Music', 'AvailablePlaylists')
+                self.MainScreenHide()
+                self.MusicScreen()
+                self.MusicScreenShow()
+                self.bPlaylists.select()
+
+            case 'OTR':
+                pass
+
+            case 'Audiobooks':
+                pass
+
+            case 'Games':
+                pass
+
+            case 'Settings':
+                pass
     
     def selectMusicScreenElement(self):
         """
@@ -491,27 +518,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         
         match self.CurrentScreen:
             case 'Main':
-                self.navigationPath.append('Main')
-                match self.CurrentScreenElement:
-                    case 'NowPlaying':                       
-                        self.setCurrentScreenElement('NowPlaying', 'Play/Pause')
-                        self.MainScreenHide()
-                        self.NowPlayingScreenShow()
-                        self.setScreenElementSelected(self.CurrentScreenElement)
-                    case 'Music':
-                        self.setCurrentScreenElement('Music', 'AvailablePlaylists')
-                        self.MainScreenHide()
-                        self.MusicScreen()
-                        self.MusicScreenShow()
-                        self.bPlaylists.select()
-                    case 'OTR':
-                        pass
-                    case 'Audiobooks':
-                        pass
-                    case 'Games':
-                        pass
-                    case 'Settings':
-                        pass
+                self.selectMainScreenElement()
 #            case 'NowPlaying':
 #                pass
             case 'Music':
