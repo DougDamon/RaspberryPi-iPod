@@ -289,6 +289,10 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             case UIAction.NEXT_TRACK:
                 self.NextTrackNowPlaying()
                 return True
+            
+            case UIAction.PREVIOUS_TRACK:
+                self.PreviousTrackNowPlaying()
+                return True    
                 
             case _:
                 return False
@@ -378,7 +382,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                     case 'Forward':
                         pass
                     case 'Rewind':
-                        self.PreviousTrackNowPlaying()
+                        pass
                     case 'Repeat':
                         match self.Repeat:
                             case 'Off':
