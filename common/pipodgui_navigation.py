@@ -42,7 +42,28 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             self.CurrentScreenElement = 'NowPlaying'
 
         self.markDirty()
-            
+    
+    def getMainScreenWidget(self, element_name):
+        """
+        Return the pygame_gui widget for a Main screen navigation element.
+
+        This keeps Main screen element-to-widget mapping in one place.
+        It does not decide whether an element should be visible, enabled,
+        disabled, or selected by default.
+        """
+
+        widgets = {
+            "NowPlaying": self.bNowPlaying,
+            "Music": self.bMusic,
+            "OTR": self.bOTR,
+            "Audiobooks": self.bAudiobooks,
+            "Games": self.bGames,
+            "Settings": self.bManagement,
+            "Management": self.bManagement,
+        }
+
+        return widgets.get(element_name)
+    
     def setPlaylistNavigation(self):
         playlists = list(self.getDownloadedPlaylists(self.CurrentPlaylistId)['Title'])
         print(f'playlists: {playlists}')
@@ -84,21 +105,11 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
     def setScreenElementSelected(self,  Element):
         match self.CurrentScreen:
             case 'Main':
-                match Element:
-                    case 'NowPlaying':
-                        self.setMainScreenElementDefault()
-                    case 'Music':
-                        self.bMusic.select()
-                    case 'OTR':
-                        self.bOTR.select()
-                    case 'Audiobooks':
-                        self.bAudiobooks.select()
-                    case 'Games':
-                        self.bGames.select()
-                    case 'Settings':
-                        self.bManagement.select()
-                    case _:
-                        pass
+                widget = self.getMainScreenWidget(Element)
+
+                if widget is not None:
+                    widget.select()
+                    
             case 'NowPlaying':
                 match Element:
                     case 'Play/Pause':
@@ -175,21 +186,11 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
     def setScreenElementUnselected(self, Element):
         match self.CurrentScreen:
             case 'Main':
-                match Element:
-                    case 'NowPlaying':
-                        self.bNowPlaying.unselect()
-                    case 'Music':
-                        self.bMusic.unselect()
-                    case 'OTR':
-                        self.bOTR.unselect()
-                    case 'Audiobooks':
-                        self.bAudiobooks.unselect()
-                    case 'Games':
-                        self.bGames.unselect()
-                    case 'Settings':
-                        self.bManagement.unselect()
-                    case _:
-                        pass
+                widget = self.getMainScreenWidget(Element)
+
+                if widget is not None:
+                    widget.unselect()
+                    
             case 'NowPlaying':
                 match Element:
                     case 'Play/Pause':
