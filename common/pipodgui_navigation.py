@@ -508,19 +508,109 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         """
         Handle selection behavior for the Now Playing screen.
         """
-        pass
+
+        match self.CurrentScreenElement:
+            case 'Play/Pause':
+                if self.AudioPlaying == True:
+                    self.Pause()
+                else:
+                    self.Play()
+
+            case 'Forward':
+                self.NextTrackNowPlaying()
+
+            case 'Rewind':
+                self.PreviousTrackNowPlaying()
+
+            case 'Repeat':
+                match self.Repeat:
+                    case 'Off':
+                        self.RepeatOn()
+                    case 'On':
+                        self.RepeatOne()
+                    case 'One':
+                        self.RepeatOff()
+
+            case 'Shuffle':
+                match self.Shuffle:
+                    case 'Off':
+                        self.ShuffleOn()
+                    case 'On':
+                        self.ShuffleOff()
+
+            case 'Back':
+                print("Back from screen:", self.CurrentScreen)
+                print("navigationPath before back:", self.navigationPath)
+
+                if len(self.navigationPath) == 0:
+                    print("No previous screen. Staying on current screen.")
+                    return
+
+                previous_screen = self.navigationPath.pop()
+                self.setScreenElementUnselected(self.CurrentScreenElement)
+                self.NowPlayingScreenHide()
+
+                match previous_screen:
+                    case 'Main':
+                        self.setCurrentScreen('Main')
+                        self.MainScreenShow()
+                        self.setMainScreenElementDefault()
+
+                    case 'Music':
+                        self.setCurrentScreenElement('Music', 'AvailablePlaylists')
+                        self.MusicScreenShow()
+                        self.setScreenElementSelected(self.CurrentScreenElement)
+
+                    case 'AvailablePlaylists':
+                        playlists = list(self.getAvailablePlaylists()['Playlist'])
+                        self.ScreenNavigation['AvailablePlaylists'] = playlists
+
+                        if self.CurrentPlaylistInfo.shape[0] == 0:
+                            playlist_index = 0
+                        else:
+                            playlist_index = self.getScreenElementIndex(
+                                'AvailablePlaylists',
+                                self.CurrentPlaylistInfo.iloc[0]['Playlist']
+                            )
+
+                        self.setCurrentScreenElement(
+                            'AvailablePlaylists',
+                            playlists[playlist_index]
+                        )
+                        self.AvailablePlaylistsScreenShow()
+                        self.setScreenElementSelected(self.CurrentScreenElement)
+
+                    case 'PlaylistTracks':
+                        tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
+                        self.ScreenNavigation['PlaylistTracks'] = tracks
+
+                        self.setCurrentScreenElement('PlaylistTracks', tracks[0])
+                        self.PlaylistTracksScreenShow()
+                        self.setScreenElementSelected(self.CurrentScreenElement)
+
+                    case _:
+                        print("Back target not implemented:", previous_screen)
+
+                print("navigationPath after back:", self.navigationPath)
+
+            case 'Home':
+                self.setScreenElementUnselected(self.CurrentScreenElement)
+
+                self.NowPlayingScreenHide()
+
+                self.setCurrentScreen('Main')
+                self.MainScreenShow()
+                self.setMainScreenElementDefault()
+
+            case _:
+                pass
     
     def Select(self):
-        current_action = self.getCurrentUIAction()
-        print("Current UI action:", current_action)
-        if self.handleUIAction(current_action):
-            return
-        
         match self.CurrentScreen:
             case 'Main':
                 self.selectMainScreenElement()
-#            case 'NowPlaying':
-#                pass
+            case 'NowPlaying':
+                self.selectNowPlayingElement()
             case 'Music':
                 self.navigationPath.append('Music')
                 match self.CurrentScreenElement:
