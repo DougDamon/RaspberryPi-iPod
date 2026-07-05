@@ -16,11 +16,32 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.setMainScreenElementDefault()
     
     def setMainScreenElementDefault(self):
+        """
+        Set the default selected element for the Main screen.
+
+        Only one Main screen navigation item should be selected at a time.
+        If there is no current playlist/track, Now Playing is disabled and
+        Music is selected. Otherwise Now Playing is selected.
+        """
+
+        # Clear any old Main screen selection boxes first.
+        self.bNowPlaying.unselect()
+        self.bMusic.unselect()
+        self.bOTR.unselect()
+        self.bAudiobooks.unselect()
+        self.bGames.unselect()
+        self.bManagement.unselect()
+
         if self.CurrentPlaylistId == None or self.CurrentTrackId == None:
             self.bNowPlaying.disable()
             self.bMusic.select()
+            self.CurrentScreenElement = 'Music'
         else:
+            self.bNowPlaying.enable()
             self.bNowPlaying.select()
+            self.CurrentScreenElement = 'NowPlaying'
+
+        self.markDirty()
             
     def setPlaylistNavigation(self):
         playlists = list(self.getDownloadedPlaylists(self.CurrentPlaylistId)['Title'])
@@ -310,6 +331,9 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 return True    
             
             case UIAction.HOME:
+                # Clear selection on the screen we are leaving.
+                self.setScreenElementUnselected(self.CurrentScreenElement)
+
                 match self.CurrentScreen:
                     case 'NowPlaying':
                         self.NowPlayingScreenHide()
@@ -320,10 +344,17 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                     case 'PlaylistTracks':
                         self.PlaylistTracksScreenHide()
 
-                self.setCurrentScreenElement('Main', 'Music')
+                # Let the Main screen choose its proper default element.
+                self.setCurrentScreen('Main')
+
+                if self.CurrentPlaylistId == None or self.CurrentTrackId == None:
+                    self.CurrentScreenElement = 'Music'
+                else:
+                    self.CurrentScreenElement = 'NowPlaying'
+
                 self.MainScreenShow()
-                self.setScreenElementSelected(self.CurrentScreenElement)
-                return True    
+                self.setMainScreenElementDefault()
+                return True
                 
             case _:
                 return False
