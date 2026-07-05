@@ -308,6 +308,22 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                     case 'One':
                         self.RepeatOff()
                 return True    
+            
+            case UIAction.HOME:
+                match self.CurrentScreen:
+                    case 'NowPlaying':
+                        self.NowPlayingScreenHide()
+                    case 'Music':
+                        self.MusicScreenHide()
+                    case 'AvailablePlaylists':
+                        self.AvailablePlaylistsScreenHide()
+                    case 'PlaylistTracks':
+                        self.PlaylistTracksScreenHide()
+
+                self.setCurrentScreenElement('Main', 'Music')
+                self.MainScreenShow()
+                self.setScreenElementSelected(self.CurrentScreenElement)
+                return True    
                 
             case _:
                 return False
@@ -413,8 +429,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                                 self.setScreenElementSelected(self.CurrentScreenElement)
                                 
                     case 'Home':
-                        self.NowPlayingScreenHide()
-                        self.MainScreenShow()
+                        pass
                         
     def EncoderNavigation(self, EncoderActivity):
 #        print(f'EncoderActivity: {EncoderActivity}')
