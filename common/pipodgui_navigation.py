@@ -99,6 +99,27 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         }
 
         return widgets.get(element_name)
+
+    def getCurrentListItemWidget(self):
+        """
+        Return the currently selected pygame_gui list item widget.
+
+        AvailablePlaylists and PlaylistTracks are dynamic list screens. Their
+        selectable elements are not fixed buttons. They are list items looked up
+        by the current screen element index.
+        """
+
+        item_index = self.getCurrentScreenElementIndex()
+
+        match self.CurrentScreen:
+            case 'AvailablePlaylists':
+                return self.sPlaylistSelectionList.item_list_container.elements[item_index]
+
+            case 'PlaylistTracks':
+                return self.sPlaylistTracks.item_list_container.elements[item_index]
+
+            case _:
+                return None
  
     def setPlaylistNavigation(self):
         playlists = list(self.getDownloadedPlaylists(self.CurrentPlaylistId)['Title'])
@@ -155,6 +176,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 
                         if widget is not None:
                             widget.select()
+                            
                     case 'Repeat':
                         match self.Repeat:
                             case 'Off':
@@ -166,6 +188,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                             case 'One':
                                 self.ShowRepeatButtonOne()
                                 self.bRepeatOne.select()
+                                
                     case 'Shuffle':
                         match self.Shuffle:
                             case 'Off':
@@ -183,15 +206,13 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 if widget is not None:
                     widget.select()
                     
-            case'AvailablePlaylists':
-                itemIndex = self.getCurrentScreenElementIndex()
-                self.sPlaylistSelectionList.item_list_container.elements[itemIndex].change_object_id('@navigation_buttons')
-                self.sPlaylistSelectionList.item_list_container.elements[itemIndex].select()                
-            case'PlaylistTracks':
-                itemIndex=self.getCurrentScreenElementIndex()
-                print(f'itemIndex: {itemIndex}')
-                self.sPlaylistTracks.item_list_container.elements[itemIndex].change_object_id('@navigation_buttons')
-                self.sPlaylistTracks.item_list_container.elements[itemIndex].select()
+            case 'AvailablePlaylists' | 'PlaylistTracks':
+                widget = self.getCurrentListItemWidget()
+
+                if widget is not None:
+                    widget.change_object_id('@navigation_buttons')
+                    widget.select()
+                
             case 'OTR':
                 pass
             case 'Audiobooks':
@@ -244,12 +265,12 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 if widget is not None:
                     widget.unselect()
                     
-            case'AvailablePlaylists':
-                itemIndex = self.getCurrentScreenElementIndex()
-                self.sPlaylistSelectionList.item_list_container.elements[itemIndex].unselect()
-            case'PlaylistTracks':
-                itemIndex = self.getCurrentScreenElementIndex()
-                self.sPlaylistTracks.item_list_container.elements[itemIndex].unselect()
+            case 'AvailablePlaylists' | 'PlaylistTracks':
+                widget = self.getCurrentListItemWidget()
+
+                if widget is not None:
+                    widget.unselect()
+                    
             case 'OTR':
                 pass
             case 'Audiobooks':
@@ -431,6 +452,36 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 
             case _:
                 return False
+    
+        def selectMainScreenElement(self):
+            """
+            Handle selection behavior for the Main screen.
+            """
+            pass
+    
+        def selectMusicScreenElement(self):
+            """
+            Handle selection behavior for the Music screen.
+            """
+            pass
+    
+        def selectAvailablePlaylist(self):
+            """
+            Handle selection behavior for the Available Playlists screen.
+            """
+            pass
+    
+        def selectPlaylistTrack(self):
+            """
+            Handle selection behavior for the Playlist Tracks screen.
+            """
+            pass
+    
+        def selectNowPlayingElement(self):
+            """
+            Handle selection behavior for the Now Playing screen.
+            """
+            pass
     
     def Select(self):
         current_action = self.getCurrentUIAction()
