@@ -37,12 +37,18 @@ SCREEN_ELEMENT_ACTIONS = {
         "Albums": None,
         "Artists": None,
         "Genres": None,
+        "Back": UIAction.BACK,
+        "Home": UIAction.HOME,
     },
     "AvailablePlaylists": {
         "PlaylistSelectionList": UIAction.SELECT_PLAYLIST,
+        "Back": UIAction.BACK,
+        "Home": UIAction.HOME,
     },
     "PlaylistTracks": {
         "PlaylistTracks": UIAction.SELECT_TRACK,
+        "Back": UIAction.BACK,
+        "Home": UIAction.HOME,
     },
 }
 
