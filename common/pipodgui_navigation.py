@@ -503,21 +503,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 self.setScreenElementSelected(self.CurrentScreenElement)
             case 'NowPlaying':
 #                Play/Pause, Forward, Rewind, Back, Home
-                match self.CurrentScreenElement:
-                    case 'Play/Pause':
-                        pass
-                    case 'Forward':
-                        pass
-                    case 'Rewind':
-                        pass
-                    case 'Repeat':
-                        pass
-                    case 'Shuffle':
-                        pass
-                    case 'Back':
-                        pass
-                    case 'Home':
-                        pass
+                pass
                         
     def EncoderNavigation(self, EncoderActivity):
 #        print(f'EncoderActivity: {EncoderActivity}')
