@@ -490,7 +490,46 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         """
         Handle selection behavior for the Music screen.
         """
-        pass
+
+        self.navigationPath.append('Music')
+
+        match self.CurrentScreenElement:
+            case 'AvailablePlaylists':
+                print(f"self.CurrentPlaylistInfo: {self.CurrentPlaylistInfo},  {type(self.CurrentPlaylistInfo)}")
+
+                if self.CurrentPlaylistInfo.shape[0] == 0:
+                    playlistIndex = 0
+                else:
+                    playlistIndex = self.getScreenElementIndex(
+                        'AvailablePlaylists',
+                        self.CurrentPlaylistInfo.iloc[0]['Playlist']
+                    )
+
+                playlists = list(self.getAvailablePlaylists()['Playlist'])
+                self.ScreenNavigation['AvailablePlaylists'] = playlists
+
+                self.setCurrentScreenElement(
+                    'AvailablePlaylists',
+                    playlists[playlistIndex]
+                )
+
+                self.MusicScreenHide()
+                self.AvailablePlaylistsScreenShow()
+                self.setScreenElementSelected(
+                    self.ScreenNavigation[self.CurrentScreen][self.getCurrentScreenElementIndex()]
+                )
+
+            case 'Albums':
+                pass
+
+            case 'Artists':
+                pass
+
+            case 'Genres':
+                pass
+
+            case _:
+                pass
     
     def selectAvailablePlaylist(self):
         """
@@ -612,26 +651,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             case 'NowPlaying':
                 self.selectNowPlayingElement()
             case 'Music':
-                self.navigationPath.append('Music')
-                match self.CurrentScreenElement:
-                    case 'AvailablePlaylists':
-                        print(f"self.CurrentPlaylistInfo: {self.CurrentPlaylistInfo},  {type(self.CurrentPlaylistInfo)}")
-                        if self.CurrentPlaylistInfo.shape[0] == 0:
-                            playlistIndex = 0
-                        else:
-                            playlistIndex = self.getScreenElementIndex('AvailablePlaylists',  self.CurrentPlaylistInfo.iloc[0]['Playlist'])
-                             
-                        playlists = list(self.getAvailablePlaylists()['Playlist'])
-                        self.ScreenNavigation['AvailablePlaylists'] = playlists
-                        self.setCurrentScreenElement('AvailablePlaylists', playlists[playlistIndex])
-                        self.MusicScreenHide()
-                        self.AvailablePlaylistsScreenShow()
-                        self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][self.getCurrentScreenElementIndex()])
-                    case 'Music':
-                        self.setCurrentScreenElement('Music', 'AvailablePlaylists')
-                        self.MainScreenHide()
-                        self.MusicScreenShow()
-                        self.bPlaylists.select()
+                self.selectMusicScreenElement()
             case 'AvailablePlaylists':
                 self.navigationPath.append('AvailablePlaylists')
                 selectedPlaylist = self.CurrentScreenElement  #get the selected playlist
