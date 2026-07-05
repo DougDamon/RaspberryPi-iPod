@@ -562,7 +562,23 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         """
         Handle selection behavior for the Playlist Tracks screen.
         """
-        pass
+
+        self.navigationPath.append('PlaylistTracks')
+
+        selectedTrack = self.CurrentScreenElement
+
+        self.setCurrentScreenElement('NowPlaying', 'Play/Pause')
+
+        selectedTrackId = self.getTrackIdByNameFromDB(
+            self.CurrentPlaylistId,
+            selectedTrack
+        )
+
+        self.setSelectedTrack(selectedTrackId)
+
+        self.PlaylistTracksScreenHide()
+        self.NowPlayingScreenShow()
+        self.setScreenElementSelected(self.CurrentScreenElement)
     
     def selectNowPlayingElement(self):
         """
@@ -676,15 +692,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             case 'AvailablePlaylists':
                 self.selectAvailablePlaylist()
             case 'PlaylistTracks':
-                self.navigationPath.append('PlaylistTracks')
-                selectedTrack = self.CurrentScreenElement  #get the selected track
-#                self.setCurrentScreen('NowPlaying')
-                self.setCurrentScreenElement('NowPlaying',  'Play/Pause') #self.ScreenNavigation[self.CurrentScreen][0])
-                selectedTrackId = self.getTrackIdByNameFromDB(self.CurrentPlaylistId,  selectedTrack)
-                self.setSelectedTrack(selectedTrackId)
-                self.PlaylistTracksScreenHide()
-                self.NowPlayingScreenShow()
-                self.setScreenElementSelected(self.CurrentScreenElement)
+                self.selectPlaylistTrack()
 #            case 'NowPlaying':
 ##                Play/Pause, Forward, Rewind, Back, Home
 #                pass
