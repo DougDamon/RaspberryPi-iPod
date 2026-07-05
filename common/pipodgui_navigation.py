@@ -1,5 +1,6 @@
 from common.pipodgui import piPodGUI
 from common.input.rotary import RotaryEncoder
+from common.ui.navigation_map import get_action_for_screen_element
    
 class piPodGUINavigation(RotaryEncoder, piPodGUI):
     def __init__(self):
@@ -12,7 +13,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.PreviousScreen = self.configuration.DefaultScreen
         self.PreviousScreenElement = self.configuration.DefaultElement
         self.setMainScreenElementDefault()
-        
+    
     def setMainScreenElementDefault(self):
         if self.CurrentPlaylistId == None or self.CurrentTrackId == None:
             self.bNowPlaying.disable()
@@ -254,7 +255,22 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             print(f'indexCurrentElement: {IndexCurrentElement}')
         else:
             pass
+    
+    def getCurrentUIAction(self):
+        """
+        Return the UIAction for the current screen/current element selection.
+    
+        This is a bridge between the existing string-based navigation code and
+        the future controller/action-based UI flow.
+        """
+        return get_action_for_screen_element(
+            self.CurrentScreen,
+            self.CurrentScreenElement
+        )
+    
     def Select(self):
+        print("Current UI action:", self.getCurrentUIAction())
+        
         match self.CurrentScreen:
             case 'Main':
                 self.navigationPath.append('Main')

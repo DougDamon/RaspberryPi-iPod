@@ -20,13 +20,13 @@ import glob
 import io
 #from datetime import datetime
 #from difflib import SequenceMatcher
-from common.config.settings import piPodConfiguration
+from common.config.settings import ConfigService
 from common.library.database import MusicDB
 
 class YouTubeDownloader():
     def __init__(self):
         self.musicDB = MusicDB()
-        self.config = piPodConfiguration()
+        self.config = ConfigService()
         self.YouTubeMusicSource = self.config.YouTubeDownloadSource
         self.WorkDirectory = self.config.WorkDirectory
         self.RelativeWorkDirectory = self.config.RelativeWorkDirectory

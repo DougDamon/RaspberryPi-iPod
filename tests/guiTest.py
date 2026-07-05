@@ -2,12 +2,12 @@
 #import datetime
 #import pygame
 #import pygame_gui
-from common.config.settings import piPodConfiguration
+from common.config.settings import ConfigService
 import common.pipodgui_navigation as piPodGUI
 
 from ccommon.library.database import MusicDB
 
-configuration = piPodConfiguration()
+configuration = ConfigService()
 #themeFile =os.path.join(configuration.ThemeDirectory,  configuration.ThemeFile)
 musicDB = MusicDB()
 #piPodAudio = AudioPlayback()

@@ -5,8 +5,8 @@ import music_tag
 #from datetime import datetime
 import pygame
 from pygame import mixer
-from common.config.settings import piPodConfiguration
-from common.library.database import MusicDB
+from common.config.settings import ConfigService
+from common.library.music_database import MusicDB
 
 
 class AudioPlayback():
@@ -14,7 +14,7 @@ class AudioPlayback():
         pygame.init()
         self.MUSIC_END = pygame.USEREVENT + 100
         self.musicDB = MusicDB()
-        self.config = piPodConfiguration()
+        self.config = ConfigService()
         self.musicRootDirectory = self.config.MusicRootDirectory
         self.CurrentDuration = 0
         self.AudioPlaying = False

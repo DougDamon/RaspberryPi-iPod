@@ -1,9 +1,9 @@
-from common.config.settings import piPodConfiguration
+from common.config.settings import ConfigService
 import common.pipodgui_navigation as piPodGUI
 
-from common.library.database import MusicDB
+from common.library.music_database import MusicDB
 
-configuration = piPodConfiguration()
+configuration = ConfigService()
 
 musicDB = MusicDB()
 

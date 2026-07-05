@@ -4,7 +4,7 @@ import pygame
 from pygame import mixer
 from datetime import datetime
 import time
-from common.config.settings import piPodConfiguration
+from common.config.settings import ConfigService
 from common.library.database import MusicDB
 
 from mutagen.mp3 import MP3
@@ -15,7 +15,7 @@ pygame.init()
 clock = pygame.time.Clock()
 
 musicDB = MusicDB()
-config = piPodConfiguration()
+config = ConfigService()
 MusicRootDirectory = config.MusicRootDirectory
 
 done = False

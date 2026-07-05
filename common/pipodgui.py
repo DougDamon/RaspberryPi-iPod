@@ -18,9 +18,9 @@ from pygame_gui.elements.ui_progress_bar import UIProgressBar
 from io import BytesIO
 
 from PIL import  Image
-from common.config.settings import piPodConfiguration
+from common.config.settings import ConfigService
 from common.audio.player import AudioPlayback
-from common.library.database import MusicDB
+from common.library.music_database import MusicDB
 #from common.input.rotary import RotaryEncoder
    
 class piPodGUI(AudioPlayback, MusicDB):
@@ -31,7 +31,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         pygame.display.set_caption('piPod')
         
         # piPod config file
-        self.configuration = piPodConfiguration()
+        self.configuration = ConfigService()
         self.Screens = self.configuration.Screens
         self.ScreenNavigation = self.configuration.ScreenNavigation
         
