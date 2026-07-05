@@ -453,35 +453,35 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             case _:
                 return False
     
-        def selectMainScreenElement(self):
-            """
-            Handle selection behavior for the Main screen.
-            """
-            pass
+    def selectMainScreenElement(self):
+        """
+        Handle selection behavior for the Main screen.
+        """
+        pass
     
-        def selectMusicScreenElement(self):
-            """
-            Handle selection behavior for the Music screen.
-            """
-            pass
+    def selectMusicScreenElement(self):
+        """
+        Handle selection behavior for the Music screen.
+        """
+        pass
     
-        def selectAvailablePlaylist(self):
-            """
-            Handle selection behavior for the Available Playlists screen.
-            """
-            pass
+    def selectAvailablePlaylist(self):
+        """
+        Handle selection behavior for the Available Playlists screen.
+        """
+        pass
     
-        def selectPlaylistTrack(self):
-            """
-            Handle selection behavior for the Playlist Tracks screen.
-            """
-            pass
+    def selectPlaylistTrack(self):
+        """
+        Handle selection behavior for the Playlist Tracks screen.
+        """
+        pass
     
-        def selectNowPlayingElement(self):
-            """
-            Handle selection behavior for the Now Playing screen.
-            """
-            pass
+    def selectNowPlayingElement(self):
+        """
+        Handle selection behavior for the Now Playing screen.
+        """
+        pass
     
     def Select(self):
         current_action = self.getCurrentUIAction()
