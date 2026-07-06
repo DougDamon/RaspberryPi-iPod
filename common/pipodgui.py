@@ -384,10 +384,12 @@ class piPodGUI(AudioPlayback, MusicDB):
         
     def Play(self):
         if self.CurrentTrackId != None:
-            self.ShowPlayButton()
-            self.bPlay.select()
             self.playTrack()
-        
+            if self.CurrentScreen == 'NowPlaying':
+                self.ShowPlayButton()
+                self.bPlay.select()
+                self.markDirty()
+
     def Pause(self):
         self.pauseTrack()
         self.ShowPauseButton()
@@ -549,17 +551,22 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.CurrentPositionPercent = (self.CurrentPosition/self.CurrentDurationSeconds) * 100
         self.setCurrentTrack(self.CurrentTrackId,  self.CurrentDurationSeconds,  0, self.StartPlaybackPosition)
         self.setTrack(self.CurrentTrackId,  self.StartPlaybackPosition)
-        self.windowNowPlaying.show()
-        self.imgAlbumArt.set_image(self.CurrentAlbumArt)
-        self.lblTrackTitle.set_text(self.CurrentTitle )
-        self.lblTrackArtist.set_text(self.CurrentArtist)
-        self.lblTrackAlbum.set_text(self.CurrentAlbum)
-        self.lblTrackGenre.set_text(self.CurrentGenre)
-        self.lblTrackPlaylist.set_text(self.CurrentPlaylist)
-        self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
-        self.lblTrackDuration.set_text(self.CurrentDurationFormat)
-        self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
         
+        if self.CurrentScreen == 'NowPlaying':
+            self.windowNowPlaying.show()
+        
+            self.imgAlbumArt.set_image(self.CurrentAlbumArt)
+            self.lblTrackTitle.set_text(self.CurrentTitle)
+            self.lblTrackArtist.set_text(self.CurrentArtist)
+            self.lblTrackAlbum.set_text(self.CurrentAlbum)
+            self.lblTrackGenre.set_text(self.CurrentGenre)
+            self.lblTrackPlaylist.set_text(self.CurrentPlaylist)
+            self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
+            self.lblTrackDuration.set_text(self.CurrentDurationFormat)
+            self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
+        
+            self.markDirty()
+            
         self.Play()
         
     def PreviousTrackNowPlaying(self):
