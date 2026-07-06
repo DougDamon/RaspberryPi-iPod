@@ -606,6 +606,82 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.setCurrentScreen('Main')
         self.MainScreenShow()
         self.setMainScreenElementDefault()
+
+    def goBack(self):
+        """
+        Return to the previous screen using navigationPath.
+
+        This centralizes Back behavior so the Now Playing Back button and
+        future rotary Left button can use the same path.
+        """
+
+        print("Back from screen:", self.CurrentScreen)
+        print("navigationPath before back:", self.navigationPath)
+
+        if len(self.navigationPath) == 0:
+            print("No previous screen. Staying on current screen.")
+            return
+
+        previous_screen = self.navigationPath.pop()
+
+        self.setScreenElementUnselected(self.CurrentScreenElement)
+
+        match self.CurrentScreen:
+            case 'NowPlaying':
+                self.NowPlayingScreenHide()
+
+            case 'Music':
+                self.MusicScreenHide()
+
+            case 'AvailablePlaylists':
+                self.AvailablePlaylistsScreenHide()
+
+            case 'PlaylistTracks':
+                self.PlaylistTracksScreenHide()
+
+        match previous_screen:
+            case 'Main':
+                self.setCurrentScreen('Main')
+                self.MainScreenShow()
+                self.setMainScreenElementDefault()
+
+            case 'Music':
+                self.setCurrentScreenElement('Music', 'AvailablePlaylists')
+                self.MusicScreenShow()
+                self.setScreenElementSelected(self.CurrentScreenElement)
+
+            case 'AvailablePlaylists':
+                playlists = list(self.getAvailablePlaylists()['Playlist'])
+                self.ScreenNavigation['AvailablePlaylists'] = playlists
+
+                if self.CurrentPlaylistInfo.shape[0] == 0:
+                    playlist_index = 0
+                else:
+                    playlist_index = self.getScreenElementIndex(
+                        'AvailablePlaylists',
+                        self.CurrentPlaylistInfo.iloc[0]['Playlist']
+                    )
+
+                self.setCurrentScreenElement(
+                    'AvailablePlaylists',
+                    playlists[playlist_index]
+                )
+
+                self.AvailablePlaylistsScreenShow()
+                self.setScreenElementSelected(self.CurrentScreenElement)
+
+            case 'PlaylistTracks':
+                tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
+                self.ScreenNavigation['PlaylistTracks'] = tracks
+
+                self.setCurrentScreenElement('PlaylistTracks', tracks[0])
+                self.PlaylistTracksScreenShow()
+                self.setScreenElementSelected(self.CurrentScreenElement)
+
+            case _:
+                print("Back target not implemented:", previous_screen)
+
+        print("navigationPath after back:", self.navigationPath)
         
     def selectNowPlayingElement(self):
         """
@@ -642,59 +718,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                         self.ShuffleOff()
 
             case 'Back':
-                print("Back from screen:", self.CurrentScreen)
-                print("navigationPath before back:", self.navigationPath)
-
-                if len(self.navigationPath) == 0:
-                    print("No previous screen. Staying on current screen.")
-                    return
-
-                previous_screen = self.navigationPath.pop()
-                self.setScreenElementUnselected(self.CurrentScreenElement)
-                self.NowPlayingScreenHide()
-
-                match previous_screen:
-                    case 'Main':
-                        self.setCurrentScreen('Main')
-                        self.MainScreenShow()
-                        self.setMainScreenElementDefault()
-
-                    case 'Music':
-                        self.setCurrentScreenElement('Music', 'AvailablePlaylists')
-                        self.MusicScreenShow()
-                        self.setScreenElementSelected(self.CurrentScreenElement)
-
-                    case 'AvailablePlaylists':
-                        playlists = list(self.getAvailablePlaylists()['Playlist'])
-                        self.ScreenNavigation['AvailablePlaylists'] = playlists
-
-                        if self.CurrentPlaylistInfo.shape[0] == 0:
-                            playlist_index = 0
-                        else:
-                            playlist_index = self.getScreenElementIndex(
-                                'AvailablePlaylists',
-                                self.CurrentPlaylistInfo.iloc[0]['Playlist']
-                            )
-
-                        self.setCurrentScreenElement(
-                            'AvailablePlaylists',
-                            playlists[playlist_index]
-                        )
-                        self.AvailablePlaylistsScreenShow()
-                        self.setScreenElementSelected(self.CurrentScreenElement)
-
-                    case 'PlaylistTracks':
-                        tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
-                        self.ScreenNavigation['PlaylistTracks'] = tracks
-
-                        self.setCurrentScreenElement('PlaylistTracks', tracks[0])
-                        self.PlaylistTracksScreenShow()
-                        self.setScreenElementSelected(self.CurrentScreenElement)
-
-                    case _:
-                        print("Back target not implemented:", previous_screen)
-
-                print("navigationPath after back:", self.navigationPath)
+                self.goBack()
 
             case 'Home':
                 self.goHome()
