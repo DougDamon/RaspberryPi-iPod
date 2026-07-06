@@ -579,7 +579,34 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.PlaylistTracksScreenHide()
         self.NowPlayingScreenShow()
         self.setScreenElementSelected(self.CurrentScreenElement)
-    
+        
+    def goHome(self):
+        """
+        Return to the Main screen from the current screen.
+
+        This centralizes Home behavior so UI buttons and future hardware
+        shortcuts can use the same path.
+        """
+
+        self.setScreenElementUnselected(self.CurrentScreenElement)
+
+        match self.CurrentScreen:
+            case 'NowPlaying':
+                self.NowPlayingScreenHide()
+
+            case 'Music':
+                self.MusicScreenHide()
+
+            case 'AvailablePlaylists':
+                self.AvailablePlaylistsScreenHide()
+
+            case 'PlaylistTracks':
+                self.PlaylistTracksScreenHide()
+
+        self.setCurrentScreen('Main')
+        self.MainScreenShow()
+        self.setMainScreenElementDefault()
+        
     def selectNowPlayingElement(self):
         """
         Handle selection behavior for the Now Playing screen.
@@ -670,13 +697,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 print("navigationPath after back:", self.navigationPath)
 
             case 'Home':
-                self.setScreenElementUnselected(self.CurrentScreenElement)
-
-                self.NowPlayingScreenHide()
-
-                self.setCurrentScreen('Main')
-                self.MainScreenShow()
-                self.setMainScreenElementDefault()
+                self.goHome()
 
             case _:
                 pass
@@ -693,9 +714,6 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 self.selectAvailablePlaylist()
             case 'PlaylistTracks':
                 self.selectPlaylistTrack()
-#            case 'NowPlaying':
-##                Play/Pause, Forward, Rewind, Back, Home
-#                pass
                         
     def EncoderNavigation(self, EncoderActivity):
 #        print(f'EncoderActivity: {EncoderActivity}')
