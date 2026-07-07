@@ -429,6 +429,16 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.NowPlayingScreenShow()
         self.setScreenElementSelected(self.CurrentScreenElement)
         
+    def hideCurrentScreen(self):
+        """
+        Hide whichever screen is currently active.
+    
+        This keeps screen-hiding behavior in one place and reuses the existing
+        generic hide(ScreenName) method from piPodGUI.
+        """
+    
+        self.hide(self.CurrentScreen)
+                
     def goHome(self):
         """
         Return to the Main screen from the current screen.
@@ -438,19 +448,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         """
 
         self.setScreenElementUnselected(self.CurrentScreenElement)
-
-        match self.CurrentScreen:
-            case 'NowPlaying':
-                self.NowPlayingScreenHide()
-
-            case 'Music':
-                self.MusicScreenHide()
-
-            case 'AvailablePlaylists':
-                self.AvailablePlaylistsScreenHide()
-
-            case 'PlaylistTracks':
-                self.PlaylistTracksScreenHide()
+        self.hideCurrentScreen()
 
         self.setCurrentScreen('Main')
         self.MainScreenShow()
@@ -474,20 +472,8 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         previous_screen = self.navigationPath.pop()
 
         self.setScreenElementUnselected(self.CurrentScreenElement)
-
-        match self.CurrentScreen:
-            case 'NowPlaying':
-                self.NowPlayingScreenHide()
-
-            case 'Music':
-                self.MusicScreenHide()
-
-            case 'AvailablePlaylists':
-                self.AvailablePlaylistsScreenHide()
-
-            case 'PlaylistTracks':
-                self.PlaylistTracksScreenHide()
-
+        self.hideCurrentScreen()
+        
         match previous_screen:
             case 'Main':
                 self.setCurrentScreen('Main')
