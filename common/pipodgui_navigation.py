@@ -438,7 +438,16 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         """
     
         self.hide(self.CurrentScreen)
-                
+        
+    def showMusicFromBack(self):
+        """
+        Restore the Music screen after Back navigation.
+        """
+    
+        self.setCurrentScreenElement('Music', 'AvailablePlaylists')
+        self.MusicScreenShow()
+        self.setScreenElementSelected(self.CurrentScreenElement)
+        
     def goHome(self):
         """
         Return to the Main screen from the current screen.
@@ -481,9 +490,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 self.setMainScreenElementDefault()
 
             case 'Music':
-                self.setCurrentScreenElement('Music', 'AvailablePlaylists')
-                self.MusicScreenShow()
-                self.setScreenElementSelected(self.CurrentScreenElement)
+                self.showMusicFromBack()
 
             case 'AvailablePlaylists':
                 playlists = list(self.getAvailablePlaylists()['Playlist'])
