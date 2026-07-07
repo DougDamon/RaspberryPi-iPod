@@ -1,7 +1,5 @@
 from common.pipodgui import piPodGUI
 from common.input.rotary import RotaryEncoder
-from common.ui.navigation_map import get_action_for_screen_element
-from common.ui.actions import UIAction
    
 class piPodGUINavigation(RotaryEncoder, piPodGUI):
     def __init__(self):
@@ -303,155 +301,6 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             print(f'indexCurrentElement: {IndexCurrentElement}')
         else:
             pass
-    
-    def getCurrentUIAction(self):
-        """
-        Return the UIAction for the current screen/current element selection.
-    
-        This is a bridge between the existing string-based navigation code and
-        the future controller/action-based UI flow.
-        """
-        return get_action_for_screen_element(
-            self.CurrentScreen,
-            self.CurrentScreenElement
-        )
-    
-    def handleUIAction(self, action):
-        """
-        Handle a UIAction selected by the current UI.
-
-        Returns True when the action was handled here.
-        Returns False when the old Select() logic should still handle it.
-        """
-        print("Handle UI action:", action)
-        
-        match action:
-            case UIAction.PLAY_PAUSE:
-                if self.AudioPlaying == True:
-                    self.Pause()
-                else:
-                    self.Play()
-                return True
-            
-            case UIAction.NEXT_TRACK:
-                self.NextTrackNowPlaying()
-                return True
-            
-            case UIAction.PREVIOUS_TRACK:
-                self.PreviousTrackNowPlaying()
-                return True    
-            
-            case UIAction.TOGGLE_SHUFFLE:
-                match self.Shuffle:
-                    case 'Off':
-                        self.ShuffleOn()
-                    case 'On':
-                        self.ShuffleOff()
-                return True    
-                
-            case UIAction.CYCLE_REPEAT:
-                match self.Repeat:
-                    case 'Off':
-                        self.RepeatOn()
-                    case 'On':
-                        self.RepeatOne()
-                    case 'One':
-                        self.RepeatOff()
-                return True    
-            
-            case UIAction.HOME:
-                # Clear selection on the screen we are leaving.
-                self.setScreenElementUnselected(self.CurrentScreenElement)
-
-                match self.CurrentScreen:
-                    case 'NowPlaying':
-                        self.NowPlayingScreenHide()
-                    case 'Music':
-                        self.MusicScreenHide()
-                    case 'AvailablePlaylists':
-                        self.AvailablePlaylistsScreenHide()
-                    case 'PlaylistTracks':
-                        self.PlaylistTracksScreenHide()
-
-                # Let the Main screen choose its proper default element.
-                self.setCurrentScreen('Main')
-
-                if self.CurrentPlaylistId == None or self.CurrentTrackId == None:
-                    self.CurrentScreenElement = 'Music'
-                else:
-                    self.CurrentScreenElement = 'NowPlaying'
-
-                self.MainScreenShow()
-                self.setMainScreenElementDefault()
-                return True
-                    
-            case UIAction.BACK:
-                print("Back from screen:", self.CurrentScreen)
-                print("navigationPath before back:", self.navigationPath)
-
-                if len(self.navigationPath) == 0:
-                    print("No previous screen. Staying on current screen.")
-                    return True
-
-                previous_screen = self.navigationPath.pop()
-                self.setScreenElementUnselected(self.CurrentScreenElement)
-
-                match self.CurrentScreen:
-                    case 'NowPlaying':
-                        self.NowPlayingScreenHide()
-                    case 'Music':
-                        self.MusicScreenHide()
-                    case 'AvailablePlaylists':
-                        self.AvailablePlaylistsScreenHide()
-                    case 'PlaylistTracks':
-                        self.PlaylistTracksScreenHide()
-
-                match previous_screen:
-                    case 'Main':
-                        self.setCurrentScreen('Main')
-                        self.MainScreenShow()
-                        self.setMainScreenElementDefault()
-
-                    case 'Music':
-                        self.setCurrentScreenElement('Music', 'AvailablePlaylists')
-                        self.MusicScreenShow()
-                        self.setScreenElementSelected(self.CurrentScreenElement)
-
-                    case 'AvailablePlaylists':
-                        playlists = list(self.getAvailablePlaylists()['Playlist'])
-                        self.ScreenNavigation['AvailablePlaylists'] = playlists
-
-                        if self.CurrentPlaylistInfo.shape[0] == 0:
-                            playlist_index = 0
-                        else:
-                            playlist_index = self.getScreenElementIndex(
-                                'AvailablePlaylists',
-                                self.CurrentPlaylistInfo.iloc[0]['Playlist']
-                            )
-
-                        self.setCurrentScreenElement(
-                            'AvailablePlaylists',
-                            playlists[playlist_index]
-                        )
-                        self.AvailablePlaylistsScreenShow()
-                        self.setScreenElementSelected(self.CurrentScreenElement)
-
-                    case 'PlaylistTracks':
-                        tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
-                        self.ScreenNavigation['PlaylistTracks'] = tracks
-
-                        self.setCurrentScreenElement('PlaylistTracks', tracks[0])
-                        self.PlaylistTracksScreenShow()
-                        self.setScreenElementSelected(self.CurrentScreenElement)
-
-                    case _:
-                        print("Back target not implemented:", previous_screen)
-
-                print("navigationPath after back:", self.navigationPath)
-                return True
-                
-            case _:
-                return False
     
     def selectMainScreenElement(self):
         """
@@ -781,10 +630,16 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                         self.goBack()
                     case 'Press':
                         pass
-                
+            
+            # Right means "forward/proceed" in menus.
+            # On NowPlaying, treat Right as a media-control shortcut for next track.
+            # This can be revisited later if the control model changes.
             case 'Right':
                 match controlAction:
                     case 'Release':
-                        self.Select()
+                        if self.CurrentScreen == 'NowPlaying':
+                            self.NextTrackNowPlaying()
+                        else:
+                            self.Select()
                     case 'Press':
                         pass
