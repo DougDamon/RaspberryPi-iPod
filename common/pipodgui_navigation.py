@@ -776,7 +776,15 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                         pass
                 
             case 'Left':
-                pass
+                match controlAction:
+                    case 'Release':
+                        self.goBack()
+                    case 'Press':
+                        pass
                 
             case 'Right':
-                pass
+                match controlAction:
+                    case 'Release':
+                        self.Select()
+                    case 'Press':
+                        pass
