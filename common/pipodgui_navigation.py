@@ -121,7 +121,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
  
     def setPlaylistNavigation(self):
         playlists = list(self.getDownloadedPlaylists(self.CurrentPlaylistId)['Title'])
-        print(f'playlists: {playlists}')
+#        print(f'playlists: {playlists}')
         self.ScreenNavigation['PlaylistTracks'] = playlists
         self.CurrentPlaylistIndex = self.getScreenElementIndex('AvailablePlaylists',  self.CurrentPlaylistInfo.iloc[0]['Playlist'])
         
@@ -143,7 +143,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             print('error setting currentScreenElement')
             
     def getScreenElementIndex(self,  Screen,  ScreenElement):
-        print(f"self.ScreenNavigation: {self.ScreenNavigation}")
+#        print(f"self.ScreenNavigation: {self.ScreenNavigation}")
         try:
             indexCurrentElement = self.ScreenNavigation[Screen].index(ScreenElement)
             return indexCurrentElement
@@ -344,7 +344,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 
         match self.CurrentScreenElement:
             case 'AvailablePlaylists':
-                print(f"self.CurrentPlaylistInfo: {self.CurrentPlaylistInfo},  {type(self.CurrentPlaylistInfo)}")
+#                print(f"self.CurrentPlaylistInfo: {self.CurrentPlaylistInfo},  {type(self.CurrentPlaylistInfo)}")
 
                 if self.CurrentPlaylistInfo.shape[0] == 0:
                     playlistIndex = 0
@@ -396,7 +396,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.setCurrentPlaylist(selectedPlaylistId)
 
         tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
-        print(f'tracks: {tracks}')
+#        print(f'tracks: {tracks}')
 
         self.ScreenNavigation['PlaylistTracks'] = tracks
         self.setCurrentScreenElement('PlaylistTracks', tracks[trackIndex])
@@ -490,13 +490,23 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
     def showPlaylistTracksFromBack(self):
         """
         Restore the Playlist Tracks screen after Back navigation.
+    
+        Do not rebuild the UISelectionList here. The PlaylistTracks screen was
+        already populated when the playlist was opened, and rebuilding the list is
+        noticeably slow on the Pi.
         """
     
-        tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
-        self.ScreenNavigation['PlaylistTracks'] = tracks
+        tracks = self.ScreenNavigation.get('PlaylistTracks', [])
+    
+        if len(tracks) == 0:
+            tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
+            self.ScreenNavigation['PlaylistTracks'] = tracks
+            self.PlaylistTracksScreenShow()
+        else:
+            self.windowPlaylistTracks.show()
+            self.markDirty()
     
         self.setCurrentScreenElement('PlaylistTracks', tracks[0])
-        self.PlaylistTracksScreenShow()
         self.setScreenElementSelected(self.CurrentScreenElement)
     
     def goBack(self):
@@ -508,7 +518,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         """
 
         print("Back from screen:", self.CurrentScreen)
-        print("navigationPath before back:", self.navigationPath)
+#        print("navigationPath before back:", self.navigationPath)
 
         if len(self.navigationPath) == 0:
             print("No previous screen. Staying on current screen.")
@@ -537,7 +547,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             case _:
                 print("Back target not implemented:", previous_screen)
 
-        print("navigationPath after back:", self.navigationPath)
+#        print("navigationPath after back:", self.navigationPath)
         
     def selectNowPlayingElement(self):
         """

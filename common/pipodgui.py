@@ -1,5 +1,5 @@
 import os
-# import time
+#import time
 import datetime
 
 import pygame
@@ -627,19 +627,22 @@ class piPodGUI(AudioPlayback, MusicDB):
         
     def updateCurrentPosition(self):
         new_position = self.getAdjustedCurrentPosition()
-
+    
         if new_position == self.CurrentPosition:
             return
-
+    
         self.CurrentPosition = new_position
         self.CurrentPositionPercent = (self.CurrentPosition / self.CurrentDurationSeconds) * 100
         self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition)
-
-        self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
-        self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
+    
         self.updateCurrentTrack(self.CurrentTrackId, self.CurrentPosition)
-
-        self.markDirty()
+    
+        if self.CurrentScreen == 'NowPlaying':
+            self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
+            self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
+            self.markDirty()
+    
+            self.markDirty()
 
     def resetCurrentPosition(self):
         self.CurrentPosition = 0
@@ -735,11 +738,20 @@ class piPodGUI(AudioPlayback, MusicDB):
          self.markDirty()
 
     def AvailablePlaylistsScreenShow(self):
+#        start_time = time.perf_counter()
+    
         dfAvailablePlaylists = self.getDownloadedPlaylists()
+#        print(f'AvailablePlaylistsScreenShow getDownloadedPlaylists: {time.perf_counter() - start_time:.4f}s')
+    
+#        list_start_time = time.perf_counter()
         self.sPlaylistSelectionList.set_item_list(list(dfAvailablePlaylists['Playlist']))
         self.setUISelectionListButtonTheme(self.sPlaylistSelectionList,  '@navigation_buttons')
+#        print(f'AvailablePlaylistsScreenShow list rebuild: {time.perf_counter() - list_start_time:.4f}s')
+    
+#        show_start_time = time.perf_counter()
         self.windowAvailablePlaylists.show()
         self.markDirty()
+#        print(f'AvailablePlaylistsScreenShow show/dirty: {time.perf_counter() - show_start_time:.4f}s')
 
     def PlaylistTracksScreen(self): 
         self.sPlaylistTracks= UISelectionList(relative_rect=pygame.Rect((12, 0), (300, 220)),
@@ -761,12 +773,20 @@ class piPodGUI(AudioPlayback, MusicDB):
 
             
     def PlaylistTracksScreenShow(self):
+#        start_time = time.perf_counter()
+    
         dfPlaylistTracks = self.getCurrentPlaylist()
-        print(f'list(dfPlaylistTracks["Title"]): {list(dfPlaylistTracks["Title"])}')
+#        print(f'PlaylistTracksScreenShow getCurrentPlaylist: {time.perf_counter() - start_time:.4f}s')
+    
+#        list_start_time = time.perf_counter()
         self.sPlaylistTracks.set_item_list(list(dfPlaylistTracks['Title']))
         self.setUISelectionListButtonTheme(self.sPlaylistTracks,  '@navigation_buttons')
+#        print(f'PlaylistTracksScreenShow list rebuild: {time.perf_counter() - list_start_time:.4f}s')
+    
+#        show_start_time = time.perf_counter()
         self.windowPlaylistTracks.show()
         self.markDirty()
+#        print(f'PlaylistTracksScreenShow show/dirty: {time.perf_counter() - show_start_time:.4f}s')
 
     def getAdjustedCurrentPosition(self):
         currentPosition = round(self.getCurrentPosition())
