@@ -447,7 +447,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.setCurrentScreenElement('Music', 'AvailablePlaylists')
         self.MusicScreenShow()
         self.setScreenElementSelected(self.CurrentScreenElement)
-        
+
     def goHome(self):
         """
         Return to the Main screen from the current screen.
@@ -462,6 +462,30 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.setCurrentScreen('Main')
         self.MainScreenShow()
         self.setMainScreenElementDefault()
+        
+    def showAvailablePlaylistsFromBack(self):
+        """
+        Restore the Available Playlists screen after Back navigation.
+        """
+    
+        playlists = list(self.getAvailablePlaylists()['Playlist'])
+        self.ScreenNavigation['AvailablePlaylists'] = playlists
+    
+        if self.CurrentPlaylistInfo.shape[0] == 0:
+            playlist_index = 0
+        else:
+            playlist_index = self.getScreenElementIndex(
+                'AvailablePlaylists',
+                self.CurrentPlaylistInfo.iloc[0]['Playlist']
+            )
+    
+        self.setCurrentScreenElement(
+            'AvailablePlaylists',
+            playlists[playlist_index]
+        )
+    
+        self.AvailablePlaylistsScreenShow()
+        self.setScreenElementSelected(self.CurrentScreenElement)
 
     def goBack(self):
         """
@@ -493,24 +517,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 self.showMusicFromBack()
 
             case 'AvailablePlaylists':
-                playlists = list(self.getAvailablePlaylists()['Playlist'])
-                self.ScreenNavigation['AvailablePlaylists'] = playlists
-
-                if self.CurrentPlaylistInfo.shape[0] == 0:
-                    playlist_index = 0
-                else:
-                    playlist_index = self.getScreenElementIndex(
-                        'AvailablePlaylists',
-                        self.CurrentPlaylistInfo.iloc[0]['Playlist']
-                    )
-
-                self.setCurrentScreenElement(
-                    'AvailablePlaylists',
-                    playlists[playlist_index]
-                )
-
-                self.AvailablePlaylistsScreenShow()
-                self.setScreenElementSelected(self.CurrentScreenElement)
+                self.showAvailablePlaylistsFromBack()
 
             case 'PlaylistTracks':
                 tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
