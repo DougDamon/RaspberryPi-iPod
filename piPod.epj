@@ -2,7 +2,7 @@
   "header": {
     "comment": "eric project file for project piPod",
     "copyright": "Copyright (C) 2026 Doug Damon, doug.damon@gmail.com",
-    "saved": "2026-07-04, 15:52:52"
+    "saved": "2026-07-07, 14:40:36"
   },
   "project": {
     "AUTHOR": "Doug Damon",
@@ -88,6 +88,8 @@
       "common/pipodgui.py",
       "common/pipodgui_navigation.py",
       "common/ui/__init__.py",
+      "common/ui/actions.py",
+      "common/ui/navigation_map.py",
       "common/youtubedownloader.py",
       "piPod.py",
       "tests/audioPlaybackTest.py",

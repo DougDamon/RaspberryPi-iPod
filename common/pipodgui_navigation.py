@@ -142,15 +142,11 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         else:
             print('error setting currentScreenElement')
             
-    def getScreenElementIndex(self,  Screen,  ScreenElement):
-#        print(f"self.ScreenNavigation: {self.ScreenNavigation}")
+    def getScreenElementIndex(self, Screen, ScreenElement):
         try:
-            indexCurrentElement = self.ScreenNavigation[Screen].index(ScreenElement)
-            return indexCurrentElement
+            return self.ScreenNavigation[Screen].index(ScreenElement)
         except ValueError:
             return 0
-        else:
-            print("Your age is:")
         
         
     def getCurrentScreenElementIndex(self):
@@ -220,7 +216,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             case 'Settings':
                 pass
         self.CurrentScreenElement = Element
-        print(f'NewScreenElement: {self.CurrentScreenElement}')
+#        print(f'NewScreenElement: {self.CurrentScreenElement}')
         self.markDirty()
 
     def setScreenElementUnselected(self, Element):
@@ -286,7 +282,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             self.setScreenElementUnselected(self.CurrentScreenElement)
             self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
             self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])   
-            print(f'indexCurrentElement: {IndexCurrentElement}')
+#            print(f'indexCurrentElement: {IndexCurrentElement}')
         else:
             pass
 
@@ -298,7 +294,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             self.setScreenElementUnselected(self.CurrentScreenElement)
             self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
             self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
-            print(f'indexCurrentElement: {IndexCurrentElement}')
+#            print(f'indexCurrentElement: {IndexCurrentElement}')
         else:
             pass
     
@@ -401,7 +397,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.ScreenNavigation['PlaylistTracks'] = tracks
         self.setCurrentScreenElement('PlaylistTracks', tracks[trackIndex])
 
-        print(f'self.CurrentScreenElement: {self.CurrentScreenElement}')
+#        print(f'self.CurrentScreenElement: {self.CurrentScreenElement}')
 
         self.AvailablePlaylistsScreenHide()
         self.PlaylistTracksScreenShow()
@@ -517,7 +513,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         future rotary Left button can use the same path.
         """
 
-        print("Back from screen:", self.CurrentScreen)
+#        print("Back from screen:", self.CurrentScreen)
 #        print("navigationPath before back:", self.navigationPath)
 
         if len(self.navigationPath) == 0:

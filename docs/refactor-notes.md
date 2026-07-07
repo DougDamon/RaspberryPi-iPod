@@ -58,3 +58,11 @@ Initial actions are defined in:
 
 - Shuffle currently uses a single icon as a toggle because there is no matching unshuffle icon yet.
 - This is acceptable for now; revisit icon/theme cleanup later.
+
+## Rotary Button Policy
+
+- Wheel Up/Down moves selection.
+- Select activates the current screen element.
+- Left should go back.
+- Right should move forward or activate the current item.
+- Exact Right behavior may vary by screen.
