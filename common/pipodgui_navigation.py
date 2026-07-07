@@ -487,6 +487,18 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.AvailablePlaylistsScreenShow()
         self.setScreenElementSelected(self.CurrentScreenElement)
 
+    def showPlaylistTracksFromBack(self):
+        """
+        Restore the Playlist Tracks screen after Back navigation.
+        """
+    
+        tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
+        self.ScreenNavigation['PlaylistTracks'] = tracks
+    
+        self.setCurrentScreenElement('PlaylistTracks', tracks[0])
+        self.PlaylistTracksScreenShow()
+        self.setScreenElementSelected(self.CurrentScreenElement)
+    
     def goBack(self):
         """
         Return to the previous screen using navigationPath.
@@ -520,12 +532,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 self.showAvailablePlaylistsFromBack()
 
             case 'PlaylistTracks':
-                tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
-                self.ScreenNavigation['PlaylistTracks'] = tracks
-
-                self.setCurrentScreenElement('PlaylistTracks', tracks[0])
-                self.PlaylistTracksScreenShow()
-                self.setScreenElementSelected(self.CurrentScreenElement)
+                self.showPlaylistTracksFromBack()
 
             case _:
                 print("Back target not implemented:", previous_screen)
