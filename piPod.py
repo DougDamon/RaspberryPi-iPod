@@ -114,5 +114,9 @@ while is_running:
         piPodGUI.drawScreen()
         piPodGUI.updateDisplay()
         piPodGUI.clearDirty()
+        piPodGUI.clearPositionDirty()
+    
+    elif piPodGUI.isPositionDirty():
+        piPodGUI.drawCurrentPosition()
         
 piPodGUI.quit()

@@ -39,9 +39,14 @@ class piPodGUI(AudioPlayback, MusicDB):
         themeFile =os.path.join(self.configuration.ThemeDirectory,  self.configuration.ThemeFile)
         
         # pygame_gui setup
-        self.window_surface = pygame.display.set_mode((325,245))
-        self.background = pygame.Surface((325,245))
+        self.window_surface = pygame.display.set_mode((320, 240))
+        self.background = pygame.Surface((320, 240))
         self.background.fill(pygame.Color('aquamarine'))
+        self.position_font = pygame.font.SysFont(None, 20)
+
+        self.current_position_rect = pygame.Rect((2, 178), (56, 20))
+        self.current_progress_rect = pygame.Rect((58, 180), (210, 15))
+        
         self.manager = UIManager((320,240),  themeFile)
         
         self.needs_redraw = True
@@ -149,16 +154,53 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.manager.draw_ui(self.window_surface)
     
     def drawCurrentPosition(self):
-        self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
-        self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
-
-        self.manager.draw_ui(self.window_surface)
-
-#        pygame.display.update([
-#            self.lblCurrentPosition.rect,
-#            self.pbarCurrentPosition.rect
-#        ])
-        pygame.display.update()
+        print("POSITION drawCurrentPosition")
+    
+        position_area_rect = pygame.Rect((2, 178), (266, 20))
+        current_position_rect = pygame.Rect((2, 178), (56, 20))
+        progress_rect = pygame.Rect((58, 180), (210, 15))
+    
+        # Clear just the timer/progress area.
+        pygame.draw.rect(
+            self.window_surface,
+            pygame.Color('aquamarine'),
+            position_area_rect
+        )
+    
+        # Draw current time.
+        text_surface = self.position_font.render(
+            self.CurrentPositionFormat,
+            True,
+            pygame.Color('black')
+        )
+        self.window_surface.blit(text_surface, current_position_rect)
+    
+        # Draw progress bar.
+        pygame.draw.rect(
+            self.window_surface,
+            pygame.Color('black'),
+            progress_rect,
+            1
+        )
+    
+        fill_width = int(progress_rect.width * (self.CurrentPositionPercent / 100))
+    
+        if fill_width > 0:
+            fill_rect = pygame.Rect(
+                progress_rect.x,
+                progress_rect.y,
+                fill_width,
+                progress_rect.height
+            )
+    
+            pygame.draw.rect(
+                self.window_surface,
+                pygame.Color('black'),
+                fill_rect
+            )
+    
+        pygame.display.update(position_area_rect)
+    
         self.clearPositionDirty()
     
     def formatTrackTime(self,  Seconds):
@@ -223,7 +265,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         if self.CurrentPlaylistId == None or self.CurrentTrackId == None:
             self.bNowPlaying.disable()
         self.windowMainScreen.show() 
-        pygame.display.flip()
+        self.updateDisplay()
         self.markDirty()
         
 #    def NavigateMainScreen(self):
@@ -366,7 +408,7 @@ class piPodGUI(AudioPlayback, MusicDB):
 #        self.bRepeatOff.show()
 #        self.bRepeatOff.select()
 #        self.bRepeatOff.unselect()
-        pygame.display.flip()
+        self.updateDisplay()
        
     def NowPlayingScreenHide(self):
         self.windowNowPlaying.hide()
@@ -500,7 +542,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.lblTrackDuration.set_text(self.CurrentDurationFormat)
         self.ShowRepeatButtonOff()
         self.ShowShuffleButtonOff()
-        pygame.display.flip()
+        self.updateDisplay()
         if self.AutoPlayOnStart:
             self.Play()
         else:
@@ -641,11 +683,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.updateCurrentTrack(self.CurrentTrackId, self.CurrentPosition)
     
         if self.CurrentScreen == 'NowPlaying':
-            self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
-            self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
-            self.markDirty()
-    
-            self.markDirty()
+            self.markPositionDirty()
 
     def resetCurrentPosition(self):
         self.CurrentPosition = 0
