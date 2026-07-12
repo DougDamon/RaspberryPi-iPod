@@ -88,3 +88,65 @@ class MPDAudioPlayback:
         self.connect()
         status = self.client.status()
         return float(status.get("duration", 0))
+    
+    def clear_playlist(self):
+        self.connect()
+        self.client.clear()
+
+    def add_track(self, path):
+        self.connect()
+        self.client.add(path)
+    
+    def add_tracks(self, paths):
+        self.connect()
+        self.client.clear()
+
+        for path in paths:
+            self.client.add(path)
+
+    def play_position(self, position=0):
+        self.connect()
+        self.client.play(position)
+    
+    def get_current_song(self):
+        return self.current_song()
+    
+    def get_current_file(self):
+        song = self.current_song()
+        return song.get("file")
+    
+    def repeat_off(self):
+        self.connect()
+        self.client.repeat(0)
+        self.client.single(0)
+    
+    def repeat_playlist(self):
+        self.connect()
+        self.client.repeat(1)
+        self.client.single(0)
+    
+    def repeat_one(self):
+        self.connect()
+        self.client.repeat(1)
+        self.client.single(1)
+    
+    def shuffle_off(self):
+        self.connect()
+        self.client.random(0)
+    
+    def shuffle_on(self):
+        self.connect()
+        self.client.random(1)
+        
+    def get_playlist_position(self):
+        status = self.status()
+        song = status.get("song")
+    
+        if song is None:
+            return None
+    
+        return int(song)
+    
+    def get_playlist_length(self):
+        status = self.status()
+        return int(status.get("playlistlength", 0))

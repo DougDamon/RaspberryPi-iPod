@@ -529,7 +529,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
         
         
-        self.setTrack(self.CurrentTrackId,  self.StartPlaybackPosition)
+        self.setPlaylist(self.CurrentPlaylistId, self.CurrentTrackId)
         
         self.windowNowPlaying.show()
         self.imgAlbumArt.set_image(self.CurrentAlbumArt)
