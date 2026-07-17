@@ -591,8 +591,8 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.CurrentDurationSeconds = round(float(str(currentTrackID3['#length'])))
         self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
         self.CurrentPositionPercent = (self.CurrentPosition/self.CurrentDurationSeconds) * 100
-        self.setCurrentTrack(self.CurrentTrackId,  self.CurrentDurationSeconds,  0, self.StartPlaybackPosition)
-        self.setTrack(self.CurrentTrackId,  self.StartPlaybackPosition)
+        self.setCurrentTrack(self.CurrentTrackId, self.CurrentDurationSeconds, 0, self.StartPlaybackPosition)
+        self.nextTrack()
         
         if self.CurrentScreen == 'NowPlaying':
             self.windowNowPlaying.show()
@@ -652,7 +652,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.CurrentDurationSeconds = round(float(str(currentTrackID3['#length'])))
         self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
         self.CurrentPositionPercent = (self.CurrentPosition/self.CurrentDurationSeconds) * 100
-        self.setTrack(self.CurrentTrackId,  self.StartPlaybackPosition)
+        self.previousTrack()
         
         if self.CurrentScreen == 'NowPlaying':
             self.windowNowPlaying.show()
