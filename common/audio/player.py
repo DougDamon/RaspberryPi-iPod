@@ -77,6 +77,70 @@ class AudioPlayback():
     
         return full_path
         
+    def getTrackIdFromMPDPath(self, mpd_path):
+        if mpd_path is None or mpd_path == '':
+            return None
+    
+        # MPD gives us a path relative to musicRootDirectory.
+        full_path = os.path.join(self.musicRootDirectory, mpd_path)
+    
+        file_location = os.path.dirname(full_path)
+        file_name = os.path.basename(full_path)
+    
+        # Normalize trailing slash differences because your DB may store
+        # FileLocation with or without a trailing slash.
+        file_location_no_slash = file_location.rstrip('/')
+        file_location_with_slash = file_location_no_slash + '/'
+    
+        df_matches = self.musicDB.getTrackTableFromDB()
+    
+        df_matches = df_matches[
+            (
+                (df_matches['FileLocation'] == file_location_no_slash) |
+                (df_matches['FileLocation'] == file_location_with_slash)
+            ) &
+            (df_matches['FileName'] == file_name)
+        ]
+    
+        if df_matches.empty:
+            print("No database match for MPD path:", mpd_path)
+            print("Expected FileLocation:", file_location_no_slash)
+            print("Expected FileName:", file_name)
+            return None
+    
+        return df_matches['TrackId'].iloc[0]
+
+    def updateCurrentTrackFromMPD(self):
+        mpd_path = self.mpd.get_current_file()
+    
+        if mpd_path is None or mpd_path == '':
+            return None
+    
+        track_id = self.getTrackIdFromMPDPath(mpd_path)
+    
+        if track_id is None:
+            return None
+    
+        dfTrack = self.musicDB.getTrackFromDB(track_id)
+    
+        if dfTrack.empty:
+            return None
+    
+        duration = int(dfTrack['DurationSeconds'].iloc[0])
+        current_position = int(round(self.getCurrentPosition()))
+    
+        self.CurrentTrackId = track_id
+        self.CurrentDuration = duration
+    
+        self.musicDB.setCurrentTrack(
+            track_id,
+            duration,
+            0,
+            current_position
+        )
+    
+        return track_id
+    
     def getTrackID3Tags(self, TrackId):
         sTrackId = TrackId
         dfTrack = self.musicDB.getTrackFromDB(sTrackId)

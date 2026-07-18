@@ -503,7 +503,53 @@ class piPodGUI(AudioPlayback, MusicDB):
         dfTrack = self.getTrackFromDB(self.CurrentTrackId)
         CurrentDurationSeconds = dfTrack['DurationSeconds'][0].item()
         self.setCurrentTrack(self.CurrentTrackId, CurrentDurationSeconds)
-        
+
+    def refreshNowPlayingDisplay(self):
+        currentTrackID3 = self.getTrackID3Tags(self.CurrentTrackId)
+        currentPlaylist = self.getPlaylistInfoFromDB(self.CurrentPlaylistId)
+    
+        currentArtwork = currentTrackID3['artwork']
+        bytesCurrentImage = currentArtwork.first.data
+        pilCurrentImage = Image.open(BytesIO(bytesCurrentImage))
+        pilCurrentImage = pilCurrentImage.resize((150, 150), 0)
+    
+        self.CurrentAlbumArt = pygame.image.frombytes(
+            pilCurrentImage.tobytes('raw'),
+            (150, 150),
+            'RGB'
+        )
+    
+        self.CurrentTitle = str(currentTrackID3['title'])
+        self.CurrentArtist = str(currentTrackID3['artist'])
+        self.CurrentAlbum = str(currentTrackID3['album'])
+        self.CurrentGenre = str(currentTrackID3['genre'])
+        self.CurrentPlaylist = currentPlaylist.loc[0]['Playlist']
+    
+        self.CurrentDurationSeconds = int(round(float(str(currentTrackID3['#length']))))
+        self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
+    
+        self.CurrentPosition = int(round(self.getCurrentPosition()))
+        self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition)
+    
+        if self.CurrentDurationSeconds > 0:
+            self.CurrentPositionPercent = (
+                self.CurrentPosition / self.CurrentDurationSeconds
+            ) * 100
+        else:
+            self.CurrentPositionPercent = 0
+    
+        if self.CurrentScreen == 'NowPlaying':
+            self.imgAlbumArt.set_image(self.CurrentAlbumArt)
+            self.lblTrackTitle.set_text(self.CurrentTitle)
+            self.lblTrackArtist.set_text(self.CurrentArtist)
+            self.lblTrackAlbum.set_text(self.CurrentAlbum)
+            self.lblTrackGenre.set_text(self.CurrentGenre)
+            self.lblTrackPlaylist.set_text(self.CurrentPlaylist)
+            self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
+            self.lblTrackDuration.set_text(self.CurrentDurationFormat)
+            self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
+            self.markDirty() 
+ 
     def NowPlayingScreenShow(self):
         dfCurrentTrack = self.getCurrentTrack()
         self.CurrentTrackId = dfCurrentTrack['TrackId'][0]
@@ -559,6 +605,8 @@ class piPodGUI(AudioPlayback, MusicDB):
         else:
             #Normal play.  Select the next track in the Playlist
             self.setNextTrack()
+            self.updateCurrentTrackFromMPD()
+            self.refreshNowPlayingDisplay()
         
         if self.NextTrackId == None and self.Repeat != 'On':
             # The playlist has finished and repeat has not been set
@@ -616,58 +664,10 @@ class piPodGUI(AudioPlayback, MusicDB):
             self.rewindTrack()
             self.resetCurrentPosition()
             return
-            
-        self.setPreviousTrack()
-        print('PrevioiusPlaylistId:',  self.NextPlaylistId)
-        print('PreviousTrackId:',  self.NextTrackId)
-        if self.NextTrackId == None:
-            return
-            
-        if self.NextPlaylistId != self.CurrentPlaylistId:
-            self.setCurrentPlaylist(self.NextPlaylistId)
-            self.CurrentPlaylistId = self.NextPlaylistId
-        
-        self.setCurrentTrack(self.NextTrackId)
-        self.CurrentTrackid = self.NextTrackId
-        
-        dfCurrentTrack = self.getCurrentTrack()
-        self.CurrentTrackId = dfCurrentTrack['TrackId'][0]
-        self.StartPlaybackPosition = dfCurrentTrack['CurrentPosition'][0].item()
-        self.CurrentPosition = dfCurrentTrack['CurrentPosition'][0].item()
-        self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition)
-        currentTrackID3 = self.getTrackID3Tags(self.CurrentTrackId)
-        currentPlaylist = self.getPlaylistInfoFromDB(self.CurrentPlaylistId)
-        currentArtwork = currentTrackID3['artwork'] 
-        bytesCurrentImage = currentArtwork.first.data
-        pilCurrentImage = Image.open(BytesIO(bytesCurrentImage))
-        
-        pilCurrentImage = pilCurrentImage.resize((150, 150), 0)
-        self.CurrentAlbumArt =  pygame.image.frombytes(pilCurrentImage.tobytes('raw'), (150, 150), 'RGB')
-        self.CurrentTitle = str(currentTrackID3['title'])
-        self.CurrentArtist = str(currentTrackID3['artist'])
-        self.CurrentAlbum = str(currentTrackID3['album'])
-        self.CurrentGenre = str(currentTrackID3['genre'])
-        self.CurrentPlaylist = currentPlaylist.loc[0]['Playlist']
-       
-        self.CurrentDurationSeconds = round(float(str(currentTrackID3['#length'])))
-        self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
-        self.CurrentPositionPercent = (self.CurrentPosition/self.CurrentDurationSeconds) * 100
+    
         self.previousTrack()
-        
-        if self.CurrentScreen == 'NowPlaying':
-            self.windowNowPlaying.show()
-            self.imgAlbumArt.set_image(self.CurrentAlbumArt)
-            self.lblTrackTitle.set_text(self.CurrentTitle)
-            self.lblTrackArtist.set_text(self.CurrentArtist)
-            self.lblTrackAlbum.set_text(self.CurrentAlbum)
-            self.lblTrackGenre.set_text(self.CurrentGenre)
-            self.lblTrackPlaylist.set_text(self.CurrentPlaylist)
-            self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
-            self.lblTrackDuration.set_text(self.CurrentDurationFormat)
-            self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
-        
-            self.markDirty()
-        
+        self.updateCurrentTrackFromMPD()
+        self.refreshNowPlayingDisplay()
         self.Play()
         
     def updateCurrentPosition(self):
