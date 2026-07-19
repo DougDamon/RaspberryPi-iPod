@@ -2,7 +2,7 @@
   "header": {
     "comment": "eric project file for project piPod",
     "copyright": "Copyright (C) 2026 Doug Damon, doug.damon@gmail.com",
-    "saved": "2026-07-07, 14:40:36"
+    "saved": "2026-07-17, 12:56:10"
   },
   "project": {
     "AUTHOR": "Doug Damon",
@@ -77,6 +77,7 @@
       "archive/YT_Playlist_Downloader/main.py",
       "archive/youtubedownloader.py",
       "common/audio/__init__.py",
+      "common/audio/mpd_player.py",
       "common/audio/player.py",
       "common/config/__init__.py",
       "common/config/settings.py",
@@ -97,6 +98,8 @@
       "tests/classTest_old.py",
       "tests/guiTest.py",
       "tests/main.py",
+      "tests/mpd_backend_test.py",
+      "tests/mpd_queue_test.py",
       "tests/test.py",
       "themeTest.py"
     ],
