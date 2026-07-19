@@ -467,17 +467,17 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.markDirty()
     
     def RepeatOff(self):
-        self.Repeat = 'Off'
+        self.setRepeatOff()
         self.ShowRepeatButtonOff()
         self.bRepeatOff.select()
-        
+    
     def RepeatOn(self):
-        self.Repeat = 'On'
+        self.setRepeatPlaylist()
         self.ShowRepeatButtonOn()
         self.bRepeatOn.select()
         
     def RepeatOne(self):
-        self.Repeat = 'One'
+        self.setRepeatOne()
         self.ShowRepeatButtonOne()
         self.bRepeatOne.select()
         
@@ -598,14 +598,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.markDirty()
         
     def NextTrackNowPlaying(self):
-        if self.Repeat == 'One':
-            self.rewindTrack()
-            self.resetCurrentPosition()
-            self.Play()
-            return
-    
         self.nextTrack()
-        self.LastMPDFile = self.mpd.get_current_file()
         self.LastMPDFile = self.mpd.get_current_file()
         self.updateCurrentTrackFromMPD()
         self.refreshNowPlayingDisplay()

@@ -99,25 +99,15 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         return widgets.get(element_name)
 
     def getCurrentListItemWidget(self):
-        """
-        Return the currently selected pygame_gui list item widget.
-
-        AvailablePlaylists and PlaylistTracks are dynamic list screens. Their
-        selectable elements are not fixed buttons. They are list items looked up
-        by the current screen element index.
-        """
-
-        item_index = self.getCurrentScreenElementIndex()
-
-        match self.CurrentScreen:
-            case 'AvailablePlaylists':
-                return self.sPlaylistSelectionList.item_list_container.elements[item_index]
-
-            case 'PlaylistTracks':
-                return self.sPlaylistTracks.item_list_container.elements[item_index]
-
-            case _:
-                return None
+        if self.CurrentScreen == 'AvailablePlaylists':
+            item_index = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)
+            return self.sPlaylistSelectionList.item_list_container.elements[item_index]
+    
+        elif self.CurrentScreen == 'PlaylistTracks':
+            item_index = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)
+            return self.sPlaylistTracks.item_list_container.elements[item_index]
+    
+        return None
  
     def setPlaylistNavigation(self):
         playlists = list(self.getDownloadedPlaylists(self.CurrentPlaylistId)['Title'])
@@ -146,8 +136,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         try:
             return self.ScreenNavigation[Screen].index(ScreenElement)
         except ValueError:
-            return 0
-        
+            return 0       
         
     def getCurrentScreenElementIndex(self):
         indexCurrentElement = self.getScreenElementIndex(self.CurrentScreen,  self.CurrentScreenElement)
@@ -155,22 +144,22 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 
 
         
-    def setScreenElementSelected(self,  Element):
+    def setScreenElementSelected(self, Element):
         match self.CurrentScreen:
             case 'Main':
                 widget = self.getMainScreenWidget(Element)
-
+    
                 if widget is not None:
                     widget.select()
-                    
+    
             case 'NowPlaying':
                 match Element:
                     case 'Play/Pause' | 'Forward' | 'Rewind' | 'Back' | 'Home':
                         widget = self.getNowPlayingWidget(Element)
-
+    
                         if widget is not None:
                             widget.select()
-                            
+    
                     case 'Repeat':
                         match self.Repeat:
                             case 'Off':
@@ -182,43 +171,46 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                             case 'One':
                                 self.ShowRepeatButtonOne()
                                 self.bRepeatOne.select()
-                                
+    
                     case 'Shuffle':
                         match self.Shuffle:
                             case 'Off':
-                                self.ShowShuffleButtonOn()
+                                self.ShowShuffleButtonOff()
                                 self.bShuffleOff.select()
                             case 'On':
-                                self.ShowShuffleButtonOff()
-                                self.bShuffleOn.select()    
+                                self.ShowShuffleButtonOn()
+                                self.bShuffleOn.select()
+    
                     case _:
                         pass
-                        
+    
             case 'Music':
                 widget = self.getMusicScreenWidget(Element)
-
+    
                 if widget is not None:
                     widget.select()
-                    
+    
             case 'AvailablePlaylists' | 'PlaylistTracks':
                 widget = self.getCurrentListItemWidget()
-
+            
                 if widget is not None:
                     widget.change_object_id('@navigation_buttons')
                     widget.select()
-                
+    
             case 'OTR':
                 pass
+    
             case 'Audiobooks':
                 pass
+    
             case 'Games':
                 pass
+    
             case 'Settings':
                 pass
+    
         self.CurrentScreenElement = Element
-#        print(f'NewScreenElement: {self.CurrentScreenElement}')
         self.markDirty()
-
     def setScreenElementUnselected(self, Element):
         match self.CurrentScreen:
             case 'Main':

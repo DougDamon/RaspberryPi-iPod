@@ -11,8 +11,16 @@ class MPDAudioPlayback:
 
     def connect(self):
         if self.connected:
-            return
-
+            try:
+                self.client.ping()
+                return
+            except ConnectionError:
+                self.connected = False
+                try:
+                    self.client.disconnect()
+                except Exception:
+                    pass
+    
         self.client.connect("localhost", 6600)
         self.connected = True
 
@@ -26,7 +34,13 @@ class MPDAudioPlayback:
 
     def status(self):
         self.connect()
-        return self.client.status()
+    
+        try:
+            return self.client.status()
+        except ConnectionError:
+            self.connected = False
+            self.connect()
+            return self.client.status()
 
     def current_song(self):
         self.connect()
@@ -73,8 +87,7 @@ class MPDAudioPlayback:
         return int(self.client.status().get("volume", 0))
 
     def get_state(self):
-        self.connect()
-        return self.client.status().get("state", "stop")
+        return self.status().get("state", "stop")
 
     def is_playing(self):
         return self.get_state() == "play"

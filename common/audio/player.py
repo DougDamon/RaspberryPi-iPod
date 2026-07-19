@@ -27,8 +27,14 @@ class AudioPlayback():
         self.Repeat = 'Off'
         self.Shuffle = 'Off'
         self.CurrentTrackFile = None
+        
     def getAudioPlayingStatus(self):
-        self.AudioPlaying = self.mpd.is_playing()
+        try:
+            self.AudioPlaying = self.mpd.is_playing()
+        except Exception as e:
+            print("Could not read MPD playing status:", e)
+            self.AudioPlaying = False
+    
         return self.AudioPlaying
     
     def setAudioPlayingStatus(self, Status):
