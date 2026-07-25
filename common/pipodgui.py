@@ -437,7 +437,14 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.pauseTrack()
         self.ShowPauseButton()
         self.bPause.select()
-        
+    
+    def VolumeUp(self):
+        self.mpd.volume_up()
+    
+    
+    def VolumeDown(self):
+        self.mpd.volume_down()
+    
     def ShowRepeatButtonOff(self):
         self.bRepeatOn.hide()
         self.bRepeatOne.hide()
