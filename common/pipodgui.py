@@ -617,7 +617,7 @@ class piPodGUI(AudioPlayback, MusicDB):
     
     def updateCurrentTrackIfChanged(self):
         current_mpd_file = self.mpd.get_current_file()
-    
+        
         if current_mpd_file is None or current_mpd_file == '':
             return
     
