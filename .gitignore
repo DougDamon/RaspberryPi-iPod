@@ -46,3 +46,4 @@ build/
 # OS files
 .DS_Store
 Thumbs.db
+hardware/kicad/pipod-carrier/.history/

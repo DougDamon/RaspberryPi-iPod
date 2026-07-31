@@ -50,20 +50,65 @@ Working prototype of a Raspberry Pi Zero 2 W portable media player using a 2.2" 
 
 ## Audio Output
 
-- Current audio output: PCM5102 I2S DAC
-- DAC/amp: PCM5102
-- Speaker/headphone support: TBD
-- Interface: I2S
-- GPIO pins used:
-  - BCK: GPIO 18 / physical pin 12
-  - DIN: GPIO 21 / physical pin 40
-  - LCK/LRCLK: GPIO 19 / physical pin 35
-  - GND: physical pin 6 or 14
-  - VCC: 5V physical pin 2 or 4
-- Notes: 
-	- SCK is not connected. Tutorial listed SCK as NC / internal via link.
-	- Tutorial (https://www.instructables.com/Raspberry-Pi-HQ-Audio-PCM5102-and-MPD/)
-	- The PCM5102 tutorial uses `LCK`, while Raspberry Pi / I2S references often call the same signal `LRCLK`, `LRCK`, or word clock.
+- Audio interface: I2S
+- DAC: PCM5102A I2S DAC breakout
+- Headphone amplifier: Electrodragon TPA6132 breakout
+- Headphone output: confirmed working
+- Speaker output: not currently implemented
+
+### Raspberry Pi to PCM5102A
+
+- BCK: GPIO18 / physical pin 12
+- DIN: GPIO21 / physical pin 40
+- LRCLK/LRCK/LCK: GPIO19 / physical pin 35
+- GND: physical pin 6 or 14
+- VCC: regulated 5 V from physical pin 2 or 4
+
+### PCM5102A Configuration
+
+- PCM5102A SCK pin is connected to ground.
+- The PCM5102A breakout provides single-ended analog outputs:
+  - Left
+  - Right
+  - Ground
+- The PCM5102A is configured using the `hifiberry-dac` device-tree overlay.
+
+### TPA6132 Headphone Amplifier
+
+- Supply: regulated 5 V
+- Gain: fixed at -6 dB
+- Breakout gain configuration:
+  - R2 populated
+  - R4 populated
+- Audio connections:
+  - PCM left output -> TPA L+
+  - PCM right output -> TPA R+
+  - PCM audio ground -> TPA L-
+  - PCM audio ground -> TPA R-
+  - System/audio ground -> TPA power GND
+- Headphone connections:
+  - TPA L -> headphone jack tip
+  - TPA R -> headphone jack ring
+  - TPA G -> headphone jack sleeve
+- DET is Active Low connected to GPIO 24
+- Audio transition testing:
+  - Play/pause: clean
+  - Track changes: clean
+  - Power-down: clean
+  - Idle noise: no audible hiss or hum
+  - Power-up: essentially clean; a very faint intermittent startup tick may be present
+- No additional analog muting or pop-suppression circuitry is currently required.
+- 
+### Notes
+
+- The PCM5102A and TPA6132 share the same regulated 5 V supply and common ground.
+- The TPA6132 operated correctly during breadboard testing at -6 dB gain.
+- At -6 dB, 60% MPD software volume was already louder than comfortable with the test headphones.
+- Smaller software-volume increments will be needed, but this is a software configuration issue rather than a hardware change.
+- Confirm whether the TPA6132 breakout already contains input coupling capacitors before reproducing the amplifier circuit or breakout connections on a custom PCB.
+- Test for hiss, display-related noise, startup/shutdown pops, and breadboard connection sensitivity before finalizing the perfboard layout.
+- The tutorial labels the I2S word-select signal `LCK`; other Raspberry Pi and I2S references may call the same signal `LRCLK`, `LRCK`, or word clock.
+- Reference tutorial: https://www.instructables.com/Raspberry-Pi-HQ-Audio-PCM5102-and-MPD/
 
 ## Power
 
@@ -98,6 +143,7 @@ Working prototype of a Raspberry Pi Zero 2 W portable media player using a 2.2" 
 | Audio DAC | I2S BCLK | GPIO 18 / Pin 12 | PCM5102 | I2S audio |
 | Audio DAC | I2S LRCLK | GPIO 19 / Pin 35 | PCM5102 | I2S audio |
 | Audio DAC | I2S DIN | GPIO 21 / Pin 40 | PCM5102 | I2S audio |
+| Audio Headphone Amp| DET | GPIO 24 / Pin 18 | TPA6132 | Headphone detection|
 | Power | Shutdown sequence | GPIO 4 / Pin 7 | Witty Pi 4 L3V7 | Default shutdown signal pin |
 | Power | System state / power monitoring | GPIO 17 / Pin 11 | Witty Pi 4 L3V7 | GPIO 17 reserved for Witty Pi; PiTFT Button 1 remapped |
 | Power | Control/status | GPIO 5 / Pin 29 | Witty Pi 4 L3V7 | Used by onboard microcontroller |
