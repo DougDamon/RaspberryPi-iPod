@@ -47,3 +47,4 @@ build/
 .DS_Store
 Thumbs.db
 hardware/kicad/pipod-carrier/.history/
+hardware/kicad/pipod-carrier/~*.lck
