@@ -5358,7 +5358,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "pipod_footprints:GY-PCM5102_PiPod"
 			(at 226.06 49.53 0)
 			(hide yes)
 			(show_name no)
@@ -5518,7 +5518,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "pipod_footprints:TPA6132_PiPod"
 			(at 307.34 49.53 0)
 			(hide yes)
 			(show_name no)
@@ -6330,7 +6330,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x20_P2.54mm_Vertical"
 			(at 137.16 135.89 0)
 			(hide yes)
 			(show_name no)
@@ -7623,7 +7623,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "pipod_footprints:GY-PCM5102_PiPod"
 			(at 182.88 120.65 0)
 			(hide yes)
 			(show_name no)
