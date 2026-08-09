@@ -3343,12 +3343,6 @@
 		(uuid "3f665119-67c0-4cac-b13a-4c63f71e6551")
 	)
 	(junction
-		(at 93.98 80.01)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "4303c44b-4bcd-4288-a985-ba26d2ea1c9f")
-	)
-	(junction
 		(at 134.62 35.56)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3521,12 +3515,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "dcb293b6-5ba1-4edf-bde2-9da9973e6498")
-	)
-	(junction
-		(at 102.87 102.87)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "e16f00ec-82ae-421c-88b1-3f767cb9884a")
 	)
 	(junction
 		(at 107.95 105.41)
@@ -3806,16 +3794,6 @@
 	)
 	(wire
 		(pts
-			(xy 93.98 80.01) (xy 93.98 90.17)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0c07b40b-e8fa-4e66-96d3-5340c0128993")
-	)
-	(wire
-		(pts
 			(xy 105.41 102.87) (xy 105.41 111.76)
 		)
 		(stroke
@@ -3833,16 +3811,6 @@
 			(type default)
 		)
 		(uuid "0cc231b6-5e70-4d93-ae7f-4935dca20b7f")
-	)
-	(wire
-		(pts
-			(xy 78.74 91.44) (xy 78.74 93.98)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0d5131d4-115d-40d5-89a9-7e72f29de47f")
 	)
 	(wire
 		(pts
@@ -4083,16 +4051,6 @@
 			(type default)
 		)
 		(uuid "1f3c57a6-37c3-4d30-9018-375c6242a8e3")
-	)
-	(wire
-		(pts
-			(xy 90.17 72.39) (xy 90.17 80.01)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "20014d46-7f8b-496e-a0ae-68eb68b9c78c")
 	)
 	(wire
 		(pts
@@ -4496,16 +4454,6 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 102.87) (xy 102.87 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "53ad5584-cf24-4289-83be-ea647e5859e6")
-	)
-	(wire
-		(pts
 			(xy 121.92 132.08) (xy 118.11 132.08)
 		)
 		(stroke
@@ -4813,16 +4761,6 @@
 			(type default)
 		)
 		(uuid "6e357966-f2df-41e5-914c-b8a643a4f05c")
-	)
-	(wire
-		(pts
-			(xy 90.17 80.01) (xy 93.98 80.01)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "70c1ff8c-1326-4143-adda-ed5a3efb2daf")
 	)
 	(wire
 		(pts
@@ -5196,7 +5134,7 @@
 	)
 	(wire
 		(pts
-			(xy 102.87 102.87) (xy 105.41 102.87)
+			(xy 97.79 102.87) (xy 105.41 102.87)
 		)
 		(stroke
 			(width 0)
@@ -5263,16 +5201,6 @@
 			(type default)
 		)
 		(uuid "9d68f75a-aee0-4d17-8c20-3f70fa680504")
-	)
-	(wire
-		(pts
-			(xy 78.74 93.98) (xy 102.87 93.98)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a1cd4717-262b-4869-b4d5-7d22274945f4")
 	)
 	(wire
 		(pts
@@ -5473,16 +5401,6 @@
 			(type default)
 		)
 		(uuid "b7b53fea-eebb-47ce-9d9b-e18ef078c192")
-	)
-	(wire
-		(pts
-			(xy 102.87 93.98) (xy 102.87 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b97af77a-99e1-44a5-95b6-63895a0000a8")
 	)
 	(wire
 		(pts
@@ -5796,7 +5714,7 @@
 	)
 	(wire
 		(pts
-			(xy 93.98 74.93) (xy 93.98 80.01)
+			(xy 93.98 74.93) (xy 93.98 90.17)
 		)
 		(stroke
 			(width 0)
@@ -7128,84 +7046,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 90.17 72.39 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "37664cb0-0e78-4fa2-9215-727ca00bf71d")
-		(property "Reference" "TP7"
-			(at 83.82 69.088 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TP_TFT_3V3"
-			(at 80.772 70.612 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Plated_Hole_D2.0mm"
-			(at 95.25 72.39 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 95.25 72.39 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 90.17 72.39 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "37daab17-913a-4a65-a956-5455b20d16d5")
-		)
-		(instances
-			(project "pipod-carrier"
-				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
-					(reference "TP7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Connector_Generic:Conn_02x06_Odd_Even")
 		(at 86.36 27.94 0)
 		(unit 1)
@@ -8293,84 +8133,6 @@
 			(project "pipod-carrier"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "#FLG03")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 78.74 91.44 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "918a1d22-0d03-468e-9374-3b93f545c333")
-		(property "Reference" "TP8"
-			(at 80.518 87.63 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TP_SEESAW_3V3"
-			(at 80.264 89.154 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Plated_Hole_D2.0mm"
-			(at 83.82 91.44 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 83.82 91.44 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 78.74 91.44 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "c041f5c4-622e-4c52-9e71-b74d130b2edf")
-		)
-		(instances
-			(project "pipod-carrier"
-				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
-					(reference "TP8")
 					(unit 1)
 				)
 			)
