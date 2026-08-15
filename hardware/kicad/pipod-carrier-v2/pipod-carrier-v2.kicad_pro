@@ -504,7 +504,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "pipod-carrier.kicad_pro",
+    "filename": "pipod-carrier-v2.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -679,8 +679,8 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "pipod-carrier.kicad_sch",
-        "name": "pipod-carrier",
+        "filename": "pipod-carrier-v2.kicad_sch",
+        "name": "pipod-carrier-v2",
         "uuid": "7155fab1-9c9a-41b5-92ad-f730b415b976"
       }
     ],
@@ -690,7 +690,7 @@
   "sheets": [
     [
       "7155fab1-9c9a-41b5-92ad-f730b415b976",
-      "pipod-carrier"
+      "pipod-carrier-v2"
     ]
   ],
   "text_variables": {},

@@ -3307,10 +3307,10 @@
 		(uuid "10413b07-6fc7-409e-b547-17f452f31964")
 	)
 	(junction
-		(at 97.79 110.49)
+		(at 142.24 55.88)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "21a2ecb2-b42a-4d7b-954e-eaece8816d0f")
+		(uuid "10a43045-3342-422d-8114-816e5203ea6e")
 	)
 	(junction
 		(at 153.67 100.33)
@@ -3335,18 +3335,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "3de27b42-76c0-455f-8cda-ff79cae4b8d3")
-	)
-	(junction
-		(at 139.7 49.53)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3f665119-67c0-4cac-b13a-4c63f71e6551")
-	)
-	(junction
-		(at 134.62 35.56)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "44e40537-9a8f-4761-af8b-277b06aa7899")
 	)
 	(junction
 		(at 158.75 104.14)
@@ -3379,22 +3367,10 @@
 		(uuid "56125846-254a-4ec0-9a23-6cd9075c90f1")
 	)
 	(junction
-		(at 147.32 45.72)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "58c19882-b222-4e5b-9815-31eaf1e03bc7")
-	)
-	(junction
 		(at 127 55.88)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "79584aab-354e-4a98-9e84-fa2d45d93de6")
-	)
-	(junction
-		(at 142.24 55.88)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "83fce7c4-4d48-4127-bcfe-58dbc994eb04")
 	)
 	(junction
 		(at 139.7 55.88)
@@ -3445,12 +3421,6 @@
 		(uuid "a208bcf1-104f-4cc6-8bfa-e5331340ffe1")
 	)
 	(junction
-		(at 100.33 107.95)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "a62d26f7-3af5-46dd-adef-07d65fe5a2a3")
-	)
-	(junction
 		(at 153.67 152.4)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3499,12 +3469,6 @@
 		(uuid "c3798254-0178-4dca-9ee4-1b5cf0f85852")
 	)
 	(junction
-		(at 137.16 48.26)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "c4ce5852-0e59-4e05-b139-43f786a65fe0")
-	)
-	(junction
 		(at 152.4 111.76)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3545,18 +3509,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e789b405-ed6d-4b77-80bc-b19dd4e508f9")
-	)
-	(junction
-		(at 144.78 48.26)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "e7fc878a-88cb-41b7-a57d-1f781d823bd7")
-	)
-	(junction
-		(at 142.24 50.8)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "e9106e1c-a3aa-4eaa-8e10-7d0d11cff8be")
 	)
 	(junction
 		(at 115.57 142.24)
@@ -4106,16 +4058,6 @@
 	)
 	(wire
 		(pts
-			(xy 106.68 24.13) (xy 106.68 27.94)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2604847d-e622-4dcc-9a5a-9e8d0bb3cfb9")
-	)
-	(wire
-		(pts
 			(xy 158.75 104.14) (xy 158.75 116.84)
 		)
 		(stroke
@@ -4133,16 +4075,6 @@
 			(type default)
 		)
 		(uuid "2903719d-1e7a-47c9-85f1-473539d7e1c4")
-	)
-	(wire
-		(pts
-			(xy 144.78 25.4) (xy 149.86 25.4)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2918e056-6cef-42e0-a367-3799589c430b")
 	)
 	(wire
 		(pts
@@ -4356,16 +4288,6 @@
 	)
 	(wire
 		(pts
-			(xy 82.55 127) (xy 100.33 127)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "43545432-f742-475f-9604-c6eaadc00114")
-	)
-	(wire
-		(pts
 			(xy 121.92 119.38) (xy 105.41 119.38)
 		)
 		(stroke
@@ -4376,7 +4298,7 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 107.95) (xy 107.95 107.95)
+			(xy 97.79 107.95) (xy 107.95 107.95)
 		)
 		(stroke
 			(width 0)
@@ -4393,16 +4315,6 @@
 			(type default)
 		)
 		(uuid "48f9340f-e2c4-4d8d-b98b-d8f21be34f4c")
-	)
-	(wire
-		(pts
-			(xy 82.55 120.65) (xy 97.79 120.65)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "498196d2-2306-4d40-91cb-b3a1b2e418bb")
 	)
 	(wire
 		(pts
@@ -4483,16 +4395,6 @@
 			(type default)
 		)
 		(uuid "4fa949a5-0030-4960-b77a-30592ecdf331")
-	)
-	(wire
-		(pts
-			(xy 129.54 25.4) (xy 137.16 25.4)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "50e046eb-a106-42b3-a925-f16b2668a3e7")
 	)
 	(wire
 		(pts
@@ -4586,16 +4488,6 @@
 	)
 	(wire
 		(pts
-			(xy 137.16 25.4) (xy 137.16 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5c76b8ee-77b4-4f09-b8f0-7bf5adfec42b")
-	)
-	(wire
-		(pts
 			(xy 144.78 55.88) (xy 146.05 55.88)
 		)
 		(stroke
@@ -4646,16 +4538,6 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 107.95) (xy 100.33 107.95)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "623793ad-b41d-4351-9780-7a66ca77c214")
-	)
-	(wire
-		(pts
 			(xy 257.81 129.54) (xy 257.81 40.64)
 		)
 		(stroke
@@ -4686,16 +4568,6 @@
 	)
 	(wire
 		(pts
-			(xy 119.38 22.86) (xy 119.38 33.02)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "65c73ce4-d7fa-49d1-bfd6-7976805403cc")
-	)
-	(wire
-		(pts
 			(xy 57.15 181.61) (xy 57.15 45.72)
 		)
 		(stroke
@@ -4713,16 +4585,6 @@
 			(type default)
 		)
 		(uuid "682a2905-36a3-46c3-8814-c6f76344bd4f")
-	)
-	(wire
-		(pts
-			(xy 142.24 27.94) (xy 142.24 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "69289e3f-aebe-4597-a4a6-256fa653c59f")
 	)
 	(wire
 		(pts
@@ -4786,16 +4648,6 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 27.94) (xy 147.32 27.94)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6b0ecf5d-6bb6-402d-8e68-e7584abfea4a")
-	)
-	(wire
-		(pts
 			(xy 113.03 170.18) (xy 113.03 154.94)
 		)
 		(stroke
@@ -4803,16 +4655,6 @@
 			(type default)
 		)
 		(uuid "6b643341-ca0d-4ad8-8d8c-8cdc283499b1")
-	)
-	(wire
-		(pts
-			(xy 93.98 57.15) (xy 93.98 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6e0d2dc9-421e-4ee8-ae27-3255f4165f37")
 	)
 	(wire
 		(pts
@@ -4956,16 +4798,6 @@
 	)
 	(wire
 		(pts
-			(xy 134.62 33.02) (xy 134.62 35.56)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7d59669b-4e2a-4945-8d6f-4cdc8a114f2c")
-	)
-	(wire
-		(pts
 			(xy 152.4 111.76) (xy 156.21 111.76)
 		)
 		(stroke
@@ -4983,16 +4815,6 @@
 			(type default)
 		)
 		(uuid "85c2c7e5-cd27-4b0e-9513-9f656e6593eb")
-	)
-	(wire
-		(pts
-			(xy 144.78 25.4) (xy 144.78 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8626f7c8-b6e5-40ef-b4d2-5a38477fad2a")
 	)
 	(wire
 		(pts
@@ -5346,26 +5168,6 @@
 	)
 	(wire
 		(pts
-			(xy 100.33 127) (xy 100.33 107.95)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "aaa21461-93cd-47a0-ba08-bc5262c1cff7")
-	)
-	(wire
-		(pts
-			(xy 129.54 22.86) (xy 129.54 25.4)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ae779442-77a4-4aa8-a2ff-6fa97ef54b8b")
-	)
-	(wire
-		(pts
 			(xy 119.38 46.99) (xy 119.38 55.88)
 		)
 		(stroke
@@ -5413,16 +5215,6 @@
 			(type default)
 		)
 		(uuid "b19eda0a-3fa7-43c4-aaac-25683fa42b12")
-	)
-	(wire
-		(pts
-			(xy 147.32 27.94) (xy 147.32 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b216ed30-c97c-40fe-934d-c8b2e3500b9a")
 	)
 	(wire
 		(pts
@@ -5556,26 +5348,6 @@
 	)
 	(wire
 		(pts
-			(xy 106.68 27.94) (xy 142.24 27.94)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c7807188-a891-47aa-9e62-1a316f8b9850")
-	)
-	(wire
-		(pts
-			(xy 119.38 33.02) (xy 134.62 33.02)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c88871e6-9a8d-4c31-b772-64cfaa8b354e")
-	)
-	(wire
-		(pts
 			(xy 33.02 157.48) (xy 33.02 133.35)
 		)
 		(stroke
@@ -5583,6 +5355,16 @@
 			(type default)
 		)
 		(uuid "c93c58a6-3552-43ef-9d70-e4cf84c2d57a")
+	)
+	(wire
+		(pts
+			(xy 142.24 50.8) (xy 142.24 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c950065a-8419-4355-b280-9847968e3b91")
 	)
 	(wire
 		(pts
@@ -5623,16 +5405,6 @@
 			(type default)
 		)
 		(uuid "ceb36c02-d41e-41f7-9718-cfd7528b79b5")
-	)
-	(wire
-		(pts
-			(xy 139.7 22.86) (xy 139.7 49.53)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cf2f1b43-f0e1-459c-9848-493ed265eb62")
 	)
 	(wire
 		(pts
@@ -5716,16 +5488,6 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 120.65) (xy 97.79 110.49)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d924ef07-94c8-48e4-95ad-2b2cabf368c0")
-	)
-	(wire
-		(pts
 			(xy 96.52 83.82) (xy 96.52 87.63)
 		)
 		(stroke
@@ -5793,16 +5555,6 @@
 			(type default)
 		)
 		(uuid "df4a3e11-5013-4b65-ab02-949120625f9b")
-	)
-	(wire
-		(pts
-			(xy 170.18 25.4) (xy 170.18 27.94)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "df6008e7-7481-4233-a9c3-161c25a3714b")
 	)
 	(wire
 		(pts
@@ -5966,16 +5718,6 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 57.15) (xy 93.98 57.15)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f1cd63c5-f693-4aea-a228-1ad2b4b18521")
-	)
-	(wire
-		(pts
 			(xy 59.69 46.99) (xy 119.38 46.99)
 		)
 		(stroke
@@ -6013,16 +5755,6 @@
 			(type default)
 		)
 		(uuid "f4866dc6-8141-4d7c-a159-7736c510ac3e")
-	)
-	(wire
-		(pts
-			(xy 93.98 53.34) (xy 101.6 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fa02dd24-fd95-480f-b121-db7174802a1d")
 	)
 	(wire
 		(pts
@@ -6385,84 +6117,6 @@
 		(uuid "fb532a64-4e28-44eb-94ab-c22edeeac4e7")
 	)
 	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 106.68 24.13 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "127d586c-f8b1-44d7-bc44-0299f9270d88")
-		(property "Reference" "TP12"
-			(at 108.458 21.336 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TP_TFT_SCLK"
-			(at 107.95 23.114 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Plated_Hole_D2.0mm"
-			(at 111.76 24.13 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 111.76 24.13 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 106.68 24.13 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "839de765-d2cc-4abe-9485-70e35c96cfd2")
-		)
-		(instances
-			(project "pipod-carrier"
-				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
-					(reference "TP12")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "pipod_symbols:TPA6132_Breakout")
 		(at 307.34 49.53 0)
 		(unit 1)
@@ -6560,87 +6214,9 @@
 			(uuid "c5855605-4609-4b36-b6a0-36a9140ec5b5")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "U4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 82.55 127 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "1aa9a98c-3007-4b9c-b34b-040e88f36ba2")
-		(property "Reference" "TP10"
-			(at 84.328 124.206 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TP_I2C_SCL"
-			(at 83.82 125.984 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Plated_Hole_D2.0mm"
-			(at 87.63 127 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 87.63 127 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 82.55 127 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "3308b31a-ff68-4c14-90f0-7cc9ea027cc1")
-		)
-		(instances
-			(project "pipod-carrier"
-				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
-					(reference "TP10")
 					(unit 1)
 				)
 			)
@@ -6716,7 +6292,7 @@
 			(uuid "97a4d287-8beb-405f-8bda-f7b5c502156a")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "#PWR01")
 					(unit 1)
@@ -6795,7 +6371,7 @@
 			(uuid "6a77e6d5-4f94-4a9d-bd32-17a65c201bde")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "TP4")
 					(unit 1)
@@ -6872,7 +6448,7 @@
 			(uuid "7edf52d3-78d1-44e9-9a06-c1d2e9903545")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "#PWR02")
 					(unit 1)
@@ -6952,7 +6528,7 @@
 			(uuid "c5e7ffd4-19ef-4f28-b015-1d28a08575f3")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "SW3")
 					(unit 1)
@@ -7029,7 +6605,7 @@
 			(uuid "b0438435-6da2-4ffb-8b92-4c21e0f30db6")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "#FLG02")
 					(unit 1)
@@ -7189,7 +6765,7 @@
 			(uuid "eac6cdd0-fa5c-494b-adc7-e3d27a33ca5a")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "U2")
 					(unit 1)
@@ -7299,87 +6875,9 @@
 			(uuid "2c13370e-0185-4e4e-b9e6-d6bf22785180")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "J3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 82.55 120.65 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "591104f2-bbba-45b1-ba9a-0da6134e6d18")
-		(property "Reference" "TP9"
-			(at 84.328 117.856 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TP_I2C_SDA"
-			(at 83.82 119.634 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Plated_Hole_D2.0mm"
-			(at 87.63 120.65 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 87.63 120.65 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 82.55 120.65 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "b0bb0ef2-36d3-46f0-9210-93bf9806f177")
-		)
-		(instances
-			(project "pipod-carrier"
-				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
-					(reference "TP9")
 					(unit 1)
 				)
 			)
@@ -7571,87 +7069,9 @@
 			(uuid "c544b2b3-c94a-441e-8a7c-54a00339f673")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "J1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 149.86 25.4 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "5d340607-7a06-417f-933e-7f79ba2aa55c")
-		(property "Reference" "TP11"
-			(at 151.384 21.336 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TP_TFT_CE0"
-			(at 151.638 23.114 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Plated_Hole_D2.0mm"
-			(at 154.94 25.4 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 154.94 25.4 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 149.86 25.4 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "542ce802-0084-4810-9044-ea594c974128")
-		)
-		(instances
-			(project "pipod-carrier"
-				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
-					(reference "TP11")
 					(unit 1)
 				)
 			)
@@ -7729,7 +7149,7 @@
 			(uuid "b4e34a78-0a32-4f30-990c-4fe1a9fd1187")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "SW1")
 					(unit 1)
@@ -7814,7 +7234,7 @@
 			(uuid "4bff9ba2-a9b5-4ab9-a1ef-75afa773eb55")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "U1")
 					(unit 1)
@@ -7891,7 +7311,7 @@
 			(uuid "712c0bab-0764-4079-9169-7ded4c9ed34e")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "#PWR05")
 					(unit 1)
@@ -7970,87 +7390,9 @@
 			(uuid "2ac9e9d8-ed5d-4891-8525-d619b0017464")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "TP3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 170.18 25.4 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "6adfd641-2e1c-4e03-bc58-22665db59472")
-		(property "Reference" "TP1"
-			(at 171.704 21.336 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TP_TFT_CE1"
-			(at 171.958 23.114 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Plated_Hole_D2.0mm"
-			(at 175.26 25.4 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 175.26 25.4 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 170.18 25.4 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "b60d640c-35cd-4fe1-a727-2a137ba098bf")
-		)
-		(instances
-			(project "pipod-carrier"
-				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
-					(reference "TP1")
 					(unit 1)
 				)
 			)
@@ -8127,7 +7469,7 @@
 			(uuid "d33f50d3-1129-4a64-8d54-8fc92aa5726e")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "SW2")
 					(unit 1)
@@ -8205,7 +7547,7 @@
 			(uuid "38ee40fb-da6d-4a31-a4d8-e9ce19edbf38")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "TP5")
 					(unit 1)
@@ -8282,7 +7624,7 @@
 			(uuid "3719fe0f-75a4-4c2a-b05a-12471a55f7af")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "#FLG03")
 					(unit 1)
@@ -8359,165 +7701,9 @@
 			(uuid "54eeab43-0204-4056-aac2-150b2dfcf695")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "#FLG01")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 129.54 22.86 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "b47a9708-953d-4a63-987e-f7164e4f7564")
-		(property "Reference" "TP13"
-			(at 131.318 20.066 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TP_TFT_MOSI"
-			(at 130.81 21.844 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Plated_Hole_D2.0mm"
-			(at 134.62 22.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 134.62 22.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 129.54 22.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "c2681717-aabe-4576-ab27-a7c6103232a8")
-		)
-		(instances
-			(project "pipod-carrier"
-				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
-					(reference "TP13")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 91.44 57.15 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "c9db3aae-f2ac-4484-912f-a0e8a7bd366c")
-		(property "Reference" "TP6"
-			(at 86.868 56.388 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TP_TFT_5V"
-			(at 84.836 58.166 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Plated_Hole_D2.0mm"
-			(at 96.52 57.15 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 96.52 57.15 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 91.44 57.15 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "21787caa-22f6-44e7-89f7-eb4d9c591e61")
-		)
-		(instances
-			(project "pipod-carrier"
-				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
-					(reference "TP6")
 					(unit 1)
 				)
 			)
@@ -8597,7 +7783,7 @@
 			(uuid "41e2a2e3-34aa-487e-8772-b94f68963695")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "J5")
 					(unit 1)
@@ -8674,7 +7860,7 @@
 			(uuid "c18abf26-2682-47fb-a777-c74c6ffe3d88")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "#PWR04")
 					(unit 1)
@@ -8793,7 +7979,7 @@
 			(uuid "7bd6ab13-6d29-46c4-a2b4-ddd1e302369f")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "U3")
 					(unit 1)
@@ -8871,165 +8057,9 @@
 			(uuid "a25f6b7c-5151-47a3-b47e-587685f74429")
 		)
 		(instances
-			(project "pipod-carrier"
+			(project "pipod-carrier-v2"
 				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
 					(reference "#PWR03")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 139.7 22.86 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "f750a973-50c7-444f-8f75-296a7c9aeb99")
-		(property "Reference" "TP15"
-			(at 141.478 20.066 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TP_TFT_MISO"
-			(at 140.97 21.844 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Plated_Hole_D2.0mm"
-			(at 144.78 22.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 144.78 22.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 139.7 22.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "1118115f-9024-4f9c-b967-953eb114f9b3")
-		)
-		(instances
-			(project "pipod-carrier"
-				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
-					(reference "TP15")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 119.38 22.86 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "f7e4b2e7-0635-432a-94ed-bdaab539e263")
-		(property "Reference" "TP14"
-			(at 121.158 20.066 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TP_TFT_DC"
-			(at 120.65 21.844 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.762 0.762)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Plated_Hole_D2.0mm"
-			(at 124.46 22.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 124.46 22.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "test point"
-			(at 119.38 22.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "00253bb0-e65d-46ff-a221-65143a6ef644")
-		)
-		(instances
-			(project "pipod-carrier"
-				(path "/7155fab1-9c9a-41b5-92ad-f730b415b976"
-					(reference "TP14")
 					(unit 1)
 				)
 			)
