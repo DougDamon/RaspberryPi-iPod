@@ -4513,6 +4513,17 @@
 		(uuid "40650aa9-8d1b-41f8-87fa-f0ac9af5f2bd")
 	)
 	(gr_circle
+		(center 160.5 145.7)
+		(end 162.7 145.7)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "c1dd678e-5dcf-4957-bea0-3235365bed4d")
+	)
+	(gr_circle
 		(center 160.525 44.675)
 		(end 162.725 44.675)
 		(stroke
