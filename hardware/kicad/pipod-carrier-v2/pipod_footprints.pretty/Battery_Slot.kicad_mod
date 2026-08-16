@@ -1,0 +1,120 @@
+(footprint "Battery_Slot"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(property "Reference" "Battery Slot"
+		(at 0 -0.5 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "8b4f2224-e2dc-4eae-b43e-78e61903dc3e")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "Battery Slot"
+		(at 0 1 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "e98d5951-4204-4c71-810b-24d0fba9dd81")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "e5a3ebd2-2e6d-4ba8-a032-915e14ed77e5")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "cfd5c8d5-1f8c-4c33-b461-ef3dbbd42e42")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr through_hole)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -1.137722 4.337722)
+		(end 1.137722 4.337722)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "04f06df8-be45-494e-8b0d-dd15225faae1")
+	)
+	(fp_line
+		(start -1.137722 10.662278)
+		(end 1.137722 10.662278)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "db1198aa-b782-4740-a30f-e02f7ca7b404")
+	)
+	(fp_arc
+		(start -1.137722 10.662278)
+		(mid -4.3 7.5)
+		(end -1.137722 4.337722)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "eb6c1fcb-dbb1-4e37-b33d-2f5c12caab8e")
+	)
+	(fp_arc
+		(start 1.137722 4.337722)
+		(mid 4.3 7.5)
+		(end 1.137722 10.662278)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "1e91ab7d-4ae8-4d29-a1ca-ebf5625852d6")
+	)
+	(fp_text user "Battery Slot"
+		(at 0 2.5 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "e35418b4-29a1-48c8-be0e-10ac32d02e58")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "" np_thru_hole oval
+		(at 0 7.5)
+		(size 8 6)
+		(drill 0.8)
+		(layers "*.Cu" "*.Mask")
+		(uuid "681f9a06-9bb5-4a9f-9c04-d38d0ed09f2d")
+	)
+	(embedded_fonts no)
+)
