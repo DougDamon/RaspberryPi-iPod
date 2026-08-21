@@ -2,6 +2,8 @@ import os
 #import time
 import datetime
 
+os.environ["SDL_VIDEODRIVER"] = "dummy"
+
 import pygame
 import pygame_gui
 
@@ -18,6 +20,7 @@ from pygame_gui.elements.ui_progress_bar import UIProgressBar
 from io import BytesIO
 
 from PIL import  Image
+from common.ui.framebuffer_display import FramebufferDisplay
 from common.config.settings import ConfigService
 from common.audio.player import AudioPlayback
 from common.library.music_database import MusicDB
@@ -104,6 +107,8 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.MusicScreenInit = False
         self.AvailablePlaylistsScreenInit = False
         
+        self.framebuffer_display = FramebufferDisplay()
+         
         self.MainScreen()
         self.MusicScreen()
         self.AvailablePlaylistsScreen()
@@ -120,7 +125,41 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.QUIT = pygame.QUIT
         self.UI_BUTTON_PRESSED = pygame_gui.UI_BUTTON_PRESSED
         self.UI_SELECTION_LIST_NEW_SELECTION = pygame_gui.UI_SELECTION_LIST_NEW_SELECTION
-    
+        
+        self.now_playing_surface = pygame.Surface(
+            (320, 240),
+            depth=32
+        )
+        
+        self.now_playing_background = pygame.Color("aquamarine")
+        self.now_playing_text = pygame.Color("black")
+        self.now_playing_selected = pygame.Color("white")
+        
+        self.now_playing_title_font = pygame.font.SysFont(None, 20)
+        self.now_playing_info_font = pygame.font.SysFont(None, 17)
+        self.now_playing_control_font = pygame.font.SysFont(None, 18)
+        self.now_playing_position_font = pygame.font.SysFont(None, 20)
+        
+        self.now_playing_position_area = pygame.Rect(2, 178, 316, 20)
+        
+        self.list_background = pygame.Color("aquamarine")
+        self.list_text = pygame.Color("black")
+        self.list_selected = pygame.Color("white")
+        
+        self.list_font = pygame.font.SysFont(None, 22)
+        self.list_position_font = pygame.font.SysFont(None, 16)
+        
+        self.list_row_height = 30
+        self.list_top = 5
+        self.list_left = 12
+        self.list_width = 296
+        self.list_visible_rows = 7
+        
+        self.list_first_visible = {
+            "AvailablePlaylists": 0,
+            "PlaylistTracks": 0,
+        }
+        
     def getClock(self):
         return pygame.time.Clock()
       
@@ -146,61 +185,24 @@ class piPodGUI(AudioPlayback, MusicDB):
         return self.needs_position_redraw
     
     def updateDisplay(self):
-        pygame.display.update()
+        self.framebuffer_display.update_full(
+            self.window_surface
+    )
         
     def quit(self):
+        self.framebuffer_display.close()
         pygame.quit()
     
     def drawScreen(self):
         self.manager.draw_ui(self.window_surface)
     
     def drawCurrentPosition(self):
-#        print("POSITION drawCurrentPosition")
+        self.drawNowPlayingPositionDirect()
     
-        position_area_rect = pygame.Rect((2, 178), (266, 20))
-        current_position_rect = pygame.Rect((2, 178), (56, 20))
-        progress_rect = pygame.Rect((58, 180), (210, 15))
-    
-        # Clear just the timer/progress area.
-        pygame.draw.rect(
-            self.window_surface,
-            pygame.Color('aquamarine'),
-            position_area_rect
+        self.framebuffer_display.update(
+            self.now_playing_surface,
+            self.now_playing_position_area
         )
-    
-        # Draw current time.
-        text_surface = self.position_font.render(
-            self.CurrentPositionFormat,
-            True,
-            pygame.Color('black')
-        )
-        self.window_surface.blit(text_surface, current_position_rect)
-    
-        # Draw progress bar.
-        pygame.draw.rect(
-            self.window_surface,
-            pygame.Color('black'),
-            progress_rect,
-            1
-        )
-    
-        fill_width = int(progress_rect.width * (self.CurrentPositionPercent / 100))
-    
-        if fill_width > 0:
-            fill_rect = pygame.Rect(
-                progress_rect.x,
-                progress_rect.y,
-                fill_width,
-                progress_rect.height
-            )
-    
-            pygame.draw.rect(
-                self.window_surface,
-                pygame.Color('black'),
-                fill_rect
-            )
-    
-        pygame.display.update(position_area_rect)
     
         self.clearPositionDirty()
     
@@ -270,7 +272,365 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.markDirty()
         
 #    def NavigateMainScreen(self):
+    def drawNowPlayingText(self, text, font, position):
+        text_surface = font.render(
+            str(text),
+            True,
+            self.now_playing_text
+        )
+    
+        self.now_playing_surface.blit(
+            text_surface,
+            position
+        )
         
+        
+    def drawNowPlayingControl(self, rect, text, element_name):
+        selected = (
+            self.CurrentScreenElement == element_name
+        )
+    
+        if selected:
+            pygame.draw.rect(
+                self.now_playing_surface,
+                self.now_playing_selected,
+                rect
+            )
+    
+        pygame.draw.rect(
+            self.now_playing_surface,
+            self.now_playing_text,
+            rect,
+            1
+        )
+    
+        label = self.now_playing_control_font.render(
+            text,
+            True,
+            self.now_playing_text
+        )
+    
+        label_x = (
+            rect.x
+            + (rect.width - label.get_width()) // 2
+        )
+    
+        label_y = (
+            rect.y
+            + (rect.height - label.get_height()) // 2
+        )
+    
+        self.now_playing_surface.blit(
+            label,
+            (label_x, label_y)
+        )
+        
+    def drawNowPlayingControls(self):
+        self.drawNowPlayingControl(
+            pygame.Rect(10, 130, 65, 25),
+            f"Shf {self.Shuffle}",
+            "Shuffle"
+        )
+    
+        repeat_text = f"Rpt {self.Repeat}"
+    
+        self.drawNowPlayingControl(
+            pygame.Rect(80, 130, 75, 25),
+            repeat_text,
+            "Repeat"
+        )
+    
+        self.drawNowPlayingControl(
+            pygame.Rect(160, 120, 45, 50),
+            "<<",
+            "Rewind"
+        )
+    
+        play_text = (
+            "Pause"
+            if self.getAudioPlayingStatus()
+            else "Play"
+        )
+    
+        self.drawNowPlayingControl(
+            pygame.Rect(210, 120, 45, 50),
+            play_text,
+            "Play/Pause"
+        )
+    
+        self.drawNowPlayingControl(
+            pygame.Rect(260, 120, 45, 50),
+            ">>",
+            "Forward"
+        )
+    
+        self.drawNowPlayingControl(
+            pygame.Rect(10, 210, 50, 25),
+            "Back",
+            "Back"
+        )
+    
+        self.drawNowPlayingControl(
+            pygame.Rect(65, 210, 50, 25),
+            "Home",
+            "Home"
+        )
+    
+    
+    def drawNowPlayingPositionDirect(self):
+        area = self.now_playing_position_area
+    
+        self.now_playing_surface.fill(
+            self.now_playing_background,
+            area
+        )
+    
+        position_rect = pygame.Rect(
+            2,
+            178,
+            56,
+            20
+        )
+    
+        progress_rect = pygame.Rect(
+            58,
+            180,
+            200,
+            15
+        )
+    
+        duration_rect = pygame.Rect(
+            263,
+            178,
+            55,
+            20
+        )
+    
+        self.drawNowPlayingText(
+            self.CurrentPositionFormat,
+            self.now_playing_position_font,
+            position_rect.topleft
+        )
+    
+        pygame.draw.rect(
+            self.now_playing_surface,
+            self.now_playing_text,
+            progress_rect,
+            1
+        )
+    
+        fill_width = int(
+            progress_rect.width
+            * (self.CurrentPositionPercent / 100)
+        )
+    
+        if fill_width > 0:
+            pygame.draw.rect(
+                self.now_playing_surface,
+                self.now_playing_text,
+                pygame.Rect(
+                    progress_rect.x,
+                    progress_rect.y,
+                    fill_width,
+                    progress_rect.height
+                )
+            )
+    
+        self.drawNowPlayingText(
+            self.CurrentDurationFormat,
+            self.now_playing_position_font,
+            duration_rect.topleft
+        )
+    
+    
+    def drawNowPlayingDirect(self):
+#        print("ABOUT TO DRAW NOW PLAYING")
+        self.now_playing_surface.fill(
+            self.now_playing_background
+        )
+    
+        album_art = pygame.transform.smoothscale(
+            self.CurrentAlbumArt,
+            (150, 150)
+        )
+    
+        self.now_playing_surface.blit(
+            album_art,
+            (5, 0)
+        )
+    
+        self.drawNowPlayingText(
+            self.CurrentTitle,
+            self.now_playing_title_font,
+            (165, 5)
+        )
+    
+        self.drawNowPlayingText(
+            self.CurrentArtist,
+            self.now_playing_info_font,
+            (165, 30)
+        )
+    
+        self.drawNowPlayingText(
+            self.CurrentAlbum,
+            self.now_playing_info_font,
+            (165, 50)
+        )
+    
+        self.drawNowPlayingText(
+            self.CurrentGenre,
+            self.now_playing_info_font,
+            (165, 70)
+        )
+    
+        self.drawNowPlayingText(
+            self.CurrentPlaylist,
+            self.now_playing_info_font,
+            (165, 90)
+        )
+    
+        self.drawNowPlayingControls()
+        self.drawNowPlayingPositionDirect()
+    
+#        print("UPDATING FULL FRAMEBUFFER")
+        self.framebuffer_display.update_full(
+            self.now_playing_surface
+        )
+#        print("FULL FRAMEBUFFER UPDATE COMPLETE")
+        self.clearDirty()
+        self.clearPositionDirty()
+    
+    def drawDirectList(self, screen_name, items):
+        self.window_surface.fill(self.list_background)
+    
+        if len(items) == 0:
+            message = self.list_font.render(
+                "No items",
+                True,
+                self.list_text
+            )
+    
+            self.window_surface.blit(
+                message,
+                (12, 10)
+            )
+    
+            self.framebuffer_display.update_full(
+                self.window_surface
+            )
+    
+            self.clearDirty()
+            return
+    
+        try:
+            selected_index = items.index(
+                self.CurrentScreenElement
+            )
+        except ValueError:
+            selected_index = 0
+    
+        first_visible = self.list_first_visible[
+            screen_name
+        ]
+    
+        if selected_index >= first_visible + self.list_visible_rows:
+            first_visible = (
+                selected_index
+                - self.list_visible_rows
+                + 1
+            )
+    
+        if selected_index < first_visible:
+            first_visible = selected_index
+    
+        self.list_first_visible[
+            screen_name
+        ] = first_visible
+    
+        visible_items = items[
+            first_visible:
+            first_visible + self.list_visible_rows
+        ]
+    
+        for row, item in enumerate(visible_items):
+            item_index = first_visible + row
+    
+            y = (
+                self.list_top
+                + row * self.list_row_height
+            )
+    
+            row_rect = pygame.Rect(
+                self.list_left,
+                y,
+                self.list_width,
+                self.list_row_height
+            )
+    
+            if item_index == selected_index:
+                pygame.draw.rect(
+                    self.window_surface,
+                    self.list_selected,
+                    row_rect
+                )
+    
+            label = self.list_font.render(
+                str(item),
+                True,
+                self.list_text
+            )
+    
+            self.window_surface.blit(
+                label,
+                (
+                    self.list_left + 6,
+                    y + 5
+                )
+            )
+    
+        position_text = self.list_position_font.render(
+            f"{selected_index + 1} / {len(items)}",
+            True,
+            self.list_text
+        )
+    
+        self.window_surface.blit(
+            position_text,
+            (
+                310 - position_text.get_width(),
+                220
+            )
+        )
+    
+        self.framebuffer_display.update_full(
+            self.window_surface
+        )
+    
+        self.clearDirty()
+    
+    def drawAvailablePlaylistsDirect(self):
+        items = self.ScreenNavigation.get(
+            "AvailablePlaylists",
+            []
+        )
+    
+        self.drawDirectList(
+            "AvailablePlaylists",
+            items
+        )
+    
+    
+    def drawPlaylistTracksDirect(self):
+        items = self.ScreenNavigation.get(
+            "PlaylistTracks",
+            []
+        )
+    
+        self.drawDirectList(
+            "PlaylistTracks",
+            items
+        )
+    
     def NowPlayingScreen(self): #, SelectedPlaylistId,  SelectedTrackId):
         self.lblTrackTitle = UILabel(relative_rect=pygame.Rect((177,5 ), (120, 21)),
                                                    text = self.CurrentTitle,
@@ -547,18 +907,10 @@ class piPodGUI(AudioPlayback, MusicDB):
             self.CurrentPositionPercent = 0
     
         if self.CurrentScreen == 'NowPlaying':
-            self.imgAlbumArt.set_image(self.CurrentAlbumArt)
-            self.lblTrackTitle.set_text(self.CurrentTitle)
-            self.lblTrackArtist.set_text(self.CurrentArtist)
-            self.lblTrackAlbum.set_text(self.CurrentAlbum)
-            self.lblTrackGenre.set_text(self.CurrentGenre)
-            self.lblTrackPlaylist.set_text(self.CurrentPlaylist)
-            self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
-            self.lblTrackDuration.set_text(self.CurrentDurationFormat)
-            self.pbarCurrentPosition.set_current_progress(self.CurrentPositionPercent)
-            self.markDirty() 
+            self.drawNowPlayingDirect()
  
     def NowPlayingScreenShow(self):
+        print("ENTER NowPlayingScreenShow")
         dfCurrentTrack = self.getCurrentTrack()
         self.CurrentTrackId = dfCurrentTrack['TrackId'][0]
         self.StartPlaybackPosition = dfCurrentTrack['CurrentPosition'][0].item()
@@ -586,22 +938,12 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.setPlaylist(self.CurrentPlaylistId, self.CurrentTrackId)
         self.LastMPDFile = self.mpd.get_current_file()
         
-        self.windowNowPlaying.show()
-        self.imgAlbumArt.set_image(self.CurrentAlbumArt)
-        self.lblTrackTitle.set_text(self.CurrentTitle )
-        self.lblTrackArtist.set_text(self.CurrentArtist)
-        self.lblTrackAlbum.set_text(self.CurrentAlbum)
-        self.lblTrackGenre.set_text(self.CurrentGenre)
-        self.lblTrackPlaylist.set_text(self.CurrentPlaylist)
-        self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
-        self.lblTrackDuration.set_text(self.CurrentDurationFormat)
-        self.ShowRepeatButtonOff()
-        self.ShowShuffleButtonOff()
-        self.updateDisplay()
         if self.AutoPlayOnStart:
             self.Play()
         else:
             self.Pause()
+        
+        self.drawNowPlayingDirect()
         self.markDirty()
         
     def NextTrackNowPlaying(self):
@@ -747,29 +1089,26 @@ class piPodGUI(AudioPlayback, MusicDB):
          self.markDirty()
 
     def AvailablePlaylistsScreenShow(self):
-#        start_time = time.perf_counter()
-    
         dfAvailablePlaylists = self.getDownloadedPlaylists()
-#        print(f'AvailablePlaylistsScreenShow getDownloadedPlaylists: {time.perf_counter() - start_time:.4f}s')
     
-#        list_start_time = time.perf_counter()
-        self.sPlaylistSelectionList.set_item_list(list(dfAvailablePlaylists['Playlist']))
-        self.setUISelectionListButtonTheme(self.sPlaylistSelectionList,  '@navigation_buttons')
-#        print(f'AvailablePlaylistsScreenShow list rebuild: {time.perf_counter() - list_start_time:.4f}s')
+        playlists = list(
+            dfAvailablePlaylists["Playlist"]
+        )
     
-#        show_start_time = time.perf_counter()
-        self.windowAvailablePlaylists.show()
-        self.markDirty()
-#        print(f'AvailablePlaylistsScreenShow show/dirty: {time.perf_counter() - show_start_time:.4f}s')
-
-    def PlaylistTracksScreen(self): 
-        self.sPlaylistTracks= UISelectionList(relative_rect=pygame.Rect((12, 0), (300, 220)),
-                                                                                                       item_list = '', #list(dfPlaylistTracks['Title']), 
-                                                                                                       container = self.windowPlaylistTracks,
-                                                                                                       manager=self.manager, 
-                                                                                                       object_id=ObjectID(class_id='@navigation_buttons'),
-#                                                                                                       allow_multi_select=False,
-                                                                                                       allow_double_clicks=False)
+        self.ScreenNavigation[
+            "AvailablePlaylists"
+        ] = playlists
+    
+        self.drawAvailablePlaylistsDirect()
+    
+        def PlaylistTracksScreen(self): 
+            self.sPlaylistTracks= UISelectionList(relative_rect=pygame.Rect((12, 0), (300, 220)),
+                                                                                                           item_list = '', #list(dfPlaylistTracks['Title']), 
+                                                                                                           container = self.windowPlaylistTracks,
+                                                                                                           manager=self.manager, 
+                                                                                                           object_id=ObjectID(class_id='@navigation_buttons'),
+    #                                                                                                       allow_multi_select=False,
+                                                                                                           allow_double_clicks=False)
 
         
     def PlaylistTracksScreenHide(self):
@@ -779,23 +1118,29 @@ class piPodGUI(AudioPlayback, MusicDB):
     def setUISelectionListButtonTheme(self,  UISelectionList,  Theme):
         for element in UISelectionList.item_list_container:
             element.change_object_id(Theme)
-
-            
+    
+    def PlaylistTracksScreen(self):
+        self.sPlaylistTracks = UISelectionList(
+            relative_rect=pygame.Rect((12, 0), (300, 220)),
+            item_list='',
+            container=self.windowPlaylistTracks,
+            manager=self.manager,
+            object_id=ObjectID(class_id='@navigation_buttons'),
+            allow_double_clicks=False
+        )    
+    
     def PlaylistTracksScreenShow(self):
-#        start_time = time.perf_counter()
-    
         dfPlaylistTracks = self.getCurrentPlaylist()
-#        print(f'PlaylistTracksScreenShow getCurrentPlaylist: {time.perf_counter() - start_time:.4f}s')
     
-#        list_start_time = time.perf_counter()
-        self.sPlaylistTracks.set_item_list(list(dfPlaylistTracks['Title']))
-        self.setUISelectionListButtonTheme(self.sPlaylistTracks,  '@navigation_buttons')
-#        print(f'PlaylistTracksScreenShow list rebuild: {time.perf_counter() - list_start_time:.4f}s')
+        tracks = list(
+            dfPlaylistTracks["Title"]
+        )
     
-#        show_start_time = time.perf_counter()
-        self.windowPlaylistTracks.show()
-        self.markDirty()
-#        print(f'PlaylistTracksScreenShow show/dirty: {time.perf_counter() - show_start_time:.4f}s')
+        self.ScreenNavigation[
+            "PlaylistTracks"
+        ] = tracks
+    
+        self.drawPlaylistTracksDirect()
 
     def getAdjustedCurrentPosition(self):
         currentPosition = round(self.getCurrentPosition())

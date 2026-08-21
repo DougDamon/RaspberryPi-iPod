@@ -66,6 +66,7 @@ while is_running:
     volumeDownIsPressed = volumeDownButton.is_pressed
     
     if volumeDownIsPressed and not volumeDownWasPressed:
+        print('vol down')
         piPodGUI.VolumeDown()
     
     volumeDownWasPressed = volumeDownIsPressed
@@ -115,8 +116,12 @@ while is_running:
             case piPodGUI.UI_BUTTON_PRESSED:
                 match event.ui_element:
                     case piPodGUI.bNowPlaying:
-                        piPodGUI.MainScreenHide()
-                        piPodGUI.NowPlayingScreenShow()
+                            piPodGUI.setCurrentScreenElement(
+                                "NowPlaying",
+                                "Play/Pause"
+                            )
+                            piPodGUI.MainScreenHide()
+                            piPodGUI.NowPlayingScreenShow()
                     case piPodGUI.bMusic:
                         piPodGUI.MainScreenHide()
                         piPodGUI.MusicScreenShow()
@@ -182,16 +187,36 @@ while is_running:
             
 #    piPodGUI.manager.process_events(event)
     piPodGUI.manager.update(time_delta)
-    # window_surface.blit(background, (0, 0))
-    if piPodGUI.isDirty():
-        piPodGUI.drawScreen()
-        piPodGUI.updateDisplay()
-        piPodGUI.clearDirty()
-        piPodGUI.clearPositionDirty()
     
-    elif piPodGUI.isPositionDirty():
-        piPodGUI.drawCurrentPosition()
- 
+    if piPodGUI.CurrentScreen == "NowPlaying":
+    
+        if piPodGUI.isDirty():
+            piPodGUI.drawNowPlayingDirect()
+    
+        elif piPodGUI.isPositionDirty():
+            piPodGUI.drawCurrentPosition()
+    
+    
+    elif piPodGUI.CurrentScreen == "AvailablePlaylists":
+    
+        if piPodGUI.isDirty():
+            piPodGUI.drawAvailablePlaylistsDirect()
+    
+    
+    elif piPodGUI.CurrentScreen == "PlaylistTracks":
+    
+        if piPodGUI.isDirty():
+            piPodGUI.drawPlaylistTracksDirect()
+    
+    
+    else:
+    
+        if piPodGUI.isDirty():
+            piPodGUI.drawScreen()
+            piPodGUI.updateDisplay()
+            piPodGUI.clearDirty()
+            piPodGUI.clearPositionDirty()
+     
 volumeUpButton.close()
 volumeDownButton.close()
 

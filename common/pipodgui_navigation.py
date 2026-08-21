@@ -191,11 +191,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                     widget.select()
     
             case 'AvailablePlaylists' | 'PlaylistTracks':
-                widget = self.getCurrentListItemWidget()
-            
-                if widget is not None:
-                    widget.change_object_id('@navigation_buttons')
-                    widget.select()
+                self.markDirty()
     
             case 'OTR':
                 pass
@@ -252,10 +248,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                     widget.unselect()
                     
             case 'AvailablePlaylists' | 'PlaylistTracks':
-                widget = self.getCurrentListItemWidget()
-
-                if widget is not None:
-                    widget.unselect()
+                self.markDirty()
                     
             case 'OTR':
                 pass
@@ -299,10 +292,16 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 
         match self.CurrentScreenElement:
             case 'NowPlaying':
+#                print("1: selecting NowPlaying")
                 self.setCurrentScreenElement('NowPlaying', 'Play/Pause')
+#                print("2: CurrentScreen =", self.CurrentScreen)
+#                print("3: CurrentScreenElement =", self.CurrentScreenElement)
                 self.MainScreenHide()
+#                print("4: Main hidden")
                 self.NowPlayingScreenShow()
+#                print("5: NowPlayingScreenShow finished")
                 self.setScreenElementSelected(self.CurrentScreenElement)
+#                print("6: selection finished")
 
             case 'Music':
                 self.setCurrentScreenElement('Music', 'AvailablePlaylists')
@@ -476,26 +475,31 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.setScreenElementSelected(self.CurrentScreenElement)
 
     def showPlaylistTracksFromBack(self):
-        """
-        Restore the Playlist Tracks screen after Back navigation.
-    
-        Do not rebuild the UISelectionList here. The PlaylistTracks screen was
-        already populated when the playlist was opened, and rebuilding the list is
-        noticeably slow on the Pi.
-        """
-    
-        tracks = self.ScreenNavigation.get('PlaylistTracks', [])
+        tracks = self.ScreenNavigation.get(
+            "PlaylistTracks",
+            []
+        )
     
         if len(tracks) == 0:
-            tracks = list(self.getPlaylistTracks(self.CurrentPlaylistId)['Title'])
-            self.ScreenNavigation['PlaylistTracks'] = tracks
-            self.PlaylistTracksScreenShow()
-        else:
-            self.windowPlaylistTracks.show()
-            self.markDirty()
+            tracks = list(
+                self.getPlaylistTracks(
+                    self.CurrentPlaylistId
+                )["Title"]
+            )
     
-        self.setCurrentScreenElement('PlaylistTracks', tracks[0])
-        self.setScreenElementSelected(self.CurrentScreenElement)
+            self.ScreenNavigation[
+                "PlaylistTracks"
+            ] = tracks
+    
+        if len(tracks) == 0:
+            return
+    
+        self.setCurrentScreenElement(
+            "PlaylistTracks",
+            tracks[0]
+        )
+    
+        self.drawPlaylistTracksDirect()
     
     def goBack(self):
         """
