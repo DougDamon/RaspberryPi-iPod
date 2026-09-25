@@ -1,40 +1,27 @@
 ** Drc report for pipod-carrier-v2.kicad_pcb **
-** Created on 2026-08-15T17:36:24 **
-** Report includes: Errors, Warnings **
+** Created on 2026-09-25T08:48:02 **
+** Report includes: Errors, Warnings, Exclusions **
 
-** Found 21 DRC violations **
-[clearance]: Clearance violation ( clearance 0.2000 mm; actual 0.1951 mm)
-    Local override; error
-    @(160.3000 mm, 59.8000 mm): PTH pad [<no net>] of SW1
-    @(162.8000 mm, 58.5500 mm): PTH pad 1 [GND] of SW1
-[clearance]: Clearance violation ( clearance 0.2000 mm; actual 0.1951 mm)
-    Local override; error
-    @(160.3000 mm, 71.8000 mm): PTH pad [<no net>] of SW2
-    @(162.8000 mm, 70.5500 mm): PTH pad 1 [GND] of SW2
-[clearance]: Clearance violation ( clearance 0.2000 mm; actual 0.1951 mm)
-    Local override; error
-    @(160.3000 mm, 59.8000 mm): PTH pad [<no net>] of SW1
-    @(162.8000 mm, 58.5500 mm): PTH pad 1 [GND] of SW1
-[clearance]: Clearance violation ( clearance 0.2000 mm; actual 0.1951 mm)
-    Local override; error
-    @(160.3000 mm, 71.8000 mm): PTH pad [<no net>] of SW2
-    @(162.8000 mm, 70.5500 mm): PTH pad 1 [GND] of SW2
-[clearance]: Clearance violation ( clearance 0.2000 mm; actual 0.1951 mm)
-    Local override; error
-    @(104.6000 mm, 120.4914 mm): PTH pad [<no net>] of SW3
-    @(102.1000 mm, 121.7414 mm): PTH pad 1 [GND] of SW3
-[clearance]: Clearance violation ( clearance 0.2000 mm; actual 0.1951 mm)
-    Local override; error
-    @(104.6000 mm, 120.4914 mm): PTH pad [<no net>] of SW3
-    @(102.1000 mm, 121.7414 mm): PTH pad 1 [GND] of SW3
-[silk_overlap]: Silkscreen clearance
-    Rule: board setup constraints silk; warning
-    @(160.2000 mm, 65.8000 mm): Reference field of SW1
-    @(158.8000 mm, 73.8000 mm): Rectangle of SW2 on F.Silkscreen
-[silk_over_copper]: Silkscreen clipped by solder mask
+** Found 18 DRC violations **
+[lib_footprint_mismatch]: Footprint 'Battery_Slot' does not match copy in library 'pipod_footprints'
     Local override; warning
-    @(160.2000 mm, 65.8000 mm): Reference field of SW1
-    @(160.3000 mm, 64.8000 mm): PTH pad [<no net>] of SW2
+    @(111.9000 mm, 70.5750 mm): Footprint Battery Slot
+[lib_footprint_mismatch]: Footprint 'MountingHole_2.2mm_M2' does not match copy in library 'MountingHole'
+    Local override; warning
+    @(160.5000 mm, 145.7000 mm): Footprint REF**
+[lib_footprint_mismatch]: Footprint 'MountingHole_2.2mm_M2' does not match copy in library 'MountingHole'
+    Local override; warning
+    @(104.5000 mm, 145.7000 mm): Footprint REF**
+[lib_footprint_mismatch]: Footprint 'MountingHole_2.2mm_M2' does not match copy in library 'MountingHole'
+    Local override; warning
+    @(104.5000 mm, 44.7000 mm): Footprint REF**
+[lib_footprint_mismatch]: Footprint 'MountingHole_2.2mm_M2' does not match copy in library 'MountingHole'
+    Local override; warning
+    @(160.5000 mm, 44.6750 mm): Footprint REF**
+[holes_co_located]: Drilled holes co-located
+    Local override; warning
+    @(118.9900 mm, 145.4500 mm): Via [/3V3] on F.Cu - B.Cu
+    @(118.9900 mm, 145.4500 mm): Via [/3V3] on F.Cu - B.Cu
 [silk_edge_clearance]: Silkscreen clipped by board edge
     Rule: board setup constraints silk; warning
     @(100.0000 mm, 40.2000 mm): Rectangle on Edge.Cuts
@@ -83,9 +70,6 @@
     Rule: board setup constraints silk; warning
     @(100.0000 mm, 40.2000 mm): Rectangle on Edge.Cuts
     @(161.9750 mm, 137.4250 mm): Arc of J1 on B.Silkscreen
-[track_dangling]: Track has unconnected end
-    Local override; warning
-    @(125.1500 mm, 140.9000 mm): Track [Net-(J1-GPIO2_{slash}_SDA1)] on F.Cu, length 0.1061 mm
 
 ** Found 0 unconnected pads **
 
