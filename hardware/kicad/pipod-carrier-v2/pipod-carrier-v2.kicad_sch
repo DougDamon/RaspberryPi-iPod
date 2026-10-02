@@ -5930,7 +5930,7 @@
 		)
 		(uuid "3b96a02e-b8de-4e40-a7a5-b51897674126")
 	)
-	(label "TFT_CE0"
+	(label "TFT_CE1"
 		(at 148.59 72.39 0)
 		(effects
 			(font
@@ -6010,7 +6010,7 @@
 		)
 		(uuid "84102fd6-908e-47d6-ad76-84c897eb71e7")
 	)
-	(label "TFT_BTN4"
+	(label "TFT_BTN2"
 		(at 119.38 74.93 0)
 		(effects
 			(font
@@ -6060,7 +6060,7 @@
 		)
 		(uuid "b2942f99-63e2-4ea4-bb10-0f7d104cfef1")
 	)
-	(label "TFT_CE1"
+	(label "TFT_CE0"
 		(at 146.05 74.93 0)
 		(effects
 			(font
@@ -6080,7 +6080,7 @@
 		)
 		(uuid "d0dd474d-da69-4615-8273-7697d183e4e5")
 	)
-	(label "TFT_BTN2"
+	(label "TFT_BTN4"
 		(at 116.84 72.39 0)
 		(effects
 			(font
