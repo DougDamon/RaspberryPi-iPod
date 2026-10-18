@@ -190,7 +190,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 if widget is not None:
                     widget.select()
     
-            case 'AvailablePlaylists' | 'PlaylistTracks':
+            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists':
                 self.markDirty()
     
             case 'OTR':
@@ -247,7 +247,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 if widget is not None:
                     widget.unselect()
                     
-            case 'AvailablePlaylists' | 'PlaylistTracks':
+            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists':
                 self.markDirty()
                     
             case 'OTR':
@@ -272,6 +272,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             pass
 
     def NavigateDown(self, IndexCurrentElement):
+        
         lengthScreenNavigation = len(self.ScreenNavigation[self.CurrentScreen]) - 1
         
         if IndexCurrentElement  < lengthScreenNavigation:
@@ -359,7 +360,27 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 pass
 
             case 'Artists':
-                pass
+                artists = list(
+                    self.getArtistsFromDB()["Artist"]
+                )
+            
+                self.ScreenNavigation[
+                    "Artists"
+                ] = artists
+            
+                if len(artists) == 0:
+                    return
+            
+                self.setCurrentScreenElement(
+                    "Artists",
+                    artists[0]
+                )
+            
+                self.MusicScreenHide()
+                self.ArtistsScreenShow()
+                self.setScreenElementSelected(
+                    self.CurrentScreenElement
+                )
 
             case 'Genres':
                 pass
@@ -394,6 +415,47 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.PlaylistTracksScreenShow()
         self.setScreenElementSelected(self.CurrentScreenElement)
     
+    def selectArtist(self):
+        self.navigationPath.append('Artists')
+    
+        selectedArtist = self.CurrentScreenElement
+    
+        dfTracks = self.getTracksByArtistFromDB(
+            selectedArtist
+        )
+    
+        if dfTracks.empty:
+            return
+    
+        artist_id = dfTracks.iloc[0]['ArtistId']
+    
+        queue_id = "artist:" + str(artist_id)
+    
+        self.setCurrentTrackList(
+            dfTracks,
+            queue_id,
+            selectedArtist
+        )
+    
+        tracks = list(
+            dfTracks["Title"]
+        )
+    
+        self.ScreenNavigation[
+            "PlaylistTracks"
+        ] = tracks
+    
+        self.setCurrentScreenElement(
+            "PlaylistTracks",
+            tracks[0]
+        )
+    
+        self.PlaylistTracksScreenShow()
+    
+        self.setScreenElementSelected(
+            self.CurrentScreenElement
+        )
+    
     def selectPlaylistTrack(self):
         """
         Handle selection behavior for the Playlist Tracks screen.
@@ -405,10 +467,11 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 
         self.setCurrentScreenElement('NowPlaying', 'Play/Pause')
 
-        selectedTrackId = self.getTrackIdByNameFromDB(
-            self.CurrentPlaylistId,
+        selectedTrackId = self.getTrackIdFromCurrentPlaylistByTitle(
             selectedTrack
         )
+        if selectedTrackId is None:
+            return
 
         self.setSelectedTrack(selectedTrackId)
 
@@ -596,7 +659,9 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 self.selectAvailablePlaylist()
             case 'PlaylistTracks':
                 self.selectPlaylistTrack()
-                        
+            case 'Artists':
+                self.selectArtist()            
+                
     def EncoderNavigation(self, EncoderActivity):
 #        print(f'EncoderActivity: {EncoderActivity}')
 #        print(f'CurrentScreenElement: {self.CurrentScreenElement}')

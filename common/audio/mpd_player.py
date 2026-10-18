@@ -42,6 +42,10 @@ class MPDAudioPlayback:
             self.connect()
             return self.client.status()
 
+    def update_library(self):
+        self.connect()
+        return self.client.update()
+        
     def current_song(self):
         self.connect()
         return self.client.currentsong()

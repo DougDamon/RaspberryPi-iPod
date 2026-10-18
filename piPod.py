@@ -208,7 +208,11 @@ while is_running:
         if piPodGUI.isDirty():
             piPodGUI.drawPlaylistTracksDirect()
     
-    
+    elif piPodGUI.CurrentScreen == "Artists":
+
+        if piPodGUI.isDirty():
+            piPodGUI.drawArtistsDirect()
+        
     else:
     
         if piPodGUI.isDirty():

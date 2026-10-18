@@ -41,28 +41,46 @@ class AudioPlayback():
         self.AudioPlaying = Status
     
     def setPlaylist(self, PlaylistId, SelectedTrackId=None):
-        dfPlaylistTracks = self.musicDB.getPlaylistTracksFromDB(PlaylistId)
+        dfPlaylistTracks = self.musicDB.getPlaylistTracksFromDB(
+            PlaylistId
+        )
     
+        return self.setTrackList(
+            dfPlaylistTracks,
+            SelectedTrackId
+        )
+        
+    def setTrackList(self, dfTracks, SelectedTrackId=None):
         mpd_paths = []
         selected_position = 0
     
-        for index, row in dfPlaylistTracks.reset_index(drop=True).iterrows():
+        for index, row in dfTracks.reset_index(drop=True).iterrows():
             track_id = row['TrackId']
     
-            dfTrack = self.musicDB.getTrackFromDB(track_id)
+            dfTrack = self.musicDB.getTrackFromDB(
+                track_id
+            )
     
             mpd_path = self.getMPDTrackPath(
                 dfTrack['FileLocation'].iloc[0],
                 dfTrack['FileName'].iloc[0]
             )
     
-            mpd_paths.append(mpd_path)
+            mpd_paths.append(
+                mpd_path
+            )
     
             if SelectedTrackId is not None and track_id == SelectedTrackId:
                 selected_position = index
     
-        self.mpd.add_tracks(mpd_paths)
-        self.mpd.play_position(selected_position)
+        self.mpd.add_tracks(
+            mpd_paths
+        )
+    
+        self.mpd.play_position(
+            selected_position
+        )
+    
         self.mpd.pause()
         self.setAudioPlayingStatus(False)
     

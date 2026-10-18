@@ -1,4 +1,5 @@
 import os
+import uuid
 from datetime import datetime
 
 import pandas as pd
@@ -16,12 +17,20 @@ class MusicDB():
         self.db = self.getMusicDB()
         
         self.dfEmpty = pd.DataFrame()
-        if len(self.getTable('NowPlayingPlaylist')) > 0 and len(self.getTable('NowPlayingTrack')) >= 0:
+        if len(self.getTable('NowPlayingPlaylist')) > 0:
             dfCurrentPlaylist = self.getCurrentPlaylist()
             dfCurrentTrack = self.getCurrentTrack()
+        
             self.CurrentPlaylistId = dfCurrentPlaylist.iloc[0]['PlaylistId']
             self.CurrentTrackId = dfCurrentTrack.iloc[0]['TrackId']
-            self.CurrentPlaylistInfo = self.getPlaylistInfoFromDB(self.CurrentPlaylistId)
+        
+            self.CurrentPlaylistInfo = pd.DataFrame([
+                {
+                    'PlaylistId': self.CurrentPlaylistId,
+                    'Playlist': dfCurrentPlaylist.iloc[0]['Playlist'],
+                    'TrackCount': len(dfCurrentPlaylist)
+                }
+            ])
         else:
             self.CurrentPlaylistId = None
             self.CurrentTrackId = None
@@ -143,6 +152,95 @@ class MusicDB():
         else:    
             playlistTrackTable.update({'Playlist' :  sPlaylist, 'Title' : sTitle , 'TrackPlaybackOrder' :  iTrackPlaybackOrder, 'Source' :  sSource,  'LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S") },  trackQuery.Track.TrackId == sTrackId)
 
+    def getOrCreateImportedArtist(self, artist_name):
+        artist_table = self.getTable('Artist')
+    
+        artist = artist_table.search(
+            where('ArtistName') == artist_name
+        )
+    
+        if len(artist) > 0:
+            return artist[0]['ArtistId']
+    
+        artist_id = str(uuid.uuid4())
+    
+        artist_table.insert({
+            'ArtistId': artist_id,
+            'ArtistName': artist_name,
+            'CreateDate': datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+            'LastUpdateDate': datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        })
+    
+        return artist_id
+    
+    def getOrCreateImportedAlbum(self, artist_id, artist_name, album_name):
+        album_table = self.getTable('Album')
+    
+        album = album_table.search(
+            (where('ArtistId') == artist_id) &
+            (where('Name') == album_name)
+        )
+    
+        if len(album) > 0:
+            return album[0]['AlbumId']
+    
+        album_id = str(uuid.uuid4())
+    
+        album_table.insert({
+            'AlbumId': album_id,
+            'Name': album_name,
+            'ArtistId': artist_id,
+            'Artist': artist_name,
+            'Source': 'FileImport',
+            'CreateDate': datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+            'LastUpdateDate': datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        })
+
+        return album_id
+    
+    def addImportedTrackToDB(
+        self,
+        title,
+        artist,
+        album,
+        track_number,
+        genre,
+        duration_seconds,
+        file_location,
+        file_name,
+        source="FileImport"
+    ):
+        track_table = self.getTable('Track')
+
+        artist_id = self.getOrCreateImportedArtist(artist)
+        
+        album_id = self.getOrCreateImportedAlbum(
+            artist_id,
+            artist,
+            album
+        )
+        
+        track_id = str(uuid.uuid4())
+    
+        track_table.insert({
+            'TrackId': track_id,
+            'Title': title,
+            'DurationSeconds': duration_seconds,
+            'FileLocation': file_location,
+            'FileName': file_name,
+            'AlbumId': album_id,
+            'Album': album,
+            'TrackNumber': track_number,
+            'ArtistId': artist_id,
+            'Artist': artist,
+            'Genre': genre,
+            'Downloaded': 'Y',
+            'Source': source,
+            'CreateDate': datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+            'LastUpdateDate': datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        })
+    
+        return track_id
 
     def addSkippedTrackToDB(self, Playlist, SkippedTrack,  Source):
         skippedTrackQuery = Query()
@@ -257,7 +355,143 @@ class MusicDB():
         tracks =  self.getTable('Track')
         dfTracks = pd.DataFrame(tracks)
         return dfTracks
-        
+
+    def getArtistsFromDB(self):
+        tracks = self.getTrackTableFromDB()
+    
+        if tracks.empty or 'Artist' not in tracks.columns:
+            return pd.DataFrame(columns=['Artist'])
+    
+        artists = tracks[['Artist']].dropna()
+        artists = artists[artists['Artist'].str.strip() != '']
+        artists = artists.drop_duplicates()
+        artists = artists.sort_values('Artist', key=lambda x: x.str.lower())
+        artists = artists.reset_index(drop=True)
+    
+        return artists
+    
+    
+    def getAlbumsFromDB(self):
+        tracks = self.getTrackTableFromDB()
+    
+        if tracks.empty or 'Album' not in tracks.columns:
+            return pd.DataFrame(columns=['Album'])
+    
+        albums = tracks[['Album']].dropna()
+        albums = albums[albums['Album'].str.strip() != '']
+        albums = albums.drop_duplicates()
+        albums = albums.sort_values('Album', key=lambda x: x.str.lower())
+        albums = albums.reset_index(drop=True)
+    
+        return albums
+    
+    
+    def getGenresFromDB(self):
+        tracks = self.getTrackTableFromDB()
+    
+        if tracks.empty or 'Genre' not in tracks.columns:
+            return pd.DataFrame(columns=['Genre'])
+    
+        genres = tracks[['Genre']].dropna()
+        genres = genres[genres['Genre'].str.strip() != '']
+        genres = genres.drop_duplicates()
+        genres = genres.sort_values('Genre', key=lambda x: x.str.lower())
+        genres = genres.reset_index(drop=True)
+    
+        return genres
+    
+    def getTracksByArtistFromDB(self, artist):
+        tracks = self.getTrackTableFromDB()
+    
+        if tracks.empty or 'Artist' not in tracks.columns:
+            return pd.DataFrame()
+    
+        tracks = tracks[tracks['Artist'] == artist].copy()
+    
+        if tracks.empty:
+            return tracks
+    
+        tracks = self.sortTracksForDisplay(tracks)
+    
+        return tracks
+    
+    
+    def getTracksByAlbumFromDB(self, album):
+        tracks = self.getTrackTableFromDB()
+    
+        if tracks.empty or 'Album' not in tracks.columns:
+            return pd.DataFrame()
+    
+        tracks = tracks[tracks['Album'] == album].copy()
+    
+        if tracks.empty:
+            return tracks
+    
+        tracks = self.sortTracksForDisplay(tracks)
+    
+        return tracks
+    
+    
+    def getTracksByGenreFromDB(self, genre):
+        tracks = self.getTrackTableFromDB()
+    
+        if tracks.empty or 'Genre' not in tracks.columns:
+            return pd.DataFrame()
+    
+        tracks = tracks[tracks['Genre'] == genre].copy()
+    
+        if tracks.empty:
+            return tracks
+    
+        tracks = self.sortTracksForDisplay(tracks)
+    
+        return tracks
+    
+    def sortTracksForDisplay(self, tracks):
+        tracks = tracks.copy()
+    
+        if 'TrackNumber' not in tracks.columns:
+            return tracks.sort_values(
+                'Title',
+                key=lambda x: x.str.lower()
+            ).reset_index(drop=True)
+    
+        tracks['TrackNumberSort'] = pd.to_numeric(
+            tracks['TrackNumber'],
+            errors='coerce'
+        )
+    
+        tracks['HasTrackNumber'] = tracks['TrackNumberSort'].notna()
+    
+        tracks = tracks.sort_values(
+            by=[
+                'HasTrackNumber',
+                'TrackNumberSort',
+                'Title'
+            ],
+            ascending=[
+                False,
+                True,
+                True
+            ],
+            key=lambda column: (
+                column.str.lower()
+                if column.name == 'Title'
+                else column
+            )
+        )
+    
+        tracks = tracks.drop(
+            columns=[
+                'TrackNumberSort',
+                'HasTrackNumber'
+            ]
+        )
+    
+        tracks = tracks.reset_index(drop=True)
+    
+        return tracks
+    
     def getPlaylistTracksFromDB(self, currentPlaylistId):
         sCurrentPlaylistId = currentPlaylistId
         trackTable = self.getTable('PlaylistTrack')
@@ -325,6 +559,21 @@ class MusicDB():
         else:
             return  dfNowPlayingPlaylist.sort_values('CurrentPlaybackOrder')
     
+    def getTrackIdFromCurrentPlaylistByTitle(self, title):
+        dfCurrentPlaylist = self.getCurrentPlaylist()
+    
+        if dfCurrentPlaylist.empty:
+            return None
+    
+        matches = dfCurrentPlaylist[
+            dfCurrentPlaylist['Title'] == title
+        ]
+
+        if matches.empty:
+            return None
+    
+        return matches.iloc[0]['TrackId']
+    
     def getCurrentPlaylistInfo(self):
         return self.CurrentPlaylistInfo
     
@@ -337,16 +586,35 @@ class MusicDB():
         
     def getCurrentTrack(self):
         nowPlayingTrackTable = self.getTable('NowPlayingTrack')
+    
         dfNowPlayingPlaylist = self.getCurrentPlaylist()
         dfNowPlayingTrack = pd.DataFrame(nowPlayingTrackTable)
-        if dfNowPlayingTrack.shape[0] == 0 and dfNowPlayingPlaylist.shape[0] == 0:
-            return self.dfEmpty
-        elif dfNowPlayingTrack.shape[0] == 0 and dfNowPlayingPlaylist.shape[0] >=1:
-            dfFirstTrack = self.getFirstTrack(dfNowPlayingPlaylist.iloc[0]['PlaylistId'])
-            self.setCurrentTrack(dfFirstTrack.iloc[0]['TrackId'],  dfNowPlayingPlaylist.iloc[0]['PlaylistId'])
-            return dfFirstTrack
-        else:
+    
+        if dfNowPlayingTrack.shape[0] > 0:
             return dfNowPlayingTrack
+    
+        if dfNowPlayingPlaylist.shape[0] == 0:
+            return self.dfEmpty
+    
+        first_track_id = dfNowPlayingPlaylist.iloc[0]['TrackId']
+    
+        dfFirstTrack = self.getTrackFromDB(
+            first_track_id
+        )
+    
+        if dfFirstTrack.empty:
+            return self.dfEmpty
+    
+        duration = int(dfFirstTrack.iloc[0]['DurationSeconds'])
+    
+        self.setCurrentTrack(
+            first_track_id,
+            duration,
+            0,
+            0
+        )
+    
+        return dfFirstTrack
     
     def getNextTrack(self):
         CurrentTrackIndex = None
@@ -429,6 +697,47 @@ class MusicDB():
         nowPlayingPlaylistTable.update({'NowPlaying' : 'Y','LastUpdateDate' : datetime.now().strftime("%m/%d/%Y, %H:%M:%S")},  nowPlayingQuery.TrackId == sTrackId)
         self.clearCurrentTrack()
         nowPlayingTrackTable.insert({'TrackId' : sTrackId,  'DurationSeconds' : fDuration, 'InitialPosition' : fInitialPosition,  'CurrentPosition' : fCurrentPosition})
+ 
+    def setCurrentTrackList(self, dfTracks, queue_id, queue_name):
+        self.clearCurrentPlaylist()
+    
+        now_playing_table = self.getTable('NowPlayingPlaylist')
+    
+        records = []
+    
+        for index, row in dfTracks.reset_index(drop=True).iterrows():
+            record = row.to_dict()
+    
+            playback_order = index + 1
+    
+            record['PlaylistId'] = queue_id
+            record['Playlist'] = queue_name
+            record['TrackPlaybackOrder'] = playback_order
+            record['CurrentPlaybackOrder'] = playback_order
+            record['NowPlaying'] = 'N'
+            record['CreateDate'] = datetime.now().strftime(
+                "%m/%d/%Y, %H:%M:%S"
+            )
+            record['LastUpdateDate'] = datetime.now().strftime(
+                "%m/%d/%Y, %H:%M:%S"
+            )
+    
+            records.append(record)
+    
+        if len(records) > 0:
+            now_playing_table.insert_multiple(records)
+    
+        self.CurrentPlaylistId = queue_id
+    
+        self.CurrentPlaylistInfo = pd.DataFrame([
+            {
+                'PlaylistId': queue_id,
+                'Playlist': queue_name,
+                'TrackCount': len(records)
+            }
+        ])
+    
+        return self.CurrentPlaylistInfo
  
     def setCurrentPlaylist(self,  PlaylistId):
 #        sPlaylistId =  PlaylistId

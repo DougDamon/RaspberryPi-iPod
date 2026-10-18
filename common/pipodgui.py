@@ -158,6 +158,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.list_first_visible = {
             "AvailablePlaylists": 0,
             "PlaylistTracks": 0,
+            "Artists": 0,
         }
         
     def getClock(self):
@@ -631,6 +632,16 @@ class piPodGUI(AudioPlayback, MusicDB):
             items
         )
     
+    def drawArtistsDirect(self):
+        items = self.ScreenNavigation.get(
+            "Artists",
+            []
+        )
+        self.drawDirectList(
+            "Artists",
+            items
+        )
+    
     def NowPlayingScreen(self): #, SelectedPlaylistId,  SelectedTrackId):
         self.lblTrackTitle = UILabel(relative_rect=pygame.Rect((177,5 ), (120, 21)),
                                                    text = self.CurrentTitle,
@@ -874,7 +885,7 @@ class piPodGUI(AudioPlayback, MusicDB):
 
     def refreshNowPlayingDisplay(self):
         currentTrackID3 = self.getTrackID3Tags(self.CurrentTrackId)
-        currentPlaylist = self.getPlaylistInfoFromDB(self.CurrentPlaylistId)
+        currentPlaylist = self.getCurrentPlaylistInfo()
     
         currentArtwork = currentTrackID3['artwork']
         bytesCurrentImage = currentArtwork.first.data
@@ -918,7 +929,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition)
         
         currentTrackID3 = self.getTrackID3Tags(self.CurrentTrackId)
-        currentPlaylist = self.getPlaylistInfoFromDB(self.CurrentPlaylistId)
+        currentPlaylist = self.getCurrentPlaylistInfo()
         currentArtwork = currentTrackID3['artwork'] 
         bytesCurrentImage = currentArtwork.first.data
         pilCurrentImage = Image.open(BytesIO(bytesCurrentImage))
@@ -935,7 +946,12 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.CurrentDurationFormat = self.formatTrackTime(self.CurrentDurationSeconds)
         
         
-        self.setPlaylist(self.CurrentPlaylistId, self.CurrentTrackId)
+        dfCurrentPlaylist = self.getCurrentPlaylist()
+
+        self.setTrackList(
+            dfCurrentPlaylist,
+            self.CurrentTrackId
+        )
         self.LastMPDFile = self.mpd.get_current_file()
         
         if self.AutoPlayOnStart:
@@ -1110,7 +1126,19 @@ class piPodGUI(AudioPlayback, MusicDB):
     #                                                                                                       allow_multi_select=False,
                                                                                                            allow_double_clicks=False)
 
-        
+    def ArtistsScreenShow(self):
+        dfArtists = self.getArtistsFromDB()
+    
+        artists = list(
+            dfArtists["Artist"]
+        )
+    
+        self.ScreenNavigation[
+            "Artists"
+        ] = artists
+    
+        self.drawArtistsDirect()
+    
     def PlaylistTracksScreenHide(self):
         self.windowPlaylistTracks.hide()
         self.markDirty()
@@ -1130,15 +1158,10 @@ class piPodGUI(AudioPlayback, MusicDB):
         )    
     
     def PlaylistTracksScreenShow(self):
-        dfPlaylistTracks = self.getCurrentPlaylist()
-    
-        tracks = list(
-            dfPlaylistTracks["Title"]
-        )
-    
-        self.ScreenNavigation[
-            "PlaylistTracks"
-        ] = tracks
+#        tracks = self.ScreenNavigation.get(
+#            "PlaylistTracks",
+#            []
+#        )
     
         self.drawPlaylistTracksDirect()
 
@@ -1156,6 +1179,8 @@ class piPodGUI(AudioPlayback, MusicDB):
         match ScreenName:
             case 'AvailablePlaylists':
                 self.AvailablePlaylistsScreenShow()
+            case 'Artists':
+                self.ArtistsScreenShow()
             case 'Main':
                 self.MainScreenShow()
             case 'Music':
