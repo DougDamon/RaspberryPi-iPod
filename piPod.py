@@ -227,6 +227,16 @@ while is_running:
 
         if piPodGUI.isDirty():
             piPodGUI.drawGenresDirect()    
+    
+    elif piPodGUI.CurrentScreen == "Tools":
+
+        if piPodGUI.isDirty():
+            piPodGUI.drawToolsDirect()
+
+    elif piPodGUI.CurrentScreen == "Import":
+    
+        if piPodGUI.isDirty():
+            piPodGUI.drawImportDirect()
     else:
     
         if piPodGUI.isDirty():

@@ -238,6 +238,8 @@ class MusicLibraryService:
             return
             
         imported_count = 0
+        skipped_count = 0
+        error_count = 0
         
         for root, directories, files in os.walk(
             self.import_music_directory
@@ -296,6 +298,8 @@ class MusicLibraryService:
                         print("SKIPPED - destination already exists")
                         print(source_file)
                         print(destination_file)
+                        
+                        skipped_count += 1
                         continue
     
                     os.makedirs(
@@ -330,8 +334,17 @@ class MusicLibraryService:
                     print("IMPORT ERROR")
                     print(source_file)
                     print(error)
+                    
+                    error_count += 1
+                    
         if imported_count > 0:
             print()
             print("Updating MPD library...")
             self.mpd.update_library()
-            print("MPD library update started.")                
+            print("MPD library update started.")
+        
+        return {
+            "imported": imported_count,
+            "skipped": skipped_count,
+            "errors": error_count,
+        }

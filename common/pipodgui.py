@@ -162,8 +162,17 @@ class piPodGUI(AudioPlayback, MusicDB):
             "Albums": 0,
             "Genres": 0,
             "ArtistAlbums": 0,
+            "Tools": 0,
+            "Import": 0,
         }
         
+        #Audio Import Results
+        self.ImportResult = {
+            "imported": 0,
+            "skipped": 0,
+            "errors": 0,
+        }
+
     def getClock(self):
         return pygame.time.Clock()
       
@@ -256,7 +265,7 @@ class piPodGUI(AudioPlayback, MusicDB):
                                                object_id=ObjectID(class_id='@navigation_buttons'))
 
         self.bManagement = UIButton(relative_rect=pygame.Rect((12, 150), (300, 24)),
-                                                         text='Mangement',
+                                                         text='Tools',
                                                          container = self.windowMainScreen , #self.containerMainWindow,
                                                          manager=self.manager, 
                                                          object_id=ObjectID(class_id='@navigation_buttons'))
@@ -678,6 +687,82 @@ class piPodGUI(AudioPlayback, MusicDB):
             items
         )
         
+    def drawToolsDirect(self):
+        items = self.ScreenNavigation.get(
+            "Tools",
+            []
+        )
+    
+        self.drawDirectList(
+            "Tools",
+            items
+        )
+    
+    
+    def drawImportDirect(self):
+        items = self.ScreenNavigation.get(
+            "Import",
+            []
+        )
+    
+        self.drawDirectList(
+            "Import",
+            items
+        )    
+    
+    def drawImportResultDirect(self):
+        self.window_surface.fill(
+            self.list_background
+        )
+    
+        title = self.list_font.render(
+            "Import Music",
+            True,
+            self.list_text
+        )
+    
+        imported = self.list_font.render(
+            "Imported: " + str(
+                self.ImportResult["imported"]
+            ),
+            True,
+            self.list_text
+        )
+    
+        skipped = self.list_font.render(
+            "Skipped: " + str(
+                self.ImportResult["skipped"]
+            ),
+            True,
+            self.list_text
+        )
+    
+        errors = self.list_font.render(
+            "Errors: " + str(
+                self.ImportResult["errors"]
+            ),
+            True,
+            self.list_text
+        )
+    
+        back = self.list_font.render(
+            "Back",
+            True,
+            self.list_text
+        )
+    
+        self.window_surface.blit(title, (12, 10))
+        self.window_surface.blit(imported, (12, 50))
+        self.window_surface.blit(skipped, (12, 80))
+        self.window_surface.blit(errors, (12, 110))
+        self.window_surface.blit(back, (12, 190))
+    
+        self.framebuffer_display.update_full(
+            self.window_surface
+        )
+    
+        self.clearDirty()
+    
     def NowPlayingScreen(self): #, SelectedPlaylistId,  SelectedTrackId):
         self.lblTrackTitle = UILabel(relative_rect=pygame.Rect((177,5 ), (120, 21)),
                                                    text = self.CurrentTitle,
@@ -1203,6 +1288,16 @@ class piPodGUI(AudioPlayback, MusicDB):
     
         self.drawGenresDirect()
     
+    def ToolsScreenShow(self):
+        self.drawToolsDirect()
+    
+    
+    def ImportScreenShow(self):
+        self.drawImportDirect()
+    
+    def ImportResultScreenShow(self):
+        self.drawImportResultDirect()
+    
     def PlaylistTracksScreenHide(self):
         self.windowPlaylistTracks.hide()
         self.markDirty()
@@ -1259,6 +1354,12 @@ class piPodGUI(AudioPlayback, MusicDB):
                 self.NowPlayingScreenShow()
             case 'PlaylistTracks':
                 self.PlaylistTracksScreenShow()
+            case 'Tools':
+                self.ToolsScreenShow()
+            case 'Import':
+                self.ImportScreenShow()
+            case 'ImportResult':
+                self.ImportResultScreenShow()
             case _:
                 pass
 

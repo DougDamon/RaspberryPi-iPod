@@ -1,5 +1,6 @@
 from common.pipodgui import piPodGUI
 from common.input.rotary import RotaryEncoder
+from common.library.music import MusicLibraryService
    
 class piPodGUINavigation(RotaryEncoder, piPodGUI):
     def __init__(self):
@@ -11,6 +12,8 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.CurrentScreenElement = self.configuration.DefaultElement
         self.PreviousScreen = self.configuration.DefaultScreen
         self.PreviousScreenElement = self.configuration.DefaultElement
+        self.ScreenReturnElement = {}
+        
         self.setMainScreenElementDefault()
     
     def setMainScreenElementDefault(self):
@@ -56,8 +59,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             "OTR": self.bOTR,
             "Audiobooks": self.bAudiobooks,
             "Games": self.bGames,
-            "Settings": self.bManagement,
-            "Management": self.bManagement,
+            "Tools": self.bManagement,
         }
 
         return widgets.get(element_name)
@@ -190,7 +192,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 if widget is not None:
                     widget.select()
     
-            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists' | 'Albums' | 'Genres' | 'ArtistAlbums':
+            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists' | 'Albums' | 'Genres' | 'ArtistAlbums' | 'Tools' | 'Import':
                 self.markDirty()
     
             case 'OTR':
@@ -247,7 +249,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 if widget is not None:
                     widget.unselect()
                     
-            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists' | 'Albums' | 'Genres' | 'ArtistAlbums':
+            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists' | 'Albums' | 'Genres' | 'ArtistAlbums' | 'Tools' | 'Import':
                 self.markDirty()
                     
             case 'OTR':
@@ -320,8 +322,92 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             case 'Games':
                 pass
 
-            case 'Settings':
-                pass
+            case 'Tools':
+                items = self.ScreenNavigation.get(
+                    "Tools",
+                    []
+                )
+            
+                if len(items) == 0:
+                    return
+            
+                self.setCurrentScreenElement(
+                    "Tools",
+                    items[0]
+                )
+            
+                self.MainScreenHide()
+                self.ToolsScreenShow()
+            
+                self.setScreenElementSelected(
+                    self.CurrentScreenElement
+                )
+    
+    def selectToolsScreenElement(self):
+        self.navigationPath.append('Tools')
+    
+        selectedItem = self.CurrentScreenElement
+    
+        self.ScreenReturnElement[
+            "Tools"
+        ] = selectedItem
+    
+        match selectedItem:
+            case 'Import':
+                items = self.ScreenNavigation.get(
+                    "Import",
+                    []
+                )
+    
+                if len(items) == 0:
+                    return
+    
+                self.setCurrentScreenElement(
+                    "Import",
+                    items[0]
+                )
+    
+                self.ImportScreenShow()
+    
+                self.setScreenElementSelected(
+                    self.CurrentScreenElement
+                )
+    
+    def selectImportScreenElement(self):
+        selectedItem = self.CurrentScreenElement
+    
+        self.ScreenReturnElement[
+            "Import"
+        ] = selectedItem
+    
+        match selectedItem:
+            case 'Music':
+                print("Starting local music import...")
+    
+                music_library = MusicLibraryService()
+                result = music_library.import_music()
+    
+                print("Local music import finished.")
+                print("Imported:", result["imported"])
+                print("Skipped:", result["skipped"])
+                print("Errors:", result["errors"])
+    
+                self.ImportResult = result
+    
+                self.navigationPath.append('Import')
+    
+                self.setCurrentScreenElement(
+                    "ImportResult",
+                    "Back"
+                )
+    
+                self.ImportResultScreenShow()
+    
+                self.setScreenElementSelected(
+                    self.CurrentScreenElement
+                )
+    
+                self.markDirty()
     
     def selectMusicScreenElement(self):
         """
@@ -329,7 +415,9 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         """
 
         self.navigationPath.append('Music')
-        self.MusicReturnElement = self.CurrentScreenElement
+        self.ScreenReturnElement[
+            "Music"
+        ] = self.CurrentScreenElement
 
         match self.CurrentScreenElement:
             case 'AvailablePlaylists':
@@ -460,6 +548,11 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.navigationPath.append('Artists')
     
         selectedArtist = self.CurrentScreenElement
+
+        self.ScreenReturnElement[
+            "Artists"
+        ] = selectedArtist
+
         self.CurrentArtist = selectedArtist
         
         dfAlbums = self.getAlbumsByArtistFromDB(
@@ -521,7 +614,10 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.navigationPath.append('Albums')
     
         selectedAlbum = self.CurrentScreenElement
-        self.CurrentAlbum = selectedAlbum
+
+        self.ScreenReturnElement[
+            "Albums"
+        ] = selectedAlbum
     
         dfTracks = self.getTracksByAlbumFromDB(
             selectedAlbum
@@ -544,7 +640,10 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.navigationPath.append('ArtistAlbums')
     
         selectedItem = self.CurrentScreenElement
-        self.ArtistAlbumReturnElement = selectedItem
+
+        self.ScreenReturnElement[
+            "ArtistAlbums"
+        ] = selectedItem
     
         if selectedItem == "All Tracks":
             dfTracks = self.getTracksByArtistFromDB(
@@ -578,7 +677,10 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.navigationPath.append('Genres')
     
         selectedGenre = self.CurrentScreenElement
-        self.CurrentGenre = selectedGenre
+
+        self.ScreenReturnElement[
+            "Genres"
+        ] = selectedGenre
     
         dfTracks = self.getTracksByGenreFromDB(
             selectedGenre
@@ -630,9 +732,8 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         Restore the Music screen after Back navigation.
         """
     
-        return_element = getattr(
-            self,
-            "MusicReturnElement",
+        return_element = self.ScreenReturnElement.get(
+            "Music",
             "AvailablePlaylists"
         )
     
@@ -657,7 +758,6 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self,
         screen_name,
         items,
-        return_attribute,
         show_method
     ):
         self.ScreenNavigation[
@@ -667,9 +767,8 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         if len(items) == 0:
             return
     
-        return_item = getattr(
-            self,
-            return_attribute,
+        return_item = self.ScreenReturnElement.get(
+            screen_name,
             items[0]
         )
     
@@ -695,9 +794,8 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.showDirectListFromBack(
             "Artists",
             artists,
-            "CurrentArtist",
             self.ArtistsScreenShow
-    )
+        )
 
     def showAlbumsFromBack(self):
         albums = list(
@@ -707,7 +805,6 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.showDirectListFromBack(
             "Albums",
             albums,
-            "CurrentAlbum",
             self.AlbumsScreenShow
         )
 
@@ -720,7 +817,6 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.showDirectListFromBack(
             "ArtistAlbums",
             items,
-            "ArtistAlbumReturnElement",
             self.ArtistAlbumsScreenShow
         )
 
@@ -732,10 +828,21 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.showDirectListFromBack(
             "Genres",
             genres,
-            "CurrentGenre",
             self.GenresScreenShow
         )
 
+    def showToolsFromBack(self):
+        items = self.ScreenNavigation.get(
+            "Tools",
+            []
+        )
+    
+        self.showDirectListFromBack(
+            "Tools",
+            items,
+            self.ToolsScreenShow
+        )
+    
     def goHome(self):
         """
         Return to the Main screen from the current screen.
@@ -848,7 +955,10 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                     
             case 'Genres':
                 self.showGenresFromBack()    
-        
+                
+            case 'Tools':
+                self.showToolsFromBack()
+                
             case _:
                 print("Back target not implemented:", previous_screen)
 
@@ -893,7 +1003,10 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 
             case 'Home':
                 self.goHome()
-
+            
+            case 'ImportResult':
+                self.goBack()
+                
             case _:
                 pass
     
@@ -917,6 +1030,10 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 self.selectAlbum()
             case 'Genres':
                 self.selectGenre()
+            case 'Tools':
+                self.selectToolsScreenElement()
+            case 'Import':
+                self.selectImportScreenElement()
                 
     def EncoderNavigation(self, EncoderActivity):
 #        print(f'EncoderActivity: {EncoderActivity}')
