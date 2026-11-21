@@ -6859,7 +6859,7 @@
 				)
 			)
 		)
-		(property "Value" "Conn_02x06_Odd_Even"
+		(property "Value" "Display"
 			(at 87.63 19.05 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6869,7 +6869,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x06_P2.54mm_Vertical"
+		(property "Footprint" "Connector_JST:JST_PH_B12B-PH-K_1x12_P2.00mm_Vertical"
 			(at 86.36 27.94 0)
 			(hide yes)
 			(show_name no)
@@ -7252,7 +7252,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
+		(property "Footprint" "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"
 			(at 85.09 129.54 0)
 			(hide yes)
 			(show_name no)
@@ -7796,7 +7796,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "Conn_01x02"
+		(property "Value" "Display 3v3"
 			(at 45.72 27.9399 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7807,7 +7807,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
+		(property "Footprint" "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical"
 			(at 43.18 25.4 0)
 			(hide yes)
 			(show_name no)

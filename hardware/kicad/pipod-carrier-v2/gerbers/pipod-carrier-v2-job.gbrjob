@@ -3,9 +3,9 @@
     "GenerationSoftware": {
       "Vendor": "KiCad",
       "Application": "Pcbnew",
-      "Version": "10.0.5-10.0.5~ubuntu24.04.1"
+      "Version": "10.0.8-10.0.8~ubuntu24.04.1"
     },
-    "CreationDate": "2026-08-20T15:12:30-05:00"
+    "CreationDate": "2026-11-20T17:08:08-06:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
@@ -46,6 +46,11 @@
     {
       "Path": "pipod-carrier-v2-F_Silkscreen.gto",
       "FileFunction": "Legend,Top",
+      "FilePolarity": "Positive"
+    },
+    {
+      "Path": "pipod-carrier-v2-B_Silkscreen.gbo",
+      "FileFunction": "Legend,Bot",
       "FilePolarity": "Positive"
     },
     {
