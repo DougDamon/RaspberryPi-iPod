@@ -56,6 +56,8 @@ class MusicLibraryService:
     def get_albums(self):
         return self.db.getAlbumsFromDB()
     
+    def get_albums_by_artist(self, artist):
+        return self.db.getAlbumsByArtistFromDB(artist)
     
     def get_genres(self):
         return self.db.getGenresFromDB()

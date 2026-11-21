@@ -212,7 +212,21 @@ while is_running:
 
         if piPodGUI.isDirty():
             piPodGUI.drawArtistsDirect()
-        
+    
+    elif piPodGUI.CurrentScreen == "Albums":
+
+        if piPodGUI.isDirty():
+            piPodGUI.drawAlbumsDirect()
+            
+    elif piPodGUI.CurrentScreen == "ArtistAlbums":
+    
+        if piPodGUI.isDirty():
+            piPodGUI.drawArtistAlbumsDirect()
+            
+    elif piPodGUI.CurrentScreen == "Genres":
+
+        if piPodGUI.isDirty():
+            piPodGUI.drawGenresDirect()    
     else:
     
         if piPodGUI.isDirty():

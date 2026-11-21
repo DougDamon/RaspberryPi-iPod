@@ -159,6 +159,9 @@ class piPodGUI(AudioPlayback, MusicDB):
             "AvailablePlaylists": 0,
             "PlaylistTracks": 0,
             "Artists": 0,
+            "Albums": 0,
+            "Genres": 0,
+            "ArtistAlbums": 0,
         }
         
     def getClock(self):
@@ -642,6 +645,39 @@ class piPodGUI(AudioPlayback, MusicDB):
             items
         )
     
+    def drawAlbumsDirect(self):
+        items = self.ScreenNavigation.get(
+            "Albums",
+            []
+        )
+    
+        self.drawDirectList(
+            "Albums",
+            items
+        )
+    
+    def drawArtistAlbumsDirect(self):
+        items = self.ScreenNavigation.get(
+            "ArtistAlbums",
+            []
+        )
+    
+        self.drawDirectList(
+            "ArtistAlbums",
+            items
+    )
+    
+    def drawGenresDirect(self):
+        items = self.ScreenNavigation.get(
+            "Genres",
+            []
+        )
+    
+        self.drawDirectList(
+            "Genres",
+            items
+        )
+        
     def NowPlayingScreen(self): #, SelectedPlaylistId,  SelectedTrackId):
         self.lblTrackTitle = UILabel(relative_rect=pygame.Rect((177,5 ), (120, 21)),
                                                    text = self.CurrentTitle,
@@ -921,7 +957,6 @@ class piPodGUI(AudioPlayback, MusicDB):
             self.drawNowPlayingDirect()
  
     def NowPlayingScreenShow(self):
-        print("ENTER NowPlayingScreenShow")
         dfCurrentTrack = self.getCurrentTrack()
         self.CurrentTrackId = dfCurrentTrack['TrackId'][0]
         self.StartPlaybackPosition = dfCurrentTrack['CurrentPosition'][0].item()
@@ -1139,6 +1174,35 @@ class piPodGUI(AudioPlayback, MusicDB):
     
         self.drawArtistsDirect()
     
+    def AlbumsScreenShow(self):
+        dfAlbums = self.getAlbumsFromDB()
+    
+        albums = list(
+            dfAlbums["Album"]
+        )
+    
+        self.ScreenNavigation[
+            "Albums"
+        ] = albums
+    
+        self.drawAlbumsDirect()
+    
+    def ArtistAlbumsScreenShow(self):
+        self.drawArtistAlbumsDirect()
+        
+    def GenresScreenShow(self):
+        dfGenres = self.getGenresFromDB()
+    
+        genres = list(
+            dfGenres["Genre"]
+        )
+    
+        self.ScreenNavigation[
+            "Genres"
+        ] = genres
+    
+        self.drawGenresDirect()
+    
     def PlaylistTracksScreenHide(self):
         self.windowPlaylistTracks.hide()
         self.markDirty()
@@ -1181,6 +1245,12 @@ class piPodGUI(AudioPlayback, MusicDB):
                 self.AvailablePlaylistsScreenShow()
             case 'Artists':
                 self.ArtistsScreenShow()
+            case 'Albums':
+                self.AlbumsScreenShow()
+            case 'ArtistAlbums':
+                self.ArtistAlbumsScreenShow()
+            case 'Genres':
+                self.GenresScreenShow()
             case 'Main':
                 self.MainScreenShow()
             case 'Music':

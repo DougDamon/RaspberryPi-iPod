@@ -190,7 +190,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 if widget is not None:
                     widget.select()
     
-            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists':
+            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists' | 'Albums' | 'Genres' | 'ArtistAlbums':
                 self.markDirty()
     
             case 'OTR':
@@ -247,7 +247,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 if widget is not None:
                     widget.unselect()
                     
-            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists':
+            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists' | 'Albums' | 'Genres' | 'ArtistAlbums':
                 self.markDirty()
                     
             case 'OTR':
@@ -329,6 +329,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         """
 
         self.navigationPath.append('Music')
+        self.MusicReturnElement = self.CurrentScreenElement
 
         match self.CurrentScreenElement:
             case 'AvailablePlaylists':
@@ -357,7 +358,27 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 )
 
             case 'Albums':
-                pass
+                albums = list(
+                    self.getAlbumsFromDB()["Album"]
+                )
+            
+                self.ScreenNavigation[
+                    "Albums"
+                ] = albums
+            
+                if len(albums) == 0:
+                    return
+            
+                self.setCurrentScreenElement(
+                    "Albums",
+                    albums[0]
+                )
+            
+                self.MusicScreenHide()
+                self.AlbumsScreenShow()
+                self.setScreenElementSelected(
+                    self.CurrentScreenElement
+                )
 
             case 'Artists':
                 artists = list(
@@ -383,7 +404,27 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 )
 
             case 'Genres':
-                pass
+                genres = list(
+                    self.getGenresFromDB()["Genre"]
+                )
+            
+                self.ScreenNavigation[
+                    "Genres"
+                ] = genres
+            
+                if len(genres) == 0:
+                    return
+            
+                self.setCurrentScreenElement(
+                    "Genres",
+                    genres[0]
+                )
+            
+                self.MusicScreenHide()
+                self.GenresScreenShow()
+                self.setScreenElementSelected(
+                    self.CurrentScreenElement
+                )
 
             case _:
                 pass
@@ -419,22 +460,42 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.navigationPath.append('Artists')
     
         selectedArtist = self.CurrentScreenElement
-    
-        dfTracks = self.getTracksByArtistFromDB(
+        self.CurrentArtist = selectedArtist
+        
+        dfAlbums = self.getAlbumsByArtistFromDB(
             selectedArtist
         )
     
+        albums = ["All Tracks"]
+    
+        if not dfAlbums.empty:
+            albums.extend(
+                list(dfAlbums["Album"])
+            )
+    
+        self.ScreenNavigation[
+            "ArtistAlbums"
+        ] = albums
+    
+        self.setCurrentScreenElement(
+            "ArtistAlbums",
+            albums[0]
+        )
+    
+        self.ArtistAlbumsScreenShow()
+    
+        self.setScreenElementSelected(
+            self.CurrentScreenElement
+        )
+    
+    def openTrackList(self, dfTracks, queue_id, queue_name):
         if dfTracks.empty:
             return
-    
-        artist_id = dfTracks.iloc[0]['ArtistId']
-    
-        queue_id = "artist:" + str(artist_id)
     
         self.setCurrentTrackList(
             dfTracks,
             queue_id,
-            selectedArtist
+            queue_name
         )
     
         tracks = list(
@@ -454,6 +515,81 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
     
         self.setScreenElementSelected(
             self.CurrentScreenElement
+        )
+    
+    def selectAlbum(self):
+        self.navigationPath.append('Albums')
+    
+        selectedAlbum = self.CurrentScreenElement
+        self.CurrentAlbum = selectedAlbum
+    
+        dfTracks = self.getTracksByAlbumFromDB(
+            selectedAlbum
+        )
+    
+        if dfTracks.empty:
+            return
+    
+        album_id = dfTracks.iloc[0]['AlbumId']
+    
+        queue_id = "album:" + str(album_id)
+    
+        self.openTrackList(
+            dfTracks,
+            queue_id,
+            selectedAlbum
+        )
+    
+    def selectArtistAlbum(self):
+        self.navigationPath.append('ArtistAlbums')
+    
+        selectedItem = self.CurrentScreenElement
+        self.ArtistAlbumReturnElement = selectedItem
+    
+        if selectedItem == "All Tracks":
+            dfTracks = self.getTracksByArtistFromDB(
+                self.CurrentArtist
+            )
+    
+            queue_id = "artist:" + self.CurrentArtist
+            queue_name = self.CurrentArtist
+    
+        else:
+            dfTracks = self.getTracksByArtistAndAlbumFromDB(
+                self.CurrentArtist,
+                selectedItem
+            )
+    
+            if dfTracks.empty:
+                return
+    
+            album_id = dfTracks.iloc[0]["AlbumId"]
+    
+            queue_id = "album:" + str(album_id)
+            queue_name = selectedItem
+    
+        self.openTrackList(
+            dfTracks,
+            queue_id,
+            queue_name
+        )
+        
+    def selectGenre(self):
+        self.navigationPath.append('Genres')
+    
+        selectedGenre = self.CurrentScreenElement
+        self.CurrentGenre = selectedGenre
+    
+        dfTracks = self.getTracksByGenreFromDB(
+            selectedGenre
+        )
+    
+        queue_id = "genre:" + selectedGenre
+    
+        self.openTrackList(
+            dfTracks,
+            queue_id,
+            selectedGenre
         )
     
     def selectPlaylistTrack(self):
@@ -494,9 +630,111 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         Restore the Music screen after Back navigation.
         """
     
-        self.setCurrentScreenElement('Music', 'AvailablePlaylists')
+        return_element = getattr(
+            self,
+            "MusicReturnElement",
+            "AvailablePlaylists"
+        )
+    
+        self.setCurrentScreenElement(
+            'Music',
+            return_element
+        )
+    
         self.MusicScreenShow()
-        self.setScreenElementSelected(self.CurrentScreenElement)
+    
+        for element in self.ScreenNavigation['Music']:
+            widget = self.getMusicScreenWidget(element)
+    
+            if widget is not None:
+                widget.unselect()
+    
+        self.setScreenElementSelected(
+            self.CurrentScreenElement
+        )
+
+    def showDirectListFromBack(
+        self,
+        screen_name,
+        items,
+        return_attribute,
+        show_method
+    ):
+        self.ScreenNavigation[
+            screen_name
+        ] = items
+    
+        if len(items) == 0:
+            return
+    
+        return_item = getattr(
+            self,
+            return_attribute,
+            items[0]
+        )
+    
+        if return_item not in items:
+            return_item = items[0]
+    
+        self.setCurrentScreenElement(
+            screen_name,
+            return_item
+        )
+    
+        show_method()
+    
+        self.setScreenElementSelected(
+            self.CurrentScreenElement
+        )
+
+    def showArtistsFromBack(self):
+        artists = list(
+            self.getArtistsFromDB()["Artist"]
+        )
+    
+        self.showDirectListFromBack(
+            "Artists",
+            artists,
+            "CurrentArtist",
+            self.ArtistsScreenShow
+    )
+
+    def showAlbumsFromBack(self):
+        albums = list(
+            self.getAlbumsFromDB()["Album"]
+        )
+    
+        self.showDirectListFromBack(
+            "Albums",
+            albums,
+            "CurrentAlbum",
+            self.AlbumsScreenShow
+        )
+
+    def showArtistAlbumsFromBack(self):
+        items = self.ScreenNavigation.get(
+            "ArtistAlbums",
+            []
+        )
+    
+        self.showDirectListFromBack(
+            "ArtistAlbums",
+            items,
+            "ArtistAlbumReturnElement",
+            self.ArtistAlbumsScreenShow
+        )
+
+    def showGenresFromBack(self):
+        genres = list(
+            self.getGenresFromDB()["Genre"]
+        )
+    
+        self.showDirectListFromBack(
+            "Genres",
+            genres,
+            "CurrentGenre",
+            self.GenresScreenShow
+        )
 
     def goHome(self):
         """
@@ -598,7 +836,19 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 
             case 'PlaylistTracks':
                 self.showPlaylistTracksFromBack()
-
+            
+            case 'Albums':
+                self.showAlbumsFromBack()
+                
+            case 'Artists':
+                self.showArtistsFromBack()
+            
+            case 'ArtistAlbums':
+                self.showArtistAlbumsFromBack()
+                    
+            case 'Genres':
+                self.showGenresFromBack()    
+        
             case _:
                 print("Back target not implemented:", previous_screen)
 
@@ -660,7 +910,13 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             case 'PlaylistTracks':
                 self.selectPlaylistTrack()
             case 'Artists':
-                self.selectArtist()            
+                self.selectArtist()
+            case 'ArtistAlbums':
+                self.selectArtistAlbum()
+            case 'Albums':
+                self.selectAlbum()
+            case 'Genres':
+                self.selectGenre()
                 
     def EncoderNavigation(self, EncoderActivity):
 #        print(f'EncoderActivity: {EncoderActivity}')

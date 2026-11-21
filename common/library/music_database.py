@@ -385,7 +385,44 @@ class MusicDB():
     
         return albums
     
+    def getAlbumsByArtistFromDB(self, artist):
+        dfTracks = self.getTrackTableFromDB()
     
+        if dfTracks.empty:
+            return pd.DataFrame()
+    
+        dfArtistTracks = dfTracks[
+            dfTracks["Artist"] == artist
+        ]
+    
+        if dfArtistTracks.empty:
+            return pd.DataFrame()
+    
+        dfAlbums = dfArtistTracks[
+            ["Album"]
+        ].copy()
+    
+        dfAlbums = dfAlbums.dropna()
+    
+        dfAlbums["Album"] = (
+            dfAlbums["Album"]
+            .astype(str)
+            .str.strip()
+        )
+    
+        dfAlbums = dfAlbums[
+            dfAlbums["Album"] != ""
+        ]
+    
+        dfAlbums = dfAlbums.drop_duplicates()
+    
+        dfAlbums = dfAlbums.sort_values(
+            "Album",
+            key=lambda column: column.str.lower()
+        )
+    
+        return dfAlbums.reset_index(drop=True)
+        
     def getGenresFromDB(self):
         tracks = self.getTrackTableFromDB()
     
@@ -431,7 +468,21 @@ class MusicDB():
     
         return tracks
     
+    def getTracksByArtistAndAlbumFromDB(self, artist, album):
+        dfTracks = self.getTrackTableFromDB()
     
+        if dfTracks.empty:
+            return self.dfEmpty
+    
+        dfTracks = dfTracks[
+            (dfTracks["Artist"] == artist) &
+            (dfTracks["Album"] == album)
+        ]
+    
+        return self.sortTracksForDisplay(
+            dfTracks
+        )
+        
     def getTracksByGenreFromDB(self, genre):
         tracks = self.getTrackTableFromDB()
     
