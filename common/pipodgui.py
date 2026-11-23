@@ -164,6 +164,8 @@ class piPodGUI(AudioPlayback, MusicDB):
             "ArtistAlbums": 0,
             "Tools": 0,
             "Import": 0,
+            "Download": 0,
+            "YouTubePlaylists": 0,
         }
         
         #Audio Import Results
@@ -644,6 +646,21 @@ class piPodGUI(AudioPlayback, MusicDB):
             items
         )
     
+    def drawYouTubePlaylistsDirect(self):
+        items = self.ScreenNavigation.get(
+            "YouTubePlaylists",
+            []
+        )
+    
+        self.drawDirectList(
+            "YouTubePlaylists",
+            items
+        )
+    
+    def YouTubePlaylistsScreenShow(self):
+        self.drawYouTubePlaylistsDirect()
+        self.markDirty()
+        
     def drawArtistsDirect(self):
         items = self.ScreenNavigation.get(
             "Artists",
@@ -763,6 +780,21 @@ class piPodGUI(AudioPlayback, MusicDB):
     
         self.clearDirty()
     
+    def drawDownloadDirect(self):
+        items = self.ScreenNavigation.get(
+            "Download",
+            []
+        )
+    
+        self.drawDirectList(
+            "Download",
+            items
+        )
+    
+    def DownloadScreenShow(self):
+        self.drawDownloadDirect()
+        self.markDirty()
+        
     def NowPlayingScreen(self): #, SelectedPlaylistId,  SelectedTrackId):
         self.lblTrackTitle = UILabel(relative_rect=pygame.Rect((177,5 ), (120, 21)),
                                                    text = self.CurrentTitle,

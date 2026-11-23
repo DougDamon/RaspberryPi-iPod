@@ -242,6 +242,109 @@ class MusicDB():
     
         return track_id
 
+    def addYouTubeTrackToDB(
+        self,
+        playlist,
+        album,
+        track,
+        track_playback_order,
+        file_location,
+        file_name
+    ):
+        track_table = self.getTable("Track")
+        playlist_track_table = self.getTable("PlaylistTrack")
+    
+        youtube_video_id = track["videoId"]
+    
+        existing_track = track_table.search(
+            where("YouTubeVideoId") == youtube_video_id
+        )
+    
+        artist = track["artists"][0]["name"]
+    
+        if artist is None:
+            artist = "Unknown Artist"
+    
+        if track["album"] is None:
+            album_name = "Unknown Album"
+            track_number = ""
+        else:
+            album_name = track["album"]["name"]
+            track_number = self.getAlbumTrackNumber(
+                album,
+                track
+            )
+    
+        artist_id = self.getOrCreateImportedArtist(
+            artist
+        )
+    
+        album_id = self.getOrCreateImportedAlbum(
+            artist_id,
+            artist,
+            album_name
+        )
+    
+        if len(existing_track) > 0:
+            track_id = existing_track[0]["TrackId"]
+    
+        else:
+            track_id = str(uuid.uuid4())
+    
+            duration_seconds = track.get(
+                "duration_seconds",
+                0
+            )
+    
+            track_table.insert({
+                "TrackId": track_id,
+                "YouTubeVideoId": youtube_video_id,
+                "Title": track["title"],
+                "DurationSeconds": duration_seconds,
+                "FileLocation": file_location,
+                "FileName": file_name,
+                "AlbumId": album_id,
+                "Album": album_name,
+                "TrackNumber": track_number,
+                "ArtistId": artist_id,
+                "Artist": artist,
+                "Genre": "",
+                "Downloaded": "Y",
+                "Source": self.YouTubeMusicSource,
+                "CreateDate": datetime.now().strftime(
+                    "%m/%d/%Y, %H:%M:%S"
+                ),
+                "LastUpdateDate": datetime.now().strftime(
+                    "%m/%d/%Y, %H:%M:%S"
+                ),
+            })
+    
+        playlist_id = playlist["id"]
+        playlist_name = playlist["title"]
+    
+        existing_playlist_track = playlist_track_table.search(
+            (where("PlaylistId") == playlist_id)
+            & (where("TrackId") == track_id)
+        )
+    
+        if len(existing_playlist_track) == 0:
+            playlist_track_table.insert({
+                "PlaylistId": playlist_id,
+                "Playlist": playlist_name,
+                "TrackId": track_id,
+                "Title": track["title"],
+                "TrackPlaybackOrder": track_playback_order,
+                "Source": self.YouTubeMusicSource,
+                "CreateDate": datetime.now().strftime(
+                    "%m/%d/%Y, %H:%M:%S"
+                ),
+                "LastUpdateDate": datetime.now().strftime(
+                    "%m/%d/%Y, %H:%M:%S"
+                ),
+            })
+    
+        return track_id
+
     def addSkippedTrackToDB(self, Playlist, SkippedTrack,  Source):
         skippedTrackQuery = Query()
         skippedTrackTable = self.getTable('SkippedTrack')

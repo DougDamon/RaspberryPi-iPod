@@ -207,6 +207,16 @@ while is_running:
     
         if piPodGUI.isDirty():
             piPodGUI.drawPlaylistTracksDirect()
+            
+    elif piPodGUI.CurrentScreen == "Download":
+    
+        if piPodGUI.isDirty():
+            piPodGUI.drawDownloadDirect()
+            
+    elif piPodGUI.CurrentScreen == "YouTubePlaylists":
+    
+        if piPodGUI.isDirty():
+            piPodGUI.drawYouTubePlaylistsDirect()
     
     elif piPodGUI.CurrentScreen == "Artists":
 

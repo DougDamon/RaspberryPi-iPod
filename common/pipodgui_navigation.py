@@ -1,6 +1,7 @@
 from common.pipodgui import piPodGUI
 from common.input.rotary import RotaryEncoder
 from common.library.music import MusicLibraryService
+from common.library.youtubedownloader import YouTubeDownloader
    
 class piPodGUINavigation(RotaryEncoder, piPodGUI):
     def __init__(self):
@@ -372,7 +373,23 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 self.setScreenElementSelected(
                     self.CurrentScreenElement
                 )
-    
+            case 'Download':
+                self.navigationPath.append(
+                    'Tools'
+                )
+            
+                self.setCurrentScreenElement(
+                    'Download',
+                    'YouTube Playlist'
+                )
+            
+                self.DownloadScreenShow()
+            
+                self.setScreenElementSelected(
+                    self.CurrentScreenElement
+                )
+            
+                self.markDirty()
     def selectImportScreenElement(self):
         selectedItem = self.CurrentScreenElement
     
@@ -516,6 +533,47 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 
             case _:
                 pass
+    
+    def selectDownloadScreenElement(self):
+        selectedItem = self.CurrentScreenElement
+    
+        match selectedItem:
+            case 'YouTube Playlist':
+                downloader = YouTubeDownloader()
+    
+                playlists = downloader.getLibraryPlaylistsFromYouTube()
+    
+                if len(playlists) == 0:
+                    print("No YouTube playlists found.")
+                    return
+    
+                self.YouTubePlaylists = playlists
+    
+                playlist_titles = [
+                    playlist['title']
+                    for playlist in playlists
+                ]
+    
+                self.ScreenNavigation[
+                    "YouTubePlaylists"
+                ] = playlist_titles
+    
+                self.navigationPath.append(
+                    'Download'
+                )
+    
+                self.setCurrentScreenElement(
+                    "YouTubePlaylists",
+                    playlist_titles[0]
+                )
+    
+                self.YouTubePlaylistsScreenShow()
+    
+                self.setScreenElementSelected(
+                    self.CurrentScreenElement
+                )
+    
+                self.markDirty()
     
     def selectAvailablePlaylist(self):
         """
@@ -716,7 +774,42 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.PlaylistTracksScreenHide()
         self.NowPlayingScreenShow()
         self.setScreenElementSelected(self.CurrentScreenElement)
-        
+    
+    def selectYouTubePlaylist(self):
+        selected_title = self.CurrentScreenElement
+    
+        selected_playlist = None
+    
+        for playlist in self.YouTubePlaylists:
+            if playlist['title'] == selected_title:
+                selected_playlist = playlist
+                break
+    
+        if selected_playlist is None:
+            print(
+                "Could not find YouTube playlist:",
+                selected_title
+            )
+            return
+    
+        playlist_id = selected_playlist['id']
+    
+        print(
+            "Downloading YouTube playlist:",
+            selected_title
+        )
+    
+        downloader = YouTubeDownloader()
+    
+        downloader.downloadPlaylistFromYouTube(
+            playlist_id
+        )
+    
+        print(
+            "YouTube playlist download finished:",
+            selected_title
+        )
+    
     def hideCurrentScreen(self):
         """
         Hide whichever screen is currently active.
@@ -1006,6 +1099,9 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             
             case 'ImportResult':
                 self.goBack()
+            
+            case 'Tools':
+                self.selectToolsScreenElement()
                 
             case _:
                 pass
@@ -1034,6 +1130,10 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
                 self.selectToolsScreenElement()
             case 'Import':
                 self.selectImportScreenElement()
+            case 'Download':
+                self.selectDownloadScreenElement()
+            case 'YouTubePlaylists':
+                self.selectYouTubePlaylist()
                 
     def EncoderNavigation(self, EncoderActivity):
 #        print(f'EncoderActivity: {EncoderActivity}')

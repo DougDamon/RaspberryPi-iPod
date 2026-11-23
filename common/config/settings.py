@@ -44,6 +44,8 @@ class ConfigService:
         self.YouTubeDownloadOauthLocation = self.configuration['YouTubeMusic']['YouTubeOauthLocation']
         self.YouTubeDownloadOauthFile = self.configuration['YouTubeMusic']['YouTubeOauthFile']
         self.YouTubeDownloadOauthFileLocation = os.path.join(self.HomeDirectory,  self.YouTubeDownloadOauthLocation,  self.YouTubeDownloadOauthFile)
+#        self.YouTubeOAuthClientId = self.configuration['YouTubeMusic']['YouTubeOAuthClientId']
+#        self.YouTubeOAuthClientSecret = self.configuration['YouTubeMusic']['YouTubeOAuthClientSecret']
         
         #YouTubeDownLoader (yt-dlp) Attributes
         self.YouTubeDownloadCodec = self.configuration['YoutTubeDownloader']['DownloadCodec']
