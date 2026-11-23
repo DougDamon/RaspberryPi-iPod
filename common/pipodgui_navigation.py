@@ -11,11 +11,13 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 
         self.CurrentScreen = self.configuration.DefaultScreen
         self.CurrentScreenElement = self.configuration.DefaultElement
+        self.CurrentScreenElementIndex = 0
         self.PreviousScreen = self.configuration.DefaultScreen
         self.PreviousScreenElement = self.configuration.DefaultElement
         self.ScreenReturnElement = {}
         
         self.setMainScreenElementDefault()
+        self.MainScreenShow()
     
     def setMainScreenElementDefault(self):
         """
@@ -126,14 +128,29 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         else:
             print('error setting currentScreen')
     
-    def setCurrentScreenElement(self,  ScreenName,  ScreenElement):
-#        print(f'self.ScreenNavigation: {self.ScreenNavigation}')
-        if ScreenName in self.ScreenNavigation and ScreenElement in self.ScreenNavigation[ScreenName]:
+    def setCurrentScreenElement(self, ScreenName, ScreenElement):
+        if (
+            ScreenName in self.ScreenNavigation
+            and ScreenElement in self.ScreenNavigation[ScreenName]
+        ):
             self.setCurrentScreen(ScreenName)
-            self.PreviousScreenElement = self.CurrentScreenElement
+    
+            self.PreviousScreenElement = (
+                self.CurrentScreenElement
+            )
+    
             self.CurrentScreenElement = ScreenElement
+    
+            self.CurrentScreenElementIndex = (
+                self.ScreenNavigation[ScreenName].index(
+                    ScreenElement
+                )
+            )
+    
         else:
-            print('error setting currentScreenElement')
+            print(
+                'error setting currentScreenElement'
+            )
             
     def getScreenElementIndex(self, Screen, ScreenElement):
         try:
@@ -142,10 +159,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
             return 0       
         
     def getCurrentScreenElementIndex(self):
-        indexCurrentElement = self.getScreenElementIndex(self.CurrentScreen,  self.CurrentScreenElement)
-        return indexCurrentElement
-
-
+        return self.CurrentScreenElementIndex
         
     def setScreenElementSelected(self, Element):
         match self.CurrentScreen:
@@ -264,29 +278,50 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         self.markDirty()
         
     def NavigateUp(self, IndexCurrentElement):
-#        lengthScreenNavigation = len(self.ScreenNavigation[self.CurrentScreen]) - 1
-        if IndexCurrentElement  > 0:
-            IndexCurrentElement = self.getCurrentScreenElementIndex()-1
-            self.setScreenElementUnselected(self.CurrentScreenElement)
-            self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
-            self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])   
-#            print(f'indexCurrentElement: {IndexCurrentElement}')
-        else:
-            pass
+        if IndexCurrentElement > 0:
+            self.setScreenElementUnselected(
+                self.CurrentScreenElement
+            )
+    
+            self.CurrentScreenElementIndex -= 1
+    
+            self.CurrentScreenElement = (
+                self.ScreenNavigation[
+                    self.CurrentScreen
+                ][self.CurrentScreenElementIndex]
+            )
+    
+            self.setScreenElementSelected(
+                self.CurrentScreenElement
+            )
 
     def NavigateDown(self, IndexCurrentElement):
-        
-        lengthScreenNavigation = len(self.ScreenNavigation[self.CurrentScreen]) - 1
-        
-        if IndexCurrentElement  < lengthScreenNavigation:
-            IndexCurrentElement = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)+1
-            self.setScreenElementUnselected(self.CurrentScreenElement)
-            self.CurrentScreenElement = self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement]
-            self.setScreenElementSelected(self.ScreenNavigation[self.CurrentScreen][IndexCurrentElement])
-#            print(f'indexCurrentElement: {IndexCurrentElement}')
-        else:
-            pass
     
+        lengthScreenNavigation = (
+            len(
+                self.ScreenNavigation[
+                    self.CurrentScreen
+                ]
+            ) - 1
+        )
+    
+        if IndexCurrentElement < lengthScreenNavigation:
+            self.setScreenElementUnselected(
+                self.CurrentScreenElement
+            )
+    
+            self.CurrentScreenElementIndex += 1
+    
+            self.CurrentScreenElement = (
+                self.ScreenNavigation[
+                    self.CurrentScreen
+                ][self.CurrentScreenElementIndex]
+            )
+    
+            self.setScreenElementSelected(
+                self.CurrentScreenElement
+            )
+        
     def selectMainScreenElement(self):
         """
         Handle selection behavior for the Main screen.
@@ -1140,7 +1175,7 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 #        print(f'CurrentScreenElement: {self.CurrentScreenElement}')
         control = next(iter(EncoderActivity))
         controlAction = EncoderActivity[control]
-        indexCurrentElement = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)
+        indexCurrentElement = (self.CurrentScreenElementIndex)
 #        print(f'indexCurrentElement: {indexCurrentElement}') 
         
 #        print(f'lengthScreenNavigation: {lengthScreenNavigation}')

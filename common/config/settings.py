@@ -36,6 +36,7 @@ class ConfigService:
         self.DefaultElement = self.configuration['UINavigation']['DefaultElement']
         #Music Attributes
         self.MusicRootDirectory = os.path.join(self.HomeDirectory,  self.configuration['Music']['MusicRootDirectory'])
+        self.AudioRootDirectory = os.path.dirname(self.MusicRootDirectory)
         self.PlaylistRootDirectory = self.HomeDirectory + self.configuration['Music']['PlaylistRootDirectory']
         self.PlaylistExtension = self.configuration['Music']['PlaylistExtension']
         

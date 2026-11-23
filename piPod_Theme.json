@@ -1,0 +1,251 @@
+{
+    "button":
+    {
+        "colours":
+        {
+            "normal_bg": "aquamarine",
+            "dark_bg": "aquamarine",
+            "selected_bg" : "aquamarine",
+            "selected_border" : "black",
+            "selected_text": "black",
+            "normal_border": "aquamarine",
+            "normal_text": "black",
+            "hovered_bg": "aquamarine",
+            "hovered_border": "black",
+            "hovered_text": "black",
+            "text_shadow": "#505050"
+        },
+         "font":
+        {
+            "name": "FreeMono",
+            "size": "10",
+            "bold": "0",
+            "italic": "1",
+            "regular_path": "/usr/share/fonts/truetype/freefont/FreeMono.ttf"
+        }
+    },
+
+    "window":
+   {
+      "colours":
+      {
+         "dark_bg": "aquamarine",
+         "normal_border": "black"
+      },
+
+      "misc":
+      {
+         "border_width": "0",
+         "shadow_width": "0",
+         "enable_title_bar": "0"
+      }
+   },
+    "windowNowPlaying":
+   {
+      "colours":
+      {
+         "dark_bg": "aquamarine",
+         "normal_border": "#999999"
+      },
+
+      "misc":
+      {
+         "border_width": "0",
+         "shadow_width": "0",
+         "enable_title_bar": "0"
+      }
+   },
+    "@now_playing_labels": {
+        "colours":
+         {
+             "normal_text": "black",
+             "text_shadow": "#505050"
+         },
+        "font": {
+            "name": "FreeMono",
+            "size": "11",
+            "bold": "1",
+            "italic": "0",
+            "regular_path": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
+            "bold_path": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf"
+        }
+    },
+    "@current_position_labels": {
+        "font": {
+            "name": "FreeMono",
+            "size": "8",
+            "bold": "1",
+            "italic": "0",
+            "regular_path": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
+            "bold_path": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf"
+        }
+    },
+    "@now_playing_buttons": {
+        "colours":
+         {
+            "normal_bg": "aquamarine",
+            "dark_bg": "aquamarine",
+            "normal_border": "aquamarine",
+            "normal_text": "black",
+            "selected_bg" : "aquamarine",
+            "selected_border" : "black",
+            "selected_text": "black",
+            "hovered_bg": "aquamarine",
+            "hovered_border": "black",
+            "text_shadow": "#505050"
+         },
+        "font": {
+            "name": "FreeMono",
+            "size": "8",
+            "bold": "0",
+            "italic": "0",
+            "regular_path": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
+            "bold_path": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf"
+        },"misc":
+         {
+             "shape": "rounded_rectangle",
+             "border_width": "2",
+             "shadow_width": "0",
+             "tool_tip_delay": "6.0",
+             "text_horiz_alignment": "center",
+             "text_vert_alignment": "center",
+             "text_horiz_alignment_padding": "6",
+             "text_vert_alignment_padding": "7"
+         }
+    },
+    "#play_button": {
+       "images": {
+            "normal_image": {
+                "path": "/home/pi/.piPod/images/play.png"
+            }
+        }
+    },
+    "#pause_button": {
+        "images": {
+            "normal_image": {
+                "path": "/home/pi/.piPod/images/pause.png"
+            }
+        }
+    },
+    "#forward_button": {
+        "images": {
+            "normal_image": {
+                "path": "/home/pi/.piPod/images/fast_forward.png"
+            }
+        }
+    },
+    "#rewind_button": {
+       "images": {
+            "normal_image": {
+                "path": "/home/pi/.piPod/images/rewind.png"
+            }
+        }
+    },
+    "#repeat_off_button": {
+       "images": {
+            "normal_image": {
+                "path": "/home/pi/.piPod/images/repeat_off.png"
+            }
+        }
+    },
+    "#repeat_on_button": {
+       "images": {
+            "normal_image": {
+                "path": "/home/pi/.piPod/images/repeat_on.png"
+            }
+        }
+    },
+    "#repeat_one_button": {
+       "images": {
+            "normal_image": {
+                "path": "/home/pi/.piPod/images/repeat_one.png"
+            }
+        }
+    },
+    "#shuffle_off_button": {
+       "images": {
+            "normal_image": {
+                "path": "/home/pi/.piPod/images/shuffle_off.png"
+            }
+        }
+    },
+    "#shuffle_on_button": {
+       "images": {
+            "normal_image": {
+                "path": "/home/pi/.piPod/images/shuffle_on.png"
+            }
+        }
+    },
+    "@navigation_buttons": {
+        "colours":
+         {
+            "normal_bg": "aquamarine",
+            "dark_bg": "aquamarine",
+            "selected_bg" : "aquamarine",
+            "selected_border" : "black",
+            "selected_text": "red",
+            "normal_border": "aquamarine",
+            "normal_text": "black",
+            "hovered_bg": "aquamarine",
+            "hovered_border": "black",
+            "hovered_text": "black",
+            "text_shadow": "#505050"
+         },
+        "font": {
+            "name": "FreeMono",
+            "size": "20",
+            "bold": "1",
+            "italic": "1",
+            "regular_path": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
+            "bold_path": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf"
+        },"misc":
+         {
+             "shape": "rounded_rectangle",
+             "border_width": "2",
+             "shadow_width": "0",
+             "tool_tip_delay": "6.0",
+             "text_horiz_alignment": "center",
+             "text_vert_alignment": "center",
+             "text_horiz_alignment_padding": "6",
+             "text_vert_alignment_padding": "7"
+         }
+    },
+    "@small_navigation_buttons": {
+        "colours":
+         {
+            "normal_bg": "aquamarine",
+            "dark_bg": "aquamarine",
+            "selected_bg" : "aquamarine",
+            "selected_border" : "black",
+            "selected_text": "black",
+            "normal_border": "aquamarine",
+            "normal_text": "black",
+            "hovered_bg": "aquamarine",
+            "hovered_border": "black",
+            "hovered_text": "black",
+            "text_shadow": "#505050"
+         },
+        "font": {
+            "name": "FreeMono",
+            "size": "12",
+            "bold": "1",
+            "italic": "0",
+            "regular_path": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
+            "bold_path": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf"
+        },"misc":
+         {
+             "shape": "rounded_rectangle",
+             "border_width": "2",
+             "shadow_width": "0",
+             "tool_tip_delay": "6.0",
+             "text_horiz_alignment": "center",
+             "text_vert_alignment": "center",
+             "text_horiz_alignment_padding": "6",
+             "text_vert_alignment_padding": "7"
+         }
+    },
+    "#back_button": {
+    },
+    "#home_button": {
+    }    
+}

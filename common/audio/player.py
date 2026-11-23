@@ -19,6 +19,7 @@ class AudioPlayback():
         self.musicDB = MusicDB()
         self.config = ConfigService()
         self.musicRootDirectory = self.config.MusicRootDirectory
+        self.audioRootDirectory = self.config.AudioRootDirectory
 
         self.mpd = MPDAudioPlayback()
 
@@ -94,10 +95,18 @@ class AudioPlayback():
         self.CurrentDuration = round(float(str(Length)))
 
     def getMPDTrackPath(self, file_location, file_name):
-        full_path = os.path.join(file_location, file_name)
+        full_path = os.path.join(
+            file_location,
+            file_name
+        )
     
-        if full_path.startswith(self.musicRootDirectory):
-            return os.path.relpath(full_path, self.musicRootDirectory)
+        if full_path.startswith(
+            self.audioRootDirectory
+        ):
+            return os.path.relpath(
+                full_path,
+                self.audioRootDirectory
+            )
     
         return full_path
         
@@ -106,7 +115,7 @@ class AudioPlayback():
             return None
     
         # MPD gives us a path relative to musicRootDirectory.
-        full_path = os.path.join(self.musicRootDirectory, mpd_path)
+        full_path = os.path.join(self.audioRootDirectory, mpd_path)
     
         file_location = os.path.dirname(full_path)
         file_name = os.path.basename(full_path)

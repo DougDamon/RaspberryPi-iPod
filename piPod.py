@@ -189,12 +189,17 @@ while is_running:
     piPodGUI.manager.update(time_delta)
     
     if piPodGUI.CurrentScreen == "NowPlaying":
-    
+
         if piPodGUI.isDirty():
             piPodGUI.drawNowPlayingDirect()
-    
         elif piPodGUI.isPositionDirty():
-            piPodGUI.drawCurrentPosition()
+                piPodGUI.drawCurrentPosition()
+    
+    
+    elif piPodGUI.CurrentScreen == "Main":
+    
+        if piPodGUI.isDirty():
+            piPodGUI.drawMainDirect()
     
     
     elif piPodGUI.CurrentScreen == "AvailablePlaylists":

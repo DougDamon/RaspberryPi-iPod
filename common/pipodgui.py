@@ -4,6 +4,7 @@ import datetime
 
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 
+import json
 import pygame
 import pygame_gui
 
@@ -119,7 +120,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.windowAvailablePlaylists.hide()
         self.windowPlaylistTracks.hide()
         self.windowNowPlaying.hide()
-        self.MainScreenShow()
+        
         
         self.navigationPath = []
         self.QUIT = pygame.QUIT
@@ -131,23 +132,36 @@ class piPodGUI(AudioPlayback, MusicDB):
             depth=32
         )
         
-        self.now_playing_background = pygame.Color("aquamarine")
-        self.now_playing_text = pygame.Color("black")
-        self.now_playing_selected = pygame.Color("white")
+        # Shared direct-framebuffer UI appearance
+        self.ui_background = pygame.Color("aquamarine")
+        self.ui_text = pygame.Color("black")
+        self.ui_selected = pygame.Color("white")
         
-        self.now_playing_title_font = pygame.font.SysFont(None, 20)
-        self.now_playing_info_font = pygame.font.SysFont(None, 17)
-        self.now_playing_control_font = pygame.font.SysFont(None, 18)
-        self.now_playing_position_font = pygame.font.SysFont(None, 20)
+        self.ui_font = self.getThemeFont(themeFile, "@navigation_buttons")
+        self.ui_small_font = pygame.font.SysFont(None, 16)
+        self.ui_title_font = pygame.font.SysFont(None, 20)
+        self.ui_info_font = pygame.font.SysFont(None, 17)
+        self.ui_control_font = pygame.font.SysFont(None, 18)
         
-        self.now_playing_position_area = pygame.Rect(2, 178, 316, 20)
+        # Direct list appearance
+        self.list_background = self.ui_background
+        self.list_text = self.ui_text
+        self.list_selected = self.ui_selected
         
-        self.list_background = pygame.Color("aquamarine")
-        self.list_text = pygame.Color("black")
-        self.list_selected = pygame.Color("white")
+        self.list_font = self.ui_font
+        self.list_position_font = self.ui_small_font
         
-        self.list_font = pygame.font.SysFont(None, 22)
-        self.list_position_font = pygame.font.SysFont(None, 16)
+        # Now Playing appearance
+        self.now_playing_background = self.ui_background
+        self.now_playing_text = self.ui_text
+        self.now_playing_selected = self.ui_selected
+        
+        self.now_playing_title_font = self.ui_title_font
+        self.now_playing_info_font = self.ui_info_font
+        self.now_playing_control_font = self.ui_control_font
+        self.now_playing_position_font = self.ui_title_font
+        
+        self.now_playing_position_area = pygame.Rect(0, 176, 320, 24)
         
         self.list_row_height = 30
         self.list_top = 5
@@ -156,6 +170,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.list_visible_rows = 7
         
         self.list_first_visible = {
+            "Main": 0,
             "AvailablePlaylists": 0,
             "PlaylistTracks": 0,
             "Artists": 0,
@@ -174,7 +189,39 @@ class piPodGUI(AudioPlayback, MusicDB):
             "skipped": 0,
             "errors": 0,
         }
-
+        
+    def getThemeFont(self, theme_file, style_name):
+        with open(theme_file, "r") as theme:
+            theme_data = json.load(theme)
+    
+        font_config = theme_data[style_name]["font"]
+    
+        font_size = int(
+            font_config["size"]
+        )
+    
+        bold = (
+            font_config.get("bold", "0") == "1"
+        )
+    
+        italic = (
+            font_config.get("italic", "0") == "1"
+        )
+    
+        if bold and "bold_path" in font_config:
+            font_path = font_config["bold_path"]
+        else:
+            font_path = font_config["regular_path"]
+    
+        font = pygame.font.Font(
+            font_path,
+            font_size
+        )
+    
+        font.set_italic(italic)
+    
+        return font
+    
     def getClock(self):
         return pygame.time.Clock()
       
@@ -280,10 +327,8 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.markDirty()
 
     def MainScreenShow(self):
-        if self.CurrentPlaylistId == None or self.CurrentTrackId == None:
-            self.bNowPlaying.disable()
-        self.windowMainScreen.show() 
-        self.updateDisplay()
+        self.windowMainScreen.hide()
+        self.drawMainDirect()
         self.markDirty()
         
 #    def NavigateMainScreen(self):
@@ -537,12 +582,11 @@ class piPodGUI(AudioPlayback, MusicDB):
             self.clearDirty()
             return
     
-        try:
-            selected_index = items.index(
-                self.CurrentScreenElement
-            )
-        except ValueError:
+        selected_index = (self.CurrentScreenElementIndex)
+        
+        if selected_index >= len(items):
             selected_index = 0
+            self.CurrentScreenElementIndex = 0
     
         first_visible = self.list_first_visible[
             screen_name
@@ -585,8 +629,9 @@ class piPodGUI(AudioPlayback, MusicDB):
             if item_index == selected_index:
                 pygame.draw.rect(
                     self.window_surface,
-                    self.list_selected,
-                    row_rect
+                    self.ui_text,
+                    row_rect,
+                    2
                 )
     
             label = self.list_font.render(
@@ -622,7 +667,31 @@ class piPodGUI(AudioPlayback, MusicDB):
         )
     
         self.clearDirty()
+    def drawMainDirect(self):
+        main_items = self.ScreenNavigation.get(
+            "Main",
+            []
+        )
     
+        display_names = {
+            "NowPlaying": "Now Playing",
+            "Music": "Music",
+            "OTR": "OTR",
+            "Audiobooks": "Audiobooks",
+            "Games": "Games",
+            "Tools": "Tools",
+        }
+    
+        items = [
+            display_names.get(item, item)
+            for item in main_items
+        ]
+    
+        self.drawDirectList(
+            "Main",
+            items
+        )
+        
     def drawAvailablePlaylistsDirect(self):
         items = self.ScreenNavigation.get(
             "AvailablePlaylists",
