@@ -13,7 +13,6 @@ from pygame_gui.core import ObjectID
 from pygame_gui.ui_manager import UIManager
 from pygame_gui.elements.ui_window import UIWindow
 from pygame_gui.elements.ui_button import UIButton
-from pygame_gui.elements.ui_selection_list import UISelectionList
 from pygame_gui.elements.ui_label import UILabel
 from pygame_gui.elements.ui_image import UIImage
 from pygame_gui.elements.ui_progress_bar import UIProgressBar
@@ -57,38 +56,22 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.needs_position_redraw = False
         
 #        Setup Windows
-#        self.windowMainScreen = UIWindow(pygame.Rect((1, 1), (320,240))
-#                                                                 ,manager=self.manager
-#                                                                 ,element_id='window') 
-        
         self.windowNowPlaying = UIWindow(pygame.Rect((1, 1), (320,240))
                                                                  ,manager=self.manager
                                                                  ,element_id='window') 
- 
-#        self.windowMusic = UIWindow(pygame.Rect((1, 1), (320,240))
-#                                                                 ,manager=self.manager
-#                                                                 ,element_id='window')  
-
-        self.windowAvailablePlaylists = UIWindow(pygame.Rect((1, 1), (320,240))
-                                                                 ,manager=self.manager
-                                                                 ,element_id='window') 
                                                                 
-        self.windowPlaylistTracks = UIWindow(pygame.Rect((1, 1), (320,240))
-                                                                 ,manager=self.manager
-                                                                 ,element_id='window') 
         
         self.CurrentPlaylistId = self.getCurrentPlaylistId()
         self.CurrentPlaylistInfo = self.getCurrentPlaylistInfo()
             
         self.CurrentTrackId = self.getCurrentTrackId()
-#        print(self.CurrentPlaylistId,  self.CurrentTrackId)
         self.NextPlaylistId = None
         self.NextTrackId = None
         self.AutoPlayOnStart = False
         
 
         self.NoAblumArtFile = os.path.join(self.configuration.ImageDirectory,  self.configuration.NoAlbumArt)
-#        print(self.NoAblumArtFile)
+
         self.ImageNoAblumArt = pygame.image.load(self.NoAblumArtFile)
         self.CurrentAlbumArt = self.ImageNoAblumArt
         self.CurrentTitle = ''
@@ -106,26 +89,17 @@ class piPodGUI(AudioPlayback, MusicDB):
         
         # Set True when Screen is Initialized
         self.MusicScreenInit = False
-        self.AvailablePlaylistsScreenInit = False
         
         self.framebuffer_display = FramebufferDisplay()
          
-#        self.MainScreen()
-#        self.MusicScreen()
-        self.AvailablePlaylistsScreen()
-        self.PlaylistTracksScreen()
         self.NowPlayingScreen()
         
-#        self.windowMusic.hide()
-        self.windowAvailablePlaylists.hide()
-        self.windowPlaylistTracks.hide()
         self.windowNowPlaying.hide()
         
         
         self.navigationPath = []
         self.QUIT = pygame.QUIT
         self.UI_BUTTON_PRESSED = pygame_gui.UI_BUTTON_PRESSED
-        self.UI_SELECTION_LIST_NEW_SELECTION = pygame_gui.UI_SELECTION_LIST_NEW_SELECTION
         
         self.now_playing_surface = pygame.Surface(
             (320, 240),
@@ -283,44 +257,6 @@ class piPodGUI(AudioPlayback, MusicDB):
     def pushNavigationPath(self,  ScreenName):
         self.navigationPath.append(ScreenName)
     
-    def MainScreen(self):
-        self.bNowPlaying = UIButton(relative_rect=pygame.Rect((12, 0), (300, 24)),
-                                                       text='Now Playing',
-                                                       container = self.windowMainScreen ,#self.containerMainWindow,
-                                                       manager = self.manager, 
-                                                       object_id=ObjectID(class_id='@navigation_buttons'))
-    
-        self.bMusic = UIButton(relative_rect=pygame.Rect((12, 30), (300, 24)),
-                                             text='Music',
-                                             container = self.windowMainScreen, #self.containerMainWindow,
-                                             manager=self.manager, 
-                                             object_id=ObjectID(class_id='@navigation_buttons'))
-
-        self.bOTR = UIButton(relative_rect=pygame.Rect((12, 60), (300, 24)),
-                                           text='OTR',
-                                           container = self.windowMainScreen , #self.containerMainWindow,
-                                           manager=self.manager, 
-                                           object_id=ObjectID(class_id='@navigation_buttons'))
-
-        self.bAudiobooks = UIButton(relative_rect=pygame.Rect((12, 90), (300, 24)),
-                                                      text='Audiobooks',
-                                                      container = self.windowMainScreen , #self.containerMainWindow,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@navigation_buttons'))
-
-        self.bGames = UIButton(relative_rect=pygame.Rect((12, 120), (300, 24)),
-                                               text='Games',
-                                               container = self.windowMainScreen , #self.containerMainWindow,
-                                               manager=self.manager, 
-                                               object_id=ObjectID(class_id='@navigation_buttons'))
-
-        self.bManagement = UIButton(relative_rect=pygame.Rect((12, 150), (300, 24)),
-                                                         text='Tools',
-                                                         container = self.windowMainScreen , #self.containerMainWindow,
-                                                         manager=self.manager, 
-                                                         object_id=ObjectID(class_id='@navigation_buttons'))
-
-        self.window_surface.blit(self.background, (0, 0))
     
     def MusicScreenHide(self):
         self.markDirty()
@@ -1267,32 +1203,6 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.updateCurrentTrack(self.CurrentTrackId,  self.CurrentPosition)
         self.markDirty()
         
-    def MusicScreen(self):
-        self.bPlaylists = UIButton(relative_rect=pygame.Rect((12, 0), (300, 24)),
-                                                 text='Playlists',
-                                                 container = self.windowMusic,
-                                                 manager=self.manager, 
-                                                 object_id=ObjectID(class_id='@navigation_buttons'))
-        
-        self.bAlbums = UIButton(relative_rect=pygame.Rect((12, 30), (300, 24)),
-                                                text='Albums',
-                                                container = self.windowMusic,
-                                                manager=self.manager, 
-                                                object_id=ObjectID(class_id='@navigation_buttons'))
-                                                       
-        self.bArtists = UIButton(relative_rect=pygame.Rect((12, 60), (300, 24)),
-                                               text='Artists',
-                                               container = self.windowMusic,
-                                               manager=self.manager, 
-                                               object_id=ObjectID(class_id='@navigation_buttons')) 
-                                            
-        self.bGenres = UIButton(relative_rect=pygame.Rect((12, 90), (300, 24)),
-                                                text='Genres',
-                                                container = self.windowMusic,
-                                                manager=self.manager, 
-                                                object_id=ObjectID(class_id='@navigation_buttons'))
-        self.MusicScreenInit = True
-        return
 
     def MainScreenHide(self):
         self.window_surface.blit(self.background, (0, 0))
@@ -1330,42 +1240,21 @@ class piPodGUI(AudioPlayback, MusicDB):
             self.NextPlaylistId = sNextPlaylistId
         self.NextTrackId = sNextTrack
         
-    def AvailablePlaylistsScreen(self):
-        self.sPlaylistSelectionList = UISelectionList(relative_rect=pygame.Rect((12, 0), (300, 220)),
-                                                                                                       item_list = '',  #playlists,
-                                                                                                       container = self.windowAvailablePlaylists,
-                                                                                                       manager=self.manager,
-                                                                                                       object_id=ObjectID(class_id='@navigation_buttons'), 
-#                                                                                                       allow_multi_select=False,
-                                                                                                       allow_double_clicks=False)
-        self.AvailablePlaylistsScreenInit = True
-        
     def AvailablePlaylistsScreenHide(self):
-         self.windowAvailablePlaylists.hide()
-         self.markDirty()
+        self.markDirty()
 
     def AvailablePlaylistsScreenShow(self):
         dfAvailablePlaylists = self.getDownloadedPlaylists()
-    
+
         playlists = list(
             dfAvailablePlaylists["Playlist"]
         )
-    
-        self.ScreenNavigation[
-            "AvailablePlaylists"
-        ] = playlists
-    
-        self.drawAvailablePlaylistsDirect()
-    
-        def PlaylistTracksScreen(self): 
-            self.sPlaylistTracks= UISelectionList(relative_rect=pygame.Rect((12, 0), (300, 220)),
-                                                                                                           item_list = '', #list(dfPlaylistTracks['Title']), 
-                                                                                                           container = self.windowPlaylistTracks,
-                                                                                                           manager=self.manager, 
-                                                                                                           object_id=ObjectID(class_id='@navigation_buttons'),
-    #                                                                                                       allow_multi_select=False,
-                                                                                                           allow_double_clicks=False)
 
+        self.ScreenNavigation["AvailablePlaylists"] = playlists
+
+        self.drawAvailablePlaylistsDirect()
+
+        
     def ArtistsScreenShow(self):
         dfArtists = self.getArtistsFromDB()
     
@@ -1419,22 +1308,9 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.drawImportResultDirect()
     
     def PlaylistTracksScreenHide(self):
-        self.windowPlaylistTracks.hide()
         self.markDirty()
         
-    def setUISelectionListButtonTheme(self,  UISelectionList,  Theme):
-        for element in UISelectionList.item_list_container:
-            element.change_object_id(Theme)
     
-    def PlaylistTracksScreen(self):
-        self.sPlaylistTracks = UISelectionList(
-            relative_rect=pygame.Rect((12, 0), (300, 220)),
-            item_list='',
-            container=self.windowPlaylistTracks,
-            manager=self.manager,
-            object_id=ObjectID(class_id='@navigation_buttons'),
-            allow_double_clicks=False
-        )    
     
     def PlaylistTracksScreenShow(self):
 #        tracks = self.ScreenNavigation.get(

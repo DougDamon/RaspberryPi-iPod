@@ -115,19 +115,6 @@ while is_running:
                 is_running = False
             case piPodGUI.UI_BUTTON_PRESSED:
                 match event.ui_element:
-                    case piPodGUI.bNowPlaying:
-                            piPodGUI.setCurrentScreenElement(
-                                "NowPlaying",
-                                "Play/Pause"
-                            )
-                            piPodGUI.MainScreenHide()
-                            piPodGUI.NowPlayingScreenShow()
-                    case piPodGUI.bMusic:
-                        piPodGUI.MainScreenHide()
-                        piPodGUI.MusicScreenShow()
-                    case piPodGUI.bPlaylists:
-                        piPodGUI.MusicScreenHide()
-                        piPodGUI.AvailablePlaylistsScreenShow()
                     case piPodGUI.bPlay:
                         piPodGUI.Play()
 #                        piPodGUI.Pause()
@@ -153,25 +140,6 @@ while is_running:
                         piPodGUI.MainScreenShow()
                     case _:
                         pass
-            case piPodGUI.UI_SELECTION_LIST_NEW_SELECTION:
-                match event.ui_element:
-                    case piPodGUI.sPlaylistSelectionList:
-                        piPodGUI.NowPlayingScreenShow()
-                        selectedPlaylist = piPodGUI.sPlaylistSelectionList.get_single_selection()
-                        SelectedNowPlayingPlaylistId = musicDB.getPlaylistIdbyNamefromDB(selectedPlaylist)
-                        piPodGUI.setCurrentPlaylist(SelectedNowPlayingPlaylistId)
-                        piPodGUI.PlaylistTracksScreenShow()                 
-                    case piPodGUI.sPlaylistTracks:
-                        piPodGUI.PlaylistTracksScreenHide()
-                        selectedTrack = piPodGUI.sPlaylistTracks.get_single_selection()
-                        SelectedNowPlayingTrackId = str(musicDB.getTrackIdByNameFromDB(SelectedNowPlayingPlaylistId,  selectedTrack))
-#                        NowPlayingContainer,  piPodAudioControls = piPod.NowPlayingScreen() #SelectedNowPlayingPlaylistId,  SelectedNowPlayingTrackId)
-                        piPodGUI.PlaylistTracksScreenHide()
-                        piPodGUI.setCurrentTrack(SelectedNowPlayingTrackId)
-                        piPodGUI.NowPlayingScreenShow()
-                    case _:
-                        pass
-#                        print('other')
             case piPodGUI.MUSIC_END:
                 piPodGUI.NextTrackNowPlaying()
 #                print('MusicEndEvent',  piPodGUI.MUSICENDEVENT)

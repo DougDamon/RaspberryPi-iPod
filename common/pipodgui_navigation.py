@@ -50,16 +50,6 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
 
         return widgets.get(element_name)
 
-    def getCurrentListItemWidget(self):
-        if self.CurrentScreen == 'AvailablePlaylists':
-            item_index = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)
-            return self.sPlaylistSelectionList.item_list_container.elements[item_index]
-    
-        elif self.CurrentScreen == 'PlaylistTracks':
-            item_index = self.ScreenNavigation[self.CurrentScreen].index(self.CurrentScreenElement)
-            return self.sPlaylistTracks.item_list_container.elements[item_index]
-    
-        return None
  
     def setPlaylistNavigation(self):
         playlists = list(self.getDownloadedPlaylists(self.CurrentPlaylistId)['Title'])
