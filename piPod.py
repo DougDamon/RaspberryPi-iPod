@@ -189,71 +189,62 @@ while is_running:
     piPodGUI.manager.update(time_delta)
     
     if piPodGUI.CurrentScreen == "NowPlaying":
-
         if piPodGUI.isDirty():
             piPodGUI.drawNowPlayingDirect()
         elif piPodGUI.isPositionDirty():
                 piPodGUI.drawCurrentPosition()
     
     
-    elif piPodGUI.CurrentScreen == "Main":
-    
+    elif piPodGUI.CurrentScreen == "Main":  
         if piPodGUI.isDirty():
             piPodGUI.drawMainDirect()
     
-    
+    elif piPodGUI.CurrentScreen == "Music":
+        if piPodGUI.isDirty():
+            piPodGUI.drawMusicDirect()
+            
     elif piPodGUI.CurrentScreen == "AvailablePlaylists":
-    
         if piPodGUI.isDirty():
             piPodGUI.drawAvailablePlaylistsDirect()
     
     
     elif piPodGUI.CurrentScreen == "PlaylistTracks":
-    
         if piPodGUI.isDirty():
             piPodGUI.drawPlaylistTracksDirect()
             
     elif piPodGUI.CurrentScreen == "Download":
-    
         if piPodGUI.isDirty():
             piPodGUI.drawDownloadDirect()
             
     elif piPodGUI.CurrentScreen == "YouTubePlaylists":
-    
         if piPodGUI.isDirty():
             piPodGUI.drawYouTubePlaylistsDirect()
     
     elif piPodGUI.CurrentScreen == "Artists":
-
         if piPodGUI.isDirty():
             piPodGUI.drawArtistsDirect()
     
     elif piPodGUI.CurrentScreen == "Albums":
-
         if piPodGUI.isDirty():
             piPodGUI.drawAlbumsDirect()
             
     elif piPodGUI.CurrentScreen == "ArtistAlbums":
-    
         if piPodGUI.isDirty():
             piPodGUI.drawArtistAlbumsDirect()
             
     elif piPodGUI.CurrentScreen == "Genres":
-
         if piPodGUI.isDirty():
             piPodGUI.drawGenresDirect()    
     
     elif piPodGUI.CurrentScreen == "Tools":
-
         if piPodGUI.isDirty():
             piPodGUI.drawToolsDirect()
 
     elif piPodGUI.CurrentScreen == "Import":
-    
         if piPodGUI.isDirty():
             piPodGUI.drawImportDirect()
-    else:
     
+    else:
         if piPodGUI.isDirty():
             piPodGUI.drawScreen()
             piPodGUI.updateDisplay()

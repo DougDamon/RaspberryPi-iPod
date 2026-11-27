@@ -194,8 +194,8 @@
         "font": {
             "name": "FreeMono",
             "size": "20",
-            "bold": "1",
-            "italic": "1",
+            "bold": "0",
+            "italic": "0",
             "regular_path": "/usr/share/fonts/truetype/freefont/FreeMono.ttf",
             "bold_path": "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf"
         },"misc":

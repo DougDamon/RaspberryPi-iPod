@@ -57,17 +57,17 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.needs_position_redraw = False
         
 #        Setup Windows
-        self.windowMainScreen = UIWindow(pygame.Rect((1, 1), (320,240))
-                                                                 ,manager=self.manager
-                                                                 ,element_id='window') 
+#        self.windowMainScreen = UIWindow(pygame.Rect((1, 1), (320,240))
+#                                                                 ,manager=self.manager
+#                                                                 ,element_id='window') 
         
         self.windowNowPlaying = UIWindow(pygame.Rect((1, 1), (320,240))
                                                                  ,manager=self.manager
                                                                  ,element_id='window') 
  
-        self.windowMusic = UIWindow(pygame.Rect((1, 1), (320,240))
-                                                                 ,manager=self.manager
-                                                                 ,element_id='window')  
+#        self.windowMusic = UIWindow(pygame.Rect((1, 1), (320,240))
+#                                                                 ,manager=self.manager
+#                                                                 ,element_id='window')  
 
         self.windowAvailablePlaylists = UIWindow(pygame.Rect((1, 1), (320,240))
                                                                  ,manager=self.manager
@@ -110,13 +110,13 @@ class piPodGUI(AudioPlayback, MusicDB):
         
         self.framebuffer_display = FramebufferDisplay()
          
-        self.MainScreen()
-        self.MusicScreen()
+#        self.MainScreen()
+#        self.MusicScreen()
         self.AvailablePlaylistsScreen()
         self.PlaylistTracksScreen()
         self.NowPlayingScreen()
         
-        self.windowMusic.hide()
+#        self.windowMusic.hide()
         self.windowAvailablePlaylists.hide()
         self.windowPlaylistTracks.hide()
         self.windowNowPlaying.hide()
@@ -171,6 +171,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         
         self.list_first_visible = {
             "Main": 0,
+            "Music": 0,
             "AvailablePlaylists": 0,
             "PlaylistTracks": 0,
             "Artists": 0,
@@ -321,14 +322,11 @@ class piPodGUI(AudioPlayback, MusicDB):
 
         self.window_surface.blit(self.background, (0, 0))
     
-    def MainScreenHide(self):
-        self.windowMainScreen.hide() #self.containerMainWindow.hide()
-        self.window_surface.blit(self.background, (0, 0))
+    def MusicScreenHide(self):
         self.markDirty()
-
-    def MainScreenShow(self):
-        self.windowMainScreen.hide()
-        self.drawMainDirect()
+    
+    def MusicScreenShow(self):
+        self.drawMusicDirect()
         self.markDirty()
         
 #    def NavigateMainScreen(self):
@@ -691,7 +689,30 @@ class piPodGUI(AudioPlayback, MusicDB):
             "Main",
             items
         )
-        
+    
+    def drawMusicDirect(self):
+        music_items = self.ScreenNavigation.get(
+            "Music",
+            []
+        )
+    
+        display_names = {
+            "AvailablePlaylists": "Playlists",
+            "Albums": "Albums",
+            "Artists": "Artists",
+            "Genres": "Genres",
+        }
+    
+        items = [
+            display_names.get(item, item)
+            for item in music_items
+        ]
+    
+        self.drawDirectList(
+            "Music",
+            items
+        )
+    
     def drawAvailablePlaylistsDirect(self):
         items = self.ScreenNavigation.get(
             "AvailablePlaylists",
@@ -1273,15 +1294,13 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.MusicScreenInit = True
         return
 
-    def MusicScreenHide(self):
-         self.windowMusic.hide()
-         self.markDirty()
-
-    def MusicScreenShow(self):
-         if self.MusicScreenInit == False:
-            self.MusicScreen()
-         self.windowMusic.show()
-         self.markDirty()
+    def MainScreenHide(self):
+        self.window_surface.blit(self.background, (0, 0))
+        self.markDirty()
+    
+    def MainScreenShow(self):
+        self.drawMainDirect()
+        self.markDirty()
         
     def getAvailablePlaylists(self):
         dfDownloadedPlaylists = self.getDownloadedPlaylists()[['PlaylistId','Playlist']]

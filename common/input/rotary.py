@@ -1,5 +1,6 @@
 import board
 from adafruit_seesaw import seesaw, rotaryio, digitalio
+#import time
 
 class RotaryEncoder():
     def __init__(self):
@@ -36,22 +37,25 @@ class RotaryEncoder():
         self.button_states = [self.select_held, self.up_held, self.left_held, self.down_held, self.right_held]
     
     def getEncoderActivity(self):
-#        print('a: ', self.wheel)
         self.position = self.wheel.position
-       
+    
+#        if self.position != self.last_position:
+#            print(time.monotonic(), self.position,
+#                  self.position - self.last_position)
+    
         if self.position < self.last_position:
             self.last_position = self.position
             return {'Wheel': 'Up'}
-        
+    
         if self.position > self.last_position:
             self.last_position = self.position
             return {'Wheel': 'Down'}
-        
-        for b in range(self.button_count ):
+    
+        for b in range(self.button_count):
             if not self.buttons[b].value and self.button_states[b] is False:
                 self.button_states[b] = True
-                return {self.button_names[b]:  'Press'}
-
+                return {self.button_names[b]: 'Press'}
+    
             if self.buttons[b].value and self.button_states[b] is True:
                 self.button_states[b] = False
-                return {self.button_names[b]:  'Release'}
+                return {self.button_names[b]: 'Release'}
