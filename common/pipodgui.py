@@ -6,16 +6,8 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 import json
 import pygame
-import pygame_gui
 
 #from pygame.font import Font
-from pygame_gui.core import ObjectID
-from pygame_gui.ui_manager import UIManager
-from pygame_gui.elements.ui_window import UIWindow
-from pygame_gui.elements.ui_button import UIButton
-from pygame_gui.elements.ui_label import UILabel
-from pygame_gui.elements.ui_image import UIImage
-from pygame_gui.elements.ui_progress_bar import UIProgressBar
 
 from io import BytesIO
 
@@ -38,27 +30,19 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.Screens = self.configuration.Screens
         self.ScreenNavigation = self.configuration.ScreenNavigation
         
-        #pygame_gui Theme file
+        # Existing theme file (navigation font)
         themeFile =os.path.join(self.configuration.ThemeDirectory,  self.configuration.ThemeFile)
         
-        # pygame_gui setup
+        # Pygame display setup
         self.window_surface = pygame.display.set_mode((320, 240))
         self.background = pygame.Surface((320, 240))
         self.background.fill(pygame.Color('aquamarine'))
-        self.position_font = pygame.font.SysFont(None, 20)
 
-        self.current_position_rect = pygame.Rect((2, 178), (56, 20))
-        self.current_progress_rect = pygame.Rect((58, 180), (210, 15))
         
-        self.manager = UIManager((320,240),  themeFile)
         
         self.needs_redraw = True
         self.needs_position_redraw = False
         
-#        Setup Windows
-        self.windowNowPlaying = UIWindow(pygame.Rect((1, 1), (320,240))
-                                                                 ,manager=self.manager
-                                                                 ,element_id='window') 
                                                                 
         
         self.CurrentPlaylistId = self.getCurrentPlaylistId()
@@ -87,19 +71,14 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.CurrentDurationFormat = '00:00'
         self.LastMPDFile = None
         
-        # Set True when Screen is Initialized
-        self.MusicScreenInit = False
         
         self.framebuffer_display = FramebufferDisplay()
          
-        self.NowPlayingScreen()
         
-        self.windowNowPlaying.hide()
         
         
         self.navigationPath = []
         self.QUIT = pygame.QUIT
-        self.UI_BUTTON_PRESSED = pygame_gui.UI_BUTTON_PRESSED
         
         self.now_playing_surface = pygame.Surface(
             (320, 240),
@@ -230,8 +209,6 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.framebuffer_display.close()
         pygame.quit()
     
-    def drawScreen(self):
-        self.manager.draw_ui(self.window_surface)
     
     def drawCurrentPosition(self):
         self.drawNowPlayingPositionDirect()
@@ -821,172 +798,21 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.drawDownloadDirect()
         self.markDirty()
         
-    def NowPlayingScreen(self): #, SelectedPlaylistId,  SelectedTrackId):
-        self.lblTrackTitle = UILabel(relative_rect=pygame.Rect((177,5 ), (120, 21)),
-                                                   text = self.CurrentTitle,
-                                                   container = self.windowNowPlaying,
-                                                   manager=self.manager, 
-                                                   object_id=ObjectID(class_id='@now_playing_labels'))
-        self.lblTrackArtist = UILabel(relative_rect=pygame.Rect((177,25 ), (120, 21)),
-                                                     text = self.CurrentArtist, 
-                                                     container = self.windowNowPlaying,
-                                                     manager=self.manager, 
-                                                     object_id=ObjectID(class_id='@now_playing_labels'))
-                                                                                          
-        self.lblTrackAlbum = UILabel(relative_rect=pygame.Rect((177,45 ), (120, 21)),
-                                                       text = self.CurrentAlbum,
-                                                       container = self.windowNowPlaying,
-                                                       manager=self.manager, 
-                                                       object_id=ObjectID(class_id='@now_playing_labels'))
-                        
-        self.lblTrackGenre = UILabel(relative_rect=pygame.Rect((177,65 ), (120, 21)),
-                                                      text = self.CurrentGenre,
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_labels'))
-                                                                                          
-        self.lblTrackPlaylist = UILabel(relative_rect=pygame.Rect((177, 85), (120, 21)),
-                                                        text = self.CurrentPlaylist , 
-                                                        container = self.windowNowPlaying,
-                                                        manager=self.manager, 
-                                                        object_id=ObjectID(class_id='@now_playing_labels'))
-                                                                                          
-        self.imgAlbumArt = UIImage(relative_rect=pygame.Rect((10, 0 ), (128, 128)),
-                                                       image_surface=self.CurrentAlbumArt, 
-                                                       container = self.windowNowPlaying,
-                                                       manager=self.manager)
-                                                       
-        self.bPlay = UIButton(relative_rect=pygame.Rect((210, 120 ), (50, 50)),
-                                                      text='',
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                      object_id='#play_button'))
-                                                                                      
-        self.bPause = UIButton(relative_rect=pygame.Rect((210, 120 ), (50, 50)),
-                                                      text='',
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                      object_id='#pause_button'))   
-        
-        self.bForward = UIButton(relative_rect=pygame.Rect((260, 120 ), (50, 50)),
-                                                      text='',
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                      object_id='#forward_button'))   
-
-        self.bRewind = UIButton(relative_rect=pygame.Rect((160, 120 ), (50, 50)),
-                                                      text='',
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                      object_id='#rewind_button'))   
-                                                                                      
-        self.bRepeatOff = UIButton(relative_rect=pygame.Rect((110,  130), (25, 25)),
-                                                      text='',
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                      object_id='#repeat_off_button')) 
-        
-        self.bRepeatOn = UIButton(relative_rect=pygame.Rect((110,  130), (25, 25)),
-                                                      text='',
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                      object_id='#repeat_on_button')) 
-                                                                                      
-        self.bRepeatOne = UIButton(relative_rect=pygame.Rect((110,  130), (25, 25)),
-                                                      text='',
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                      object_id='#repeat_one_button'))
-        
-        self.bShuffleOff = UIButton(relative_rect=pygame.Rect((10,  130), (25, 25)),
-                                                      text='',
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                      object_id='#shuffle_off_button'))
-                                                                                      
-        self.bShuffleOn = UIButton(relative_rect=pygame.Rect((10,  130), (25, 25)),
-                                                      text='',
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                      object_id='#shuffle_on_button'))
-                                                                                      
-        self.bBack = UIButton(relative_rect=pygame.Rect((10, 210), (50, 25)),
-                                                      text='Back',
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@small_navigation_buttons', 
-                                                                                      object_id='#back_button'))   
-
-        self.bHome = UIButton(relative_rect=pygame.Rect((65, 210), (50, 25)),
-                                                      text='Home',
-                                                      container = self.windowNowPlaying,
-                                                      manager=self.manager, 
-                                                      object_id=ObjectID(class_id='@small_navigation_buttons', 
-                                                                                      object_id='#home_button')) 
-                                                                                      
-        
-                                                                                      
-        self.pbarCurrentPosition = UIProgressBar(relative_rect=pygame.Rect((58, 180), (210, 15)),
-                                                                          container = self.windowNowPlaying,
-                                                                          manager=self.manager, 
-                                                                          object_id=ObjectID(class_id='@now_playing_buttons', 
-                                                                                                          object_id='#current_position_bar'))
-                                                                                                       
-        self.lblCurrentPosition = UILabel(relative_rect=pygame.Rect((2, 178), (56, 20)),
-                                                            text=self.CurrentPositionFormat,
-                                                            container = self.windowNowPlaying,
-                                                            manager=self.manager, 
-                                                            object_id=ObjectID(class_id='@now_playing_labels'))
-        
-        self.lblTrackDuration = UILabel(relative_rect=pygame.Rect((263, 178), (56, 20)),
-                                                            text=self.CurrentDurationFormat,
-                                                            container = self.windowNowPlaying,
-                                                            manager=self.manager, 
-                                                            object_id=ObjectID(class_id='@now_playing_labels'))
-   
-        self.bPause.hide()
-#        self.bRepeatOn.hide()
-#        self.bRepeatOne.hide()
-#        self.bRepeatOff.show()
-#        self.bRepeatOff.select()
-#        self.bRepeatOff.unselect()
-        self.updateDisplay()
        
     def NowPlayingScreenHide(self):
-        self.windowNowPlaying.hide()
         self.markDirty()
         
-    def ShowPlayButton(self):
-        self.bPlay.hide()
-        self.bPause.show()
-        self.markDirty()
         
-    def ShowPauseButton(self):
-        self.bPause.hide()
-        self.bPlay.show()
-        self.markDirty()
         
     def Play(self):
-        if self.CurrentTrackId != None:
+        if self.CurrentTrackId is not None:
             self.playTrack()
             if self.CurrentScreen == 'NowPlaying':
-                self.ShowPlayButton()
-                self.bPlay.select()
                 self.markDirty()
 
     def Pause(self):
         self.pauseTrack()
-        self.ShowPauseButton()
-        self.bPause.select()
+        self.markDirty()
     
     def VolumeUp(self):
         self.mpd.volume_up()
@@ -995,60 +821,32 @@ class piPodGUI(AudioPlayback, MusicDB):
     def VolumeDown(self):
         self.mpd.volume_down()
     
-    def ShowRepeatButtonOff(self):
-        self.bRepeatOn.hide()
-        self.bRepeatOne.hide()
-        self.bRepeatOff.show()
-        self.markDirty()
         
-    def ShowRepeatButtonOn(self):
-        self.bRepeatOff.hide()
-        self.bRepeatOne.hide()
-        self.bRepeatOn.show()
-        self.markDirty()
     
-    def ShowRepeatButtonOne(self):
-        self.bRepeatOff.hide()
-        self.bRepeatOn.hide()
-        self.bRepeatOne.show()
-        self.markDirty()
     
-    def ShowShuffleButtonOff(self):
-        self.bShuffleOn.show()
-        self.bShuffleOn.unselect()
-        self.markDirty()
     
-    def ShowShuffleButtonOn(self):
-        self.bShuffleOn.show()
-        self.bShuffleOn.select()
-        self.markDirty()
     
     def RepeatOff(self):
         self.setRepeatOff()
-        self.ShowRepeatButtonOff()
-        self.bRepeatOff.select()
+        self.markDirty()
     
     def RepeatOn(self):
         self.setRepeatPlaylist()
-        self.ShowRepeatButtonOn()
-        self.bRepeatOn.select()
+        self.markDirty()
         
     def RepeatOne(self):
         self.setRepeatOne()
-        self.ShowRepeatButtonOne()
-        self.bRepeatOne.select()
+        self.markDirty()
         
-    def  ShuffleOff(self):
+    def ShuffleOff(self):
         self.Shuffle = 'Off'
         self.unshuffleCurrentPlaylist()
-        self.ShowShuffleButtonOff()
-        self.bShuffleOff.select()
+        self.markDirty()
         
-    def  ShuffleOn(self):
+    def ShuffleOn(self):
         self.Shuffle = 'On'
         self.shuffleCurrentPlaylist()
-        self.ShowShuffleButtonOn()    
-        self.bShuffleOn.select()
+        self.markDirty()
 #    def setCurrentPlaylist(self, PlaylistId):
 #        self.CurrentPlaylistId = PlaylistId
 #        
@@ -1194,13 +992,7 @@ class piPodGUI(AudioPlayback, MusicDB):
         self.CurrentPositionPercent = 0
         self.StartPlaybackPosition = 0
         self.CurrentPositionFormat = '00:00'
-        self.updateCurrentTrack(self.CurrentTrackId,  self.CurrentPosition)
-        self.CurrentPositionFormat = self.formatTrackTime(self.CurrentPosition )
-        self.window_surface.blit(self.background, (2, 178))
-        self.lblCurrentPosition.set_text(self.CurrentPositionFormat)
-        self.manager.draw_ui(self.window_surface)
-        self.lblCurrentPosition.rebuild()
-        self.updateCurrentTrack(self.CurrentTrackId,  self.CurrentPosition)
+        self.updateCurrentTrack(self.CurrentTrackId, self.CurrentPosition)
         self.markDirty()
         
 

@@ -32,23 +32,6 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
     
         self.markDirty()
 
-    def getNowPlayingWidget(self, element_name):
-        """
-        Return the pygame_gui widget for a simple Now Playing screen element.
-
-        Repeat and Shuffle are intentionally not handled here because they
-        use state-specific widgets/icons.
-        """
-
-        widgets = {
-            "Play/Pause": self.bPause if self.getAudioPlayingStatus() else self.bPlay,
-            "Forward": self.bForward,
-            "Rewind": self.bRewind,
-            "Back": self.bBack,
-            "Home": self.bHome,
-        }
-
-        return widgets.get(element_name)
 
  
     def setPlaylistNavigation(self):
@@ -99,102 +82,10 @@ class piPodGUINavigation(RotaryEncoder, piPodGUI):
         return self.CurrentScreenElementIndex
         
     def setScreenElementSelected(self, Element):
-        match self.CurrentScreen:
-            case 'Main' | 'Music':
-                self.markDirty()
-    
-            case 'NowPlaying':
-                match Element:
-                    case 'Play/Pause' | 'Forward' | 'Rewind' | 'Back' | 'Home':
-                        widget = self.getNowPlayingWidget(Element)
-    
-                        if widget is not None:
-                            widget.select()
-    
-                    case 'Repeat':
-                        match self.Repeat:
-                            case 'Off':
-                                self.ShowRepeatButtonOff()
-                                self.bRepeatOff.select()
-                            case 'On':
-                                self.ShowRepeatButtonOn()
-                                self.bRepeatOn.select()
-                            case 'One':
-                                self.ShowRepeatButtonOne()
-                                self.bRepeatOne.select()
-    
-                    case 'Shuffle':
-                        match self.Shuffle:
-                            case 'Off':
-                                self.ShowShuffleButtonOff()
-                                self.bShuffleOff.select()
-                            case 'On':
-                                self.ShowShuffleButtonOn()
-                                self.bShuffleOn.select()
-    
-                    case _:
-                        pass
-    
-            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists' | 'Albums' | 'Genres' | 'ArtistAlbums' | 'Tools' | 'Import':
-                self.markDirty()
-    
-            case 'OTR':
-                pass
-    
-            case 'Audiobooks':
-                pass
-    
-            case 'Games':
-                pass
-    
-            case 'Settings':
-                pass
-    
         self.CurrentScreenElement = Element
         self.markDirty()
         
     def setScreenElementUnselected(self, Element):
-        match self.CurrentScreen:
-            case 'Main' | 'Music':
-                self.markDirty()
-                    
-            case 'NowPlaying':
-                match Element:
-                    case 'Play/Pause' | 'Forward' | 'Rewind' | 'Back' | 'Home':
-                        widget = self.getNowPlayingWidget(Element)
-
-                        if widget is not None:
-                            widget.unselect()
-                    case 'Repeat':
-                        match self.Repeat:
-                            case 'Off':
-                                self.ShowRepeatButtonOff()
-                                self.bRepeatOff.unselect()
-                            case 'On':
-                                self.ShowRepeatButtonOn()
-                                self.bRepeatOn.unselect()
-                            case 'One':
-                                self.ShowRepeatButtonOne()
-                                self.bRepeatOne.unselect()
-                    case 'Shuffle':
-                        if self.Shuffle == 'Off':
-                            self.bShuffleOn.unselect()
-                        else:
-                            self.bShuffleOn.select()
-                    case _:
-                        pass
-                    
-            case 'AvailablePlaylists' | 'PlaylistTracks' | 'Artists' | 'Albums' | 'Genres' | 'ArtistAlbums' | 'Tools' | 'Import':
-                self.markDirty()
-                    
-            case 'OTR':
-                pass
-            case 'Audiobooks':
-                pass
-            case 'Games':
-                pass
-            case 'Settings':
-                pass
         self.markDirty()
         
     def NavigateUp(self, IndexCurrentElement):

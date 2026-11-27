@@ -35,8 +35,6 @@ piPodGUI = piPodGUI.piPodGUINavigation()
 clock = piPodGUI.getClock()
 
 # Music
-isMusicPlaying = False
-isMusicPaused = False
 currentPosition = 0
 
 CurrentPlaylistId = None
@@ -48,7 +46,7 @@ NextTrackSet = False
 # UI Navigation
 #MainScreenUIElements = {'NowPlaying' : 1 ,  'Music' : 2,  'OTR' : 3, 'Audiobooks' : 4, 'Games' :  5,  'Management' : 6}
 while is_running:
-    time_delta = clock.tick(60)/1000.0
+    clock.tick(60)
     encoderActivity = piPodGUI.getEncoderActivity()
     if encoderActivity != None:
         piPodGUI.EncoderNavigation(encoderActivity)
@@ -108,54 +106,15 @@ while is_running:
     displayButton4WasPressed = displayButton4IsPressed    
         
     for event in piPodGUI.getEvent():
-        piPodGUI.manager.process_events(event)
-#        print(f'Event: {event}')
         match event.type:
             case piPodGUI.QUIT:
                 is_running = False
-            case piPodGUI.UI_BUTTON_PRESSED:
-                match event.ui_element:
-                    case piPodGUI.bPlay:
-                        piPodGUI.Play()
-#                        piPodGUI.Pause()
-#                        piPodGUI.display.flip()
-#                        piPodAudio.playTrack()
-                        isMusicPlaying = True
-                        isMusicPaused = False
-                    case piPodGUI.bPause:
-                        piPodGUI.Pause()
-#                        piPodGUI.display.flip()
-#                        piPodGUI.piPodAudio.pauseTrack()
-                        NextTrack = None
-                        isMusicPaused = True                    
-                    case piPodGUI.bForward:
-                        piPodGUI.NextTrackNowPlaying()
-                    case piPodGUI.bRewind:
-                        isMusicPlaying = False
-                        piPodGUI.PreviousTrackNowPlaying()
-                        isMusicPlaying = True
-                    case piPodGUI.bHome:
-                        print('home')
-                        piPodGUI.NowPlayingScreenHide()
-                        piPodGUI.MainScreenShow()
-                    case _:
-                        pass
             case piPodGUI.MUSIC_END:
                 piPodGUI.NextTrackNowPlaying()
-#                print('MusicEndEvent',  piPodGUI.MUSICENDEVENT)
-            case _:
-                pass
-    if isMusicPlaying == True or piPodGUI.AudioPlaying == True:
+
+    if piPodGUI.AudioPlaying:
         piPodGUI.updateCurrentPosition()
-        
-#        if not NextTrackSet:
-#            print('Setting Next Track')
-#            piPodGUI.setNowPlayingNextTrack()
-#            print()
-            
-#    piPodGUI.manager.process_events(event)
-    piPodGUI.manager.update(time_delta)
-    
+
     if piPodGUI.CurrentScreen == "NowPlaying":
         if piPodGUI.isDirty():
             piPodGUI.drawNowPlayingDirect()
@@ -212,9 +171,13 @@ while is_running:
         if piPodGUI.isDirty():
             piPodGUI.drawImportDirect()
     
+    elif piPodGUI.CurrentScreen == "ImportResult":
+        if piPodGUI.isDirty():
+            piPodGUI.drawImportResultDirect()
+
     else:
         if piPodGUI.isDirty():
-            piPodGUI.drawScreen()
+            piPodGUI.window_surface.fill(piPodGUI.ui_background)
             piPodGUI.updateDisplay()
             piPodGUI.clearDirty()
             piPodGUI.clearPositionDirty()
